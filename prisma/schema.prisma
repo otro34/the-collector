@@ -37,8 +37,8 @@ model Item {
   description         String?
   coverUrl            String?
   price               Float?
-  tags                String          // JSON string array
-  customFields        String?         // JSON string for flexible data
+  tags                String          @default("[]") // JSON string array
+  customFields        Json?           // Flexible JSON for type-specific data
 
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
@@ -63,7 +63,7 @@ model Videogame {
   developer           String?
   region              String?
   edition             String?
-  genres              String          // JSON string array
+  genres              String          @default("[]") // JSON string array
   metacriticScore     Int?
 }
 
@@ -77,7 +77,7 @@ model Music {
   publisher           String?
   format              String          // CD, Vinyl, etc.
   discCount           String?
-  genres              String          // JSON string array
+  genres              String          @default("[]") // JSON string array
   tracklist           String?
 }
 
@@ -93,7 +93,7 @@ model Book {
   series              String?
   publisher           String?
   coverType           String?
-  genres              String          // JSON string array
+  genres              String          @default("[]") // JSON string array
 }
 
 // Backup tracking
@@ -111,6 +111,6 @@ model Backup {
 model Settings {
   id                  String          @id @default(cuid())
   key                 String          @unique
-  value               String          // JSON string
+  value               Json            // JSON value
   updatedAt           DateTime        @updatedAt
 }
