@@ -41,7 +41,7 @@ const videogameSchema = z.object({
   coverUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   language: z.string().optional(),
   country: z.string().optional(),
-  copies: z.number().int().min(1).default(1),
+  copies: z.number().int().min(1).optional(),
   price: z.number().min(0).optional().nullable(),
   tags: z.string().optional(),
   metacriticScore: z.number().int().min(0).max(100).optional().nullable(),
@@ -421,7 +421,13 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
                   <FormItem>
                     <FormLabel>Copies</FormLabel>
                     <FormControl>
-                      <Input type="number" min="1" {...field} />
+                      <Input
+                        type="number"
+                        min="1"
+                        {...field}
+                        value={field.value ?? 1}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
