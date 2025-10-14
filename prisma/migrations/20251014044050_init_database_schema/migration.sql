@@ -11,7 +11,7 @@ CREATE TABLE "Item" (
     "coverUrl" TEXT,
     "price" REAL,
     "tags" TEXT NOT NULL DEFAULT '[]',
-    "customFields" JSONB,
+    "customFields" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -72,7 +72,7 @@ CREATE TABLE "Backup" (
 CREATE TABLE "Settings" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "key" TEXT NOT NULL,
-    "value" JSONB NOT NULL,
+    "value" TEXT NOT NULL,
     "updatedAt" DATETIME NOT NULL
 );
 
