@@ -1,0 +1,48 @@
+{
+  "name": "the-collector",
+  "version": "1.0.0",
+  "description": "Front-end app for a collection of books, games and music.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "echo \"Tests will be added in later sprints\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otro34/the-collector.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/otro34/the-collector/issues"
+  },
+  "homepage": "https://github.com/otro34/the-collector#readme",
+  "dependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "clsx": "^2.1.1",
+    "next": "^15.5.5",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.3.1",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.14",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.37.0",
+    "eslint-config-next": "^15.5.5",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14"
+  }
+}
