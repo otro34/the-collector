@@ -2,27 +2,27 @@
 
 **Last Updated**: 2025-10-14
 
-## Current Sprint: Sprint 1 - Database & Data Migration
+## Current Sprint: Sprint 2 - Core UI & Layout
 
-**Status**: 🟢 Completed
+**Status**: 🟡 In Progress
 **Start Date**: 2025-10-14
-**End Date**: 2025-10-14
+**End Date**: TBD
 
 ---
 
 ## Sprint Progress Overview
 
-| Sprint   | Status       | Start Date | End Date   | Completed Stories | Total Stories |
-| -------- | ------------ | ---------- | ---------- | ----------------- | ------------- |
-| Sprint 0 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 2 | ⚪ Planned   | -          | -          | 0                 | 5             |
-| Sprint 3 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 4 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 5 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 6 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 7 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 8 | ⚪ Planned   | -          | -          | 0                 | 10            |
+| Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
+| -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
+| Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
+| Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 2 | 🟡 In Progress | 2025-10-14 | -          | 0                 | 5             |
+| Sprint 3 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 4 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 5 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -148,6 +148,82 @@
   - [x] Documentation added
 
 **Sprint 1 Total**: 24 story points
+
+---
+
+## Sprint 2: Core UI & Layout
+
+### User Stories
+
+#### US-2.1: Create Main Layout Component
+
+- **Status**: 🔴 Not Started
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Root layout with header and main content area
+  - [ ] Responsive header with navigation
+  - [ ] Mobile menu (hamburger)
+  - [ ] Theme toggle (light/dark)
+  - [ ] Footer component
+
+#### US-2.2: Implement Navigation
+
+- **Status**: 🔴 Not Started
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Navigation menu with links to all sections
+  - [ ] Active link highlighting
+  - [ ] Navigation works on mobile and desktop
+  - [ ] Search bar in header (UI only for now)
+
+#### US-2.3: Build Dashboard Page
+
+- **Status**: 🔴 Not Started
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Dashboard page with stats cards
+  - [ ] Total items count by collection type
+  - [ ] Recent additions section (last 20 items)
+  - [ ] Quick action buttons (Add Item, Import, Backup)
+  - [ ] Collection overview cards with navigation
+  - [ ] Responsive layout
+
+#### US-2.4: Install and Configure shadcn/ui Components
+
+- **Status**: 🔴 Not Started
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Button component installed
+  - [ ] Card component installed
+  - [ ] Dialog component installed
+  - [ ] Dropdown Menu component installed
+  - [ ] Input component installed
+  - [ ] Label component installed
+  - [ ] Select component installed
+  - [ ] Theme configured with custom colors
+
+#### US-2.5: Implement Dark Mode
+
+- **Status**: 🔴 Not Started
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Theme provider set up
+  - [ ] Dark mode toggle in header
+  - [ ] Theme preference persisted in localStorage
+  - [ ] All pages styled for both themes
+  - [ ] Smooth theme transitions
+
+**Sprint 2 Total**: 22 story points
 
 ---
 
