@@ -15,7 +15,7 @@
 | Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
 | -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
 | Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟡 In Progress | 2025-10-14 | -          | 2                 | 5             |
+| Sprint 1 | 🟡 In Progress | 2025-10-14 | -          | 3                 | 5             |
 | Sprint 2 | ⚪ Planned     | -          | -          | 0                 | 5             |
 | Sprint 3 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 4 | ⚪ Planned     | -          | -          | 0                 | 6             |
@@ -110,8 +110,16 @@
 
 #### US-1.3: Build CSV Parser
 
-- **Status**: ⚪ Planned
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [x] CSV parser function created using PapaParse
+  - [x] Column mapping logic implemented (auto-detect and manual)
+  - [x] Data validation logic implemented using Zod schemas
+  - [x] Error reporting for invalid data (row/column/field level)
+  - [x] Support for different CSV formats (videogames, music, books)
 
 #### US-1.4: Import Existing CSV Data
 
@@ -132,8 +140,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 13
-- **Overall Progress**: 5.0%
+- **Completed Story Points**: 18
+- **Overall Progress**: 7.0%
 
 ### Milestone Tracker
 
@@ -154,7 +162,6 @@
 
 ### To Do
 
-- US-1.3: Build CSV Parser
 - US-1.4: Import Existing CSV Data
 - US-1.5: Create Seed Data Script
 
@@ -164,7 +171,8 @@
 - US-0.2: Install Core Dependencies ✅ [PR #3](https://github.com/otro34/the-collector/pull/3)
 - US-0.3: Set Up Development Tools ✅ [PR #4](https://github.com/otro34/the-collector/pull/4)
 - US-1.1: Define Database Schema ✅ [PR #5](https://github.com/otro34/the-collector/pull/5)
-- US-1.2: Create Database Utilities ✅ [PR TBD](https://github.com/otro34/the-collector/pull/TBD)
+- US-1.2: Create Database Utilities ✅ [PR #6](https://github.com/otro34/the-collector/pull/6)
+- US-1.3: Build CSV Parser ✅ [PR TBD](https://github.com/otro34/the-collector/pull/TBD)
 
 ---
 
@@ -182,7 +190,23 @@
 
 ## Notes & Decisions
 
-### 2025-10-14 (Later - US-1.2)
+### 2025-10-14 (Latest - US-1.3)
+
+- **US-1.3 Completed**: CSV parser utility created with full validation and error reporting
+- Created src/lib/csv-parser.ts with PapaParse integration (650+ lines)
+- Implemented auto-detect column mapping for all CSV formats (videogames, music, books)
+- Default column mappings configured for existing CSV files in original-data/
+- Data validation using Zod schemas (videogameSchema, musicSchema, bookSchema)
+- Comprehensive error reporting with row/column/field-level details
+- Support for multiple CSV formats with flexible column mapping
+- Parser functions: parseVideogameCSV, parseMusicCSV, parseBookCSV, parseCollectionCSV
+- Error reporting helpers: formatValidationErrors, generateErrorReport, getParseResultSummary
+- Type-safe parsing with ParseResult<T> containing data, errors, warnings, and stats
+- Installed PapaParse and @types/papaparse dependencies
+- All code passes TypeScript type checking and ESLint validation
+- Note: Unit tests deferred until testing infrastructure (vitest) is set up in future sprint
+
+### 2025-10-14 (Earlier - US-1.2)
 
 - **US-1.2 Completed**: Database utilities created with comprehensive functionality
 - Created src/lib/db-utils.ts with CRUD operations for all collection types
