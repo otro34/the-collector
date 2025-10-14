@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Collection Types
+enum CollectionType {
+  VIDEOGAME
+  MUSIC
+  BOOK
+}
+
+// Book subtypes
+enum BookType {
+  MANGA
+  COMIC
+  GRAPHIC_NOVEL
+  OTHER
+}
+
+// Base Item Model (shared fields)
+model Item {
+  id                  String          @id @default(cuid())
+  collectionType      CollectionType
+  title               String
+  year                Int?
+  language            String?
+  country             String?
+  copies              Int             @default(1)
+  description         String?
+  coverUrl            String?
+  price               Float?
+  tags                String          // JSON string array
+  customFields        String?         // JSON string for flexible data
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relationships
+  videogame           Videogame?
+  music               Music?
+  book                Book?
+
+  @@index([collectionType])
+  @@index([title])
+}
+
+// Video Game specific fields
+model Videogame {
+  id                  String          @id @default(cuid())
+  itemId              String          @unique
+  item                Item            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  platform            String
+  publisher           String?
+  developer           String?
+  region              String?
+  edition             String?
+  genres              String          // JSON string array
+  metacriticScore     Int?
+}
+
+// Music specific fields (vinyl/CD)
+model Music {
+  id                  String          @id @default(cuid())
+  itemId              String          @unique
+  item                Item            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  artist              String
+  publisher           String?
+  format              String          // CD, Vinyl, etc.
+  discCount           String?
+  genres              String          // JSON string array
+  tracklist           String?
+}
+
+// Book specific fields (manga, comics, etc.)
+model Book {
+  id                  String          @id @default(cuid())
+  itemId              String          @unique
+  item                Item            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  type                BookType
+  author              String
+  volume              String?
+  series              String?
+  publisher           String?
+  coverType           String?
+  genres              String          // JSON string array
+}
+
+// Backup tracking
+model Backup {
+  id                  String          @id @default(cuid())
+  filename            String
+  size                Int             // bytes
+  itemCount           Int
+  location            String          // local path or cloud URL
+  type                String          // 'manual', 'scheduled', 'csv_export'
+  createdAt           DateTime        @default(now())
+}
+
+// App settings
+model Settings {
+  id                  String          @id @default(cuid())
+  key                 String          @unique
+  value               String          // JSON string
+  updatedAt           DateTime        @updatedAt
+}
