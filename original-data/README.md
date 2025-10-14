@@ -1,0 +1,1 @@
+This folders contains the overall result of the collections. All data should be appended here, on the different catalog files. 
