@@ -98,7 +98,7 @@ export function CollectionGrid({ items, collectionType, onItemClick }: Collectio
 
               {/* Metadata */}
               <div className="p-2">
-                <h3 className="font-medium text-sm line-clamp-2 h-10 mb-1" title={item.title}>
+                <h3 className="font-medium text-sm line-clamp-2 min-h-10 mb-1" title={item.title}>
                   {item.title}
                 </h3>
                 <div className="space-y-0.5">
