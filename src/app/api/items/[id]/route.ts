@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import { getItemById } from '@/lib/db-utils'
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   try {
-    const item = await getItemById(params.id)
+    const item = await getItemById(id)
 
     if (!item) {
       return NextResponse.json({ error: 'Item not found' }, { status: 404 })
@@ -16,11 +17,12 @@ export async function GET(_request: Request, { params }: { params: { id: string 
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   try {
     await request.json()
     // TODO: Implement update logic in US-4.5
-    console.log('Update request for item:', params.id)
+    console.log('Update request for item:', id)
     return NextResponse.json({ message: 'Update not yet implemented' }, { status: 501 })
   } catch (error) {
     console.error('Update item error:', error)
@@ -28,10 +30,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   try {
     // TODO: Implement delete logic in US-4.6
-    console.log('Delete request for item:', params.id)
+    console.log('Delete request for item:', id)
     return NextResponse.json({ message: 'Delete not yet implemented' }, { status: 501 })
   } catch (error) {
     console.error('Delete item error:', error)
