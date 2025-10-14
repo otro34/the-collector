@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getItemById } from '@/lib/db-utils'
+import { prisma } from '@/lib/db'
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -33,11 +34,29 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   try {
-    // TODO: Implement delete logic in US-4.6
-    console.log('Delete request for item:', id)
-    return NextResponse.json({ message: 'Delete not yet implemented' }, { status: 501 })
+    // Check if item exists
+    const existingItem = await getItemById(id)
+    if (!existingItem) {
+      return NextResponse.json({ error: 'Item not found' }, { status: 404 })
+    }
+
+    // Delete the item (cascade delete will handle related records)
+    await prisma.item.delete({
+      where: { id },
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Item deleted successfully',
+    })
   } catch (error) {
     console.error('Delete item error:', error)
-    return NextResponse.json({ error: 'Failed to delete item' }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: 'Failed to delete item',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    )
   }
 }
