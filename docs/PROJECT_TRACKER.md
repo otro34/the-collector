@@ -18,7 +18,7 @@
 | Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
 | Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
 | Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 4 | 🟡 In Progress | 2025-10-14 | -          | 2                 | 6             |
+| Sprint 4 | 🟡 In Progress | 2025-10-14 | -          | 4                 | 6             |
 | Sprint 5 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
@@ -356,57 +356,60 @@
 
 #### US-4.3: Create "Add Music" Form
 
-- **Status**: ⚪ Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#15](https://github.com/otro34/the-collector/pull/15)
 - **Acceptance Criteria**:
-  - [ ] Form with all music fields
-  - [ ] Form validation
-  - [ ] Genre multi-select
-  - [ ] Success/error messages
-  - [ ] Form resets after submission
+  - [x] Form with all music fields
+  - [x] Form validation
+  - [x] Genre multi-select
+  - [x] Success/error messages
+  - [x] Form resets after submission
 
 #### US-4.4: Create "Add Book" Form
 
-- **Status**: ⚪ Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#16](https://github.com/otro34/the-collector/pull/16)
 - **Acceptance Criteria**:
-  - [ ] Form with all book fields
-  - [ ] Form validation
-  - [ ] Book type selector (Manga, Comic, etc.)
-  - [ ] Genre multi-select
-  - [ ] Success/error messages
+  - [x] Form with all book fields
+  - [x] Form validation
+  - [x] Book type selector (Manga, Comic, etc.)
+  - [x] Genre multi-select
+  - [x] Success/error messages
 
 #### US-4.5: Implement Edit Functionality
 
-- **Status**: ⚪ Not Started
+- **Status**: 🟡 Partially Complete (50%)
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#17](https://github.com/otro34/the-collector/pull/17)
 - **Acceptance Criteria**:
-  - [ ] Edit button opens form pre-filled with current data
-  - [ ] Form validation works
-  - [ ] Save updates the database
-  - [ ] Success/error messages
+  - [x] Edit button opens form pre-filled with current data (videogames only)
+  - [x] Form validation works
+  - [x] Save updates the database (PUT API endpoint ready for all types)
+  - [x] Success/error messages
   - [ ] Detail view refreshes after save
+  - [ ] **MISSING**: Edit pages for music and books
+  - [ ] **MISSING**: handleEdit implementation in collection pages
 
 #### US-4.6: Implement Delete Functionality
 
-- **Status**: ⚪ Not Started
+- **Status**: 🟡 Partially Complete (50%)
 - **Assigned**: Claude
 - **Story Points**: 3
-- **PR**: TBD
+- **PR**: [#18](https://github.com/otro34/the-collector/pull/18)
 - **Acceptance Criteria**:
-  - [ ] Delete button in item detail
+  - [x] Delete button in item detail
+  - [x] Item removed from database (DELETE API endpoint ready)
   - [ ] Confirmation dialog before deleting
-  - [ ] Item removed from database
-  - [ ] User redirected to collection page
-  - [ ] Success message shown
+  - [ ] **MISSING**: handleDelete implementation in collection pages
+  - [ ] **MISSING**: User redirected to collection page after deletion
+  - [ ] **MISSING**: Success message shown
 
-**Sprint 4 Total**: 31 story points (13 completed, 18 remaining)
+**Sprint 4 Total**: 31 story points (23 completed, 8 remaining - 74% complete)
 
 ---
 
@@ -415,14 +418,14 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 95
-- **Overall Progress**: 36.8%
+- **Completed Story Points**: 105 (82 fully complete + 23 from Sprint 4)
+- **Overall Progress**: 40.7%
 
 ### Milestone Tracker
 
 - [x] **Milestone 1**: Foundation Complete (Sprint 0-1)
 - [x] **Milestone 2**: Core UI & Collections (Sprint 2-3)
-- [ ] **Milestone 3**: CRUD Operations (Sprint 4) - 42% complete
+- [ ] **Milestone 3**: CRUD Operations (Sprint 4) - 74% complete
 - [ ] **Milestone 4**: Search & Data Management (Sprint 5-6)
 - [ ] **Milestone 5**: Backup & Polish (Sprint 7-8)
 - [ ] **Milestone 6**: MVP Launch
@@ -460,10 +463,11 @@
 
 ## Notes & Decisions
 
-### 2025-10-14 (Latest - Sprint 4 Started! 🚀)
+### 2025-10-14 (Latest - Sprint 4 Nearly Complete! 🚀)
 
-- **Sprint 4 IN PROGRESS**: 2 of 6 user stories completed
-- Item detail modal and add videogame form fully implemented
+- **Sprint 4 IN PROGRESS**: 4 of 6 user stories fully completed, 2 partially completed (74% overall)
+- All "Add" forms completed for videogames, music, and books
+- Edit and Delete functionality partially implemented
 - Features completed:
   - **US-4.1**: Item Detail Modal with full metadata display
     - Created ItemDetailModal component with type-specific rendering
@@ -484,6 +488,33 @@
     - Fixed Next.js 15 async params handling for dynamic routes
     - Proper error handling and success messages
     - Form redirects to collection page after successful submission
+  - **US-4.3**: Add Music Form with full validation ✅
+    - Created form page at `/music/new` with all music fields
+    - Format selector (CD, Vinyl, Cassette, Digital)
+    - POST endpoint at `/api/items/music` with validation
+    - Genres, tracklist, disc count fields
+    - Success messages and form reset
+  - **US-4.4**: Add Book Form with full validation ✅
+    - Created form page at `/books/new` with all book fields
+    - Book type selector (Manga, Comic, Graphic Novel, Other)
+    - POST endpoint at `/api/items/books` with validation
+    - Volume, series, cover type fields
+    - Success messages and form reset
+  - **US-4.5**: Edit Functionality (Partially Complete - 50%)
+    - ✅ Created edit page at `/videogames/[id]/edit` with pre-filled form
+    - ✅ PUT endpoint at `/api/items/[id]` supporting all collection types
+    - ✅ Form validation and update logic working
+    - ❌ MISSING: Edit pages for music (`/music/[id]/edit`)
+    - ❌ MISSING: Edit pages for books (`/books/[id]/edit`)
+    - ❌ MISSING: handleEdit implementation in collection pages (currently TODO comments)
+    - ❌ MISSING: Books page doesn't have ItemDetailModal integration
+  - **US-4.6**: Delete Functionality (Partially Complete - 50%)
+    - ✅ DELETE endpoint at `/api/items/[id]` working
+    - ✅ Delete button in ItemDetailModal component
+    - ❌ MISSING: Confirmation dialog before deletion
+    - ❌ MISSING: handleDelete implementation (currently TODO comments in videogames/music pages)
+    - ❌ MISSING: Success toast and redirect after deletion
+    - ❌ MISSING: Books page integration
 - Technical improvements:
   - Fixed TypeScript generic type issues with Form component
   - Updated [id] route to handle Next.js 15 async params pattern
@@ -493,10 +524,21 @@
 - Commits:
   - `5f6562d`: feat(items): integrate Item Detail Modal [US-4.1]
   - `742baad`: feat(videogames): add videogame form with validation [US-4.2]
-- **Overall Progress**: 95/258 story points (36.8%)
-- **Sprint 4 Progress**: 13/31 story points (42%)
-- **Next Tasks**: US-4.3 (Add Music Form), US-4.4 (Add Book Form), US-4.5 (Edit), US-4.6 (Delete)
-- Ready to continue with remaining CRUD operations
+  - `476e9e3`: feat(music): add music form with validation [US-4.3]
+  - `ee001a7`: feat(books): add book form with validation [US-4.4]
+  - `b83a716`: feat(items): implement edit functionality for all collection types [US-4.5]
+  - `92da532`: feat(items): implement delete functionality [US-4.6]
+- **Overall Progress**: 105/258 story points (40.7%)
+- **Sprint 4 Progress**: 23/31 story points (74% - 4 complete, 2 partial)
+- **Next Tasks**: Complete US-4.5 (Edit pages for music/books + handlers), Complete US-4.6 (Confirmation dialog + handlers)
+- **Remaining Work for Sprint 4**:
+  - Create `/music/[id]/edit/page.tsx`
+  - Create `/books/[id]/edit/page.tsx`
+  - Implement handleEdit in videogames, music, books pages
+  - Add ItemDetailModal to books page
+  - Create confirmation dialog component
+  - Implement handleDelete in all collection pages
+  - Add success messages and redirects for delete
 
 ### 2025-10-14 (Earlier - Sprint 3 Complete! 🎉)
 
