@@ -4,25 +4,25 @@
 
 ## Current Sprint: Sprint 1 - Database & Data Migration
 
-**Status**: 🔴 Not Started
-**Start Date**: TBD
+**Status**: 🟡 In Progress
+**Start Date**: 2025-10-14
 **End Date**: TBD
 
 ---
 
 ## Sprint Progress Overview
 
-| Sprint   | Status       | Start Date | End Date   | Completed Stories | Total Stories |
-| -------- | ------------ | ---------- | ---------- | ----------------- | ------------- |
-| Sprint 0 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | ⚪ Planned   | -          | -          | 0                 | 5             |
-| Sprint 2 | ⚪ Planned   | -          | -          | 0                 | 5             |
-| Sprint 3 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 4 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 5 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 6 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 7 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 8 | ⚪ Planned   | -          | -          | 0                 | 10            |
+| Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
+| -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
+| Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
+| Sprint 1 | 🟡 In Progress | 2025-10-14 | -          | 1                 | 5             |
+| Sprint 2 | ⚪ Planned     | -          | -          | 0                 | 5             |
+| Sprint 3 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 4 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 5 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -81,8 +81,17 @@
 
 #### US-1.1: Define Database Schema
 
-- **Status**: ⚪ Planned
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [x] Prisma schema created with all models (Item, Videogame, Music, Book, Backup, Settings)
+  - [x] Relationships defined correctly
+  - [x] Indexes added for performance
+  - [x] Enums defined for collection types
+  - [x] Initial migration created
+  - [x] Database file created
 
 #### US-1.2: Create Database Utilities
 
@@ -113,8 +122,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 5
-- **Overall Progress**: 1.9%
+- **Completed Story Points**: 10
+- **Overall Progress**: 3.9%
 
 ### Milestone Tracker
 
@@ -135,7 +144,6 @@
 
 ### To Do
 
-- US-1.1: Define Database Schema
 - US-1.2: Create Database Utilities
 - US-1.3: Build CSV Parser
 - US-1.4: Import Existing CSV Data
@@ -146,6 +154,7 @@
 - US-0.1: Initialize Next.js Project ✅ [PR #1](https://github.com/otro34/the-collector/pull/1)
 - US-0.2: Install Core Dependencies ✅ [PR #3](https://github.com/otro34/the-collector/pull/3)
 - US-0.3: Set Up Development Tools ✅ [PR #4](https://github.com/otro34/the-collector/pull/4)
+- US-1.1: Define Database Schema ✅ [PR TBD](https://github.com/otro34/the-collector/pull/TBD)
 
 ---
 
@@ -162,6 +171,17 @@
 ---
 
 ## Notes & Decisions
+
+### 2025-10-14 (Later)
+
+- **US-1.1 Completed**: Database schema defined and initial migration created
+- Updated Prisma schema with proper types (Json for customFields and Settings.value)
+- SQLite limitation: Arrays stored as JSON strings (not native arrays) due to SQLite constraints
+- All models include proper relationships and cascade deletes
+- Database indexes added on collectionType and title fields for performance
+- Initial migration applied successfully, database file created at prisma/dev.db
+- Database connection tested and verified working
+- Sprint 1 officially started
 
 ### 2025-10-14
 
