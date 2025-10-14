@@ -4,12 +4,18 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Gamepad2, Music, BookOpen } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import type { Item, CollectionType } from '@prisma/client'
+import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
+
+type ItemWithRelations = Item & {
+  videogame?: Videogame | null
+  music?: MusicType | null
+  book?: Book | null
+}
 
 interface CollectionGridProps {
-  items: Item[]
+  items: ItemWithRelations[]
   collectionType: CollectionType
-  onItemClick?: (item: Item) => void
+  onItemClick?: (item: ItemWithRelations) => void
 }
 
 export function CollectionGrid({ items, collectionType, onItemClick }: CollectionGridProps) {
@@ -92,10 +98,17 @@ export function CollectionGrid({ items, collectionType, onItemClick }: Collectio
 
               {/* Metadata */}
               <div className="p-2">
-                <h3 className="font-medium text-sm line-clamp-2 mb-1" title={item.title}>
+                <h3 className="font-medium text-sm line-clamp-2 h-10 mb-1" title={item.title}>
                   {item.title}
                 </h3>
-                {item.year && <p className="text-xs text-muted-foreground">{item.year}</p>}
+                <div className="space-y-0.5">
+                  {collectionType === 'VIDEOGAME' && item.videogame?.platform && (
+                    <p className="text-xs text-muted-foreground line-clamp-1">
+                      {item.videogame.platform}
+                    </p>
+                  )}
+                  {item.year && <p className="text-xs text-muted-foreground">{item.year}</p>}
+                </div>
               </div>
             </CardContent>
           </Card>
