@@ -4,25 +4,25 @@
 
 ## Current Sprint: Sprint 1 - Database & Data Migration
 
-**Status**: 🟡 In Progress
+**Status**: 🟢 Completed
 **Start Date**: 2025-10-14
-**End Date**: TBD
+**End Date**: 2025-10-14
 
 ---
 
 ## Sprint Progress Overview
 
-| Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
-| -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
-| Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟡 In Progress | 2025-10-14 | -          | 4                 | 5             |
-| Sprint 2 | ⚪ Planned     | -          | -          | 0                 | 5             |
-| Sprint 3 | ⚪ Planned     | -          | -          | 0                 | 6             |
-| Sprint 4 | ⚪ Planned     | -          | -          | 0                 | 6             |
-| Sprint 5 | ⚪ Planned     | -          | -          | 0                 | 6             |
-| Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
-| Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
-| Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
+| Sprint   | Status       | Start Date | End Date   | Completed Stories | Total Stories |
+| -------- | ------------ | ---------- | ---------- | ----------------- | ------------- |
+| Sprint 0 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 3                 | 3             |
+| Sprint 1 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 2 | ⚪ Planned   | -          | -          | 0                 | 5             |
+| Sprint 3 | ⚪ Planned   | -          | -          | 0                 | 6             |
+| Sprint 4 | ⚪ Planned   | -          | -          | 0                 | 6             |
+| Sprint 5 | ⚪ Planned   | -          | -          | 0                 | 6             |
+| Sprint 6 | ⚪ Planned   | -          | -          | 0                 | 6             |
+| Sprint 7 | ⚪ Planned   | -          | -          | 0                 | 6             |
+| Sprint 8 | ⚪ Planned   | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -137,8 +137,15 @@
 
 #### US-1.5: Create Seed Data Script
 
-- **Status**: ⚪ Planned
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 3
+- **PR**: [#9](https://github.com/otro34/the-collector/pull/9)
+- **Acceptance Criteria**:
+  - [x] Seed script created (`prisma/seed.ts`)
+  - [x] Can clear database and reimport CSV data
+  - [x] Configured in package.json
+  - [x] Documentation added
 
 **Sprint 1 Total**: 24 story points
 
@@ -149,12 +156,12 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 26
-- **Overall Progress**: 10.1%
+- **Completed Story Points**: 29
+- **Overall Progress**: 11.2%
 
 ### Milestone Tracker
 
-- [ ] **Milestone 1**: Foundation Complete (Sprint 0-1)
+- [x] **Milestone 1**: Foundation Complete (Sprint 0-1)
 - [ ] **Milestone 2**: Core UI & Collections (Sprint 2-3)
 - [ ] **Milestone 3**: CRUD Operations (Sprint 4)
 - [ ] **Milestone 4**: Search & Data Management (Sprint 5-6)
@@ -165,15 +172,7 @@
 
 ## Current Sprint Backlog
 
-### In Progress
-
-- None
-
-### To Do
-
-- US-1.5: Create Seed Data Script
-
-### Done
+### Sprint 1 Completed
 
 - US-0.1: Initialize Next.js Project ✅ [PR #1](https://github.com/otro34/the-collector/pull/1)
 - US-0.2: Install Core Dependencies ✅ [PR #3](https://github.com/otro34/the-collector/pull/3)
@@ -182,6 +181,9 @@
 - US-1.2: Create Database Utilities ✅ [PR #6](https://github.com/otro34/the-collector/pull/6)
 - US-1.3: Build CSV Parser ✅ [PR #7](https://github.com/otro34/the-collector/pull/7)
 - US-1.4: Import Existing CSV Data ✅ [PR #8](https://github.com/otro34/the-collector/pull/8)
+- US-1.5: Create Seed Data Script ✅ [PR #9](https://github.com/otro34/the-collector/pull/9)
+
+**Next Sprint**: Sprint 2 - Core UI & Layout
 
 ---
 
@@ -199,7 +201,41 @@
 
 ## Notes & Decisions
 
-### 2025-10-14 (Latest - US-1.4)
+### 2025-10-14 (Latest - Sprint 1 Complete! 🎉)
+
+- **US-1.5 Completed**: Comprehensive seed script created successfully
+- **Sprint 1 COMPLETED**: All 5 user stories finished in 1 day!
+- Created prisma/seed.ts (420+ lines) with full database seeding functionality
+- Features implemented:
+  - Clear database with proper cascade delete order (child tables first)
+  - Import all CSV data (videogames, music, books) with progress indicators
+  - Environment variable configuration:
+    - SEED_SKIP_IMPORT=true: Clear DB only, don't import
+    - SEED_IMPORT_ONLY=true: Import only, don't clear
+  - Check for CSV file existence before attempting import
+  - Database verification after seeding
+  - Comprehensive error handling and logging
+  - Graceful handling of missing CSV files
+- Test results:
+  - Successfully cleared database completely
+  - Imported 1,021 items (468 videogames, 3 music, 550 books)
+  - Zero failed imports
+  - Database verification confirmed all items imported correctly
+- Updated README.md with comprehensive documentation:
+  - Database scripts section with detailed usage instructions
+  - CSV import format specifications for all collection types
+  - Project structure overview
+  - Getting started guide
+  - Development scripts reference
+- Prisma configuration already in place (package.json line 29)
+- All code passes TypeScript type checking and ESLint validation
+- PR #9 created with Copilot review requested
+- **Milestone 1 Achieved**: Foundation Complete (Sprint 0-1)
+- **Overall Progress**: 29/258 story points (11.2%)
+- **Sprint Velocity**: 24 points in 1 day (incredible pace!)
+- Ready to begin Sprint 2: Core UI & Layout
+
+### 2025-10-14 (Earlier - US-1.4)
 
 - **US-1.4 Completed**: CSV import script created and successfully imported all data
 - Created scripts/import-csv.ts (480+ lines) with comprehensive import functionality
@@ -296,19 +332,19 @@
 
 ## Velocity Tracking
 
-| Sprint   | Planned Points | Completed Points | Velocity       |
-| -------- | -------------- | ---------------- | -------------- |
-| Sprint 0 | 5              | 5                | 5.0 points/day |
-| Sprint 1 | 24             | -                | -              |
-| Sprint 2 | 22             | -                | -              |
-| Sprint 3 | 31             | -                | -              |
-| Sprint 4 | 31             | -                | -              |
-| Sprint 5 | 36             | -                | -              |
-| Sprint 6 | 34             | -                | -              |
-| Sprint 7 | 36             | -                | -              |
-| Sprint 8 | 39             | -                | -              |
+| Sprint   | Planned Points | Completed Points | Velocity        |
+| -------- | -------------- | ---------------- | --------------- |
+| Sprint 0 | 5              | 5                | 5.0 points/day  |
+| Sprint 1 | 24             | 24               | 24.0 points/day |
+| Sprint 2 | 22             | -                | -               |
+| Sprint 3 | 31             | -                | -               |
+| Sprint 4 | 31             | -                | -               |
+| Sprint 5 | 36             | -                | -               |
+| Sprint 6 | 34             | -                | -               |
+| Sprint 7 | 36             | -                | -               |
+| Sprint 8 | 39             | -                | -               |
 
-**Average Velocity**: TBD (calculated after first sprint)
+**Average Velocity**: 14.5 points/day (average of Sprint 0 and Sprint 1)
 
 ---
 
