@@ -2,7 +2,7 @@
 
 **Last Updated**: 2025-10-14
 
-## Current Sprint: Sprint 2 - Core UI & Layout
+## Current Sprint: Sprint 3 - Collections Display
 
 **Status**: 🟡 In Progress
 **Start Date**: 2025-10-14
@@ -16,8 +16,8 @@
 | -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
 | Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
 | Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 2 | 🟡 In Progress | 2025-10-14 | -          | 3                 | 5             |
-| Sprint 3 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 3 | 🟡 In Progress | 2025-10-14 | -          | 0                 | 6             |
 | Sprint 4 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 5 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
@@ -182,33 +182,33 @@
 
 #### US-2.3: Build Dashboard Page
 
-- **Status**: 🔴 Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 8
-- **PR**: TBD
+- **PR**: [#11](https://github.com/otro34/the-collector/pull/11)
 - **Acceptance Criteria**:
-  - [ ] Dashboard page with stats cards
-  - [ ] Total items count by collection type
-  - [ ] Recent additions section (last 20 items)
-  - [ ] Quick action buttons (Add Item, Import, Backup)
-  - [ ] Collection overview cards with navigation
-  - [ ] Responsive layout
+  - [x] Dashboard page with stats cards
+  - [x] Total items count by collection type
+  - [x] Recent additions section (last 20 items)
+  - [x] Quick action buttons (Add Item, Import, Backup)
+  - [x] Collection overview cards with navigation
+  - [x] Responsive layout
 
 #### US-2.4: Install and Configure shadcn/ui Components
 
-- **Status**: 🔴 Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 3
-- **PR**: TBD
+- **PR**: [#11](https://github.com/otro34/the-collector/pull/11)
 - **Acceptance Criteria**:
-  - [ ] Button component installed
-  - [ ] Card component installed
-  - [ ] Dialog component installed
-  - [ ] Dropdown Menu component installed
-  - [ ] Input component installed
-  - [ ] Label component installed
-  - [ ] Select component installed
-  - [ ] Theme configured with custom colors
+  - [x] Button component installed
+  - [x] Card component installed
+  - [x] Dialog component installed
+  - [x] Dropdown Menu component installed
+  - [x] Input component installed
+  - [x] Label component installed
+  - [x] Select component installed
+  - [x] Theme configured with custom colors
 
 #### US-2.5: Implement Dark Mode
 
@@ -232,8 +232,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 29
-- **Overall Progress**: 11.2%
+- **Completed Story Points**: 51
+- **Overall Progress**: 19.8%
 
 ### Milestone Tracker
 
@@ -277,7 +277,35 @@
 
 ## Notes & Decisions
 
-### 2025-10-14 (Latest - Sprint 1 Complete! 🎉)
+### 2025-10-14 (Latest - Sprint 2 Complete! 🎉)
+
+- **Sprint 2 COMPLETED**: All 5 user stories finished in 1 day!
+- Dashboard page fully implemented with all required features
+- All shadcn/ui components installed and configured
+- Features completed:
+  - **US-2.1**: Main layout with header, footer, navigation, and mobile menu
+  - **US-2.2**: Full navigation with active link highlighting and search bar UI
+  - **US-2.3**: Complete dashboard page with stats cards, recent additions, quick actions, and collection overview
+  - **US-2.4**: All shadcn/ui components installed (Button, Card, Dialog, Dropdown Menu, Input, Label, Select)
+  - **US-2.5**: Dark mode implementation with theme toggle and persistence
+- Dashboard implementation details:
+  - Stats cards showing total items and counts by collection type
+  - Recent additions section displaying last 20 items with icons and dates
+  - Quick action buttons for Add Item, Import, and Backup
+  - Collection overview cards with navigation to each collection
+  - Fully responsive layout (mobile, tablet, desktop)
+  - Loading states with skeleton animations
+  - Error handling with user-friendly messages
+- Created QueryProvider component for TanStack Query
+- Created `/api/dashboard` endpoint with proper data fetching
+- Theme configuration using OKLCH color space for better color accuracy
+- All code passes TypeScript type checking and build successfully
+- PR #11 merged with all changes
+- **Overall Progress**: 51/258 story points (19.8%)
+- **Sprint Velocity**: 22 points in 1 day (maintaining excellent pace!)
+- Ready to begin Sprint 3: Collections Display
+
+### 2025-10-14 (Earlier - Sprint 1 Complete! 🎉)
 
 - **US-1.5 Completed**: Comprehensive seed script created successfully
 - **Sprint 1 COMPLETED**: All 5 user stories finished in 1 day!
@@ -412,7 +440,7 @@
 | -------- | -------------- | ---------------- | --------------- |
 | Sprint 0 | 5              | 5                | 5.0 points/day  |
 | Sprint 1 | 24             | 24               | 24.0 points/day |
-| Sprint 2 | 22             | -                | -               |
+| Sprint 2 | 22             | 22               | 22.0 points/day |
 | Sprint 3 | 31             | -                | -               |
 | Sprint 4 | 31             | -                | -               |
 | Sprint 5 | 36             | -                | -               |
@@ -420,7 +448,7 @@
 | Sprint 7 | 36             | -                | -               |
 | Sprint 8 | 39             | -                | -               |
 
-**Average Velocity**: 14.5 points/day (average of Sprint 0 and Sprint 1)
+**Average Velocity**: 17.0 points/day (average of Sprint 0, 1, and 2)
 
 ---
 
