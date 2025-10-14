@@ -21,6 +21,8 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
+    "db:import": "tsx scripts/import-csv.ts",
+    "db:test": "tsx scripts/test-db.ts",
     "prepare": "husky"
   },
   "prisma": {

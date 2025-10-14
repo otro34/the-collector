@@ -127,28 +127,37 @@ export const DEFAULT_COLUMN_MAPPINGS: Record<CollectionType, ColumnMapping> = {
  */
 const baseItemSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  year: z.coerce.number().int().min(1900).max(2100).optional().nullable(),
+  year: z
+    .union([
+      z.coerce.number().int().min(1900).max(2100),
+      z.literal('').transform(() => null),
+      z.null(),
+      z.undefined(),
+    ])
+    .optional()
+    .nullable()
+    .catch(null),
   description: z.string().optional().nullable(),
-  coverUrl: z.string().url().optional().nullable().or(z.literal('')),
-  copies: z.coerce.number().int().min(0).optional().nullable(),
+  coverUrl: z.string().url().optional().nullable().or(z.literal('')).catch(null),
+  copies: z.coerce.number().int().min(0).optional().nullable().catch(1),
   priceEstimate: z.string().optional().nullable(),
 })
 
 export const videogameSchema = baseItemSchema.extend({
-  platform: z.string().min(1, 'Platform is required'),
+  platform: z.string().optional().nullable().default('Unknown'),
   publisher: z.string().optional().nullable(),
   developer: z.string().optional().nullable(),
   region: z.string().optional().nullable(),
   edition: z.string().optional().nullable(),
   language: z.string().optional().nullable(),
   genres: z.string().optional().nullable(), // CSV string, will be parsed to array
-  metacriticScore: z.coerce.number().int().min(0).max(100).optional().nullable(),
+  metacriticScore: z.coerce.number().int().min(0).max(100).optional().nullable().catch(null),
   sourceImages: z.string().optional().nullable(),
   dataSource: z.string().optional().nullable(),
 })
 
 export const musicSchema = baseItemSchema.extend({
-  artist: z.string().min(1, 'Artist is required'),
+  artist: z.string().optional().nullable().default('Unknown Artist'),
   publisher: z.string().optional().nullable(),
   format: z.string().optional().nullable(),
   discCount: z.string().optional().nullable(),
@@ -163,7 +172,10 @@ export const bookSchema = baseItemSchema.extend({
   type: z
     .nativeEnum(BookType)
     .or(z.string())
+    .optional()
+    .nullable()
     .transform((val) => {
+      if (!val) return BookType.OTHER
       // Map string values to BookType enum
       const typeMap: Record<string, BookType> = {
         Manga: BookType.MANGA,
@@ -173,8 +185,8 @@ export const bookSchema = baseItemSchema.extend({
       }
       return typeMap[val] || BookType.OTHER
     }),
-  author: z.string().min(1, 'Author is required'),
-  volume: z.coerce.number().int().min(0).optional().nullable(),
+  author: z.string().optional().nullable().default('Unknown Author'),
+  volume: z.coerce.number().int().min(0).optional().nullable().catch(null),
   series: z.string().optional().nullable(),
   publisher: z.string().optional().nullable(),
   language: z.string().optional().nullable(),
