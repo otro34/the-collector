@@ -1,7 +1,7 @@
 # Claude AI Development Guide - The Collector
 
 **Project**: The Collector - Personal Collection Management System
-**Last Updated**: 2025-10-13
+**Last Updated**: 2025-10-14
 **Developer**: Juan Carlos Romaina (otro34@hotmail.com)
 
 ---
@@ -11,6 +11,7 @@
 The Collector is a responsive web application for managing personal collections of video games, music (vinyl/CDs), and books (manga, comics, and other books). Built with Next.js, TypeScript, SQLite, and modern UI components.
 
 ### Key Requirements
+
 - **Local-first**: SQLite database, no cloud dependencies
 - **Data Import**: Support existing CSV files in `original-data/`
 - **Modern Design**: Responsive, fresh UI with dark mode
@@ -33,27 +34,32 @@ You must be familiar with these documents before starting any work:
 ## 🏗️ Tech Stack
 
 ### Core Framework
+
 - **Next.js 14+** (App Router)
 - **TypeScript** (strict mode)
 - **React 18+**
 
 ### Database & Backend
+
 - **SQLite** (via Prisma ORM)
 - **Prisma** for database access
 - **Next.js API Routes** / Server Actions
 
 ### UI & Styling
+
 - **Tailwind CSS** for styling
 - **shadcn/ui** (Radix UI primitives) for components
 - **Lucide React** for icons
 - **next-themes** for dark mode
 
 ### State & Data Fetching
+
 - **Zustand** for global state
 - **TanStack Query** (React Query) for server state
 - **React Hook Form** + **Zod** for forms and validation
 
 ### Utilities
+
 - **PapaParse** for CSV parsing
 - **AWS SDK** or **Cloudflare R2 SDK** for cloud backups (later sprints)
 
@@ -106,12 +112,44 @@ the-collector/
 
 ---
 
+## 🔐 Environment Variables
+
+The project uses environment variables stored in `.env` file at the root of the project.
+
+### GitHub Token
+
+A GitHub personal access token is configured for CLI operations in the `.env` file:
+
+```bash
+# .env file (never commit this file!)
+GITHUB_TOKEN=<your-github-token-here>
+```
+
+**Usage**:
+
+- The GitHub token is automatically available to GitHub CLI (`gh`) commands
+- Used for creating pull requests, requesting reviews, and other GitHub operations
+- The token has appropriate permissions for repository operations
+- Get the actual token value from the `.env` file in the project root
+
+**Security Note**:
+
+- ⚠️ **NEVER** include the actual token value in documentation or code
+- The `.env` file is gitignored and should never be committed to version control
+- Keep the token secure and do not share it publicly
+- If the token is compromised, regenerate it immediately on GitHub
+- Always reference the token from the `.env` file, never hardcode it
+
+---
+
 ## 🔄 Development Workflow
 
 ### For Every User Story
 
 #### 1. Read Current Sprint Context
+
 Before starting any work:
+
 ```bash
 # Review current sprint in docs/PROJECT_TRACKER.md
 # Read the specific user story in docs/USER_STORIES.md
@@ -119,6 +157,7 @@ Before starting any work:
 ```
 
 #### 2. Create Feature Branch
+
 ```bash
 git checkout main
 git pull origin main
@@ -126,10 +165,12 @@ git checkout -b feature/US-XXX-description
 ```
 
 **Branch naming convention**: `feature/US-[story-number]-[short-description]`
+
 - Example: `feature/US-0.1-initialize-nextjs`
 - Example: `feature/US-1.3-csv-parser`
 
 #### 3. Configure Git (if not already done)
+
 ```bash
 git config user.email "otro34@hotmail.com"
 git config user.name "Juan Carlos Romaina"
@@ -140,6 +181,7 @@ git config user.name "Juan Carlos Romaina"
 Follow these guidelines:
 
 **Code Quality**:
+
 - ✅ Write clean, readable TypeScript code
 - ✅ Follow Next.js App Router conventions
 - ✅ Use Prisma for all database operations
@@ -155,12 +197,14 @@ Follow these guidelines:
 - ✅ Support dark mode
 
 **Testing**:
+
 - ✅ Write unit tests for utilities and helpers (90% coverage)
 - ✅ Write component tests (70% coverage)
 - ✅ Write service/API tests (80% coverage)
 - ✅ Overall minimum coverage: 70%
 
 **Validation**:
+
 - ✅ Code compiles with no errors
 - ✅ No TypeScript errors
 - ✅ No ESLint warnings/errors
@@ -208,6 +252,7 @@ EOF
 ```
 
 **Commit type options**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `refactor`: Code refactoring
@@ -225,12 +270,12 @@ EOF
 git push -u origin feature/US-XXX-description
 ```
 
-Then use GitHub MCP to create PR:
+Then use GitHub MCP to create PR (using the GitHub token from .env):
 
 ```typescript
 // Use mcp__github__create_pull_request with:
 {
-  owner: "jromaina",
+  owner: "otro34",
   repo: "the-collector",
   title: "feat: [US-XXX] Descriptive title",
   head: "feature/US-XXX-description",
@@ -277,17 +322,20 @@ Then use GitHub MCP to create PR:
 #### 8. Request Copilot Review
 
 ```typescript
-// Use mcp__github__request_copilot_review
+// Use mcp__github__request_copilot_review (uses GitHub token from .env)
 {
-  owner: "jromaina",
+  owner: "otro34",
   repo: "the-collector",
   pullNumber: [PR_NUMBER]
 }
 ```
 
+**Note**: The GitHub token from `.env` is automatically used for all GitHub CLI and MCP operations.
+
 #### 9. Update Project Tracker
 
 After PR is created, update `docs/PROJECT_TRACKER.md`:
+
 1. Change user story status from 🔵 Pending → 🟡 In Progress → 🟢 Completed
 2. Check off all acceptance criteria
 3. Update sprint progress
@@ -299,12 +347,14 @@ After PR is created, update `docs/PROJECT_TRACKER.md`:
 ## 🎨 UI/UX Guidelines
 
 ### Design Principles
+
 - **Mobile-first**: Design for mobile, enhance for desktop
 - **Accessibility**: WCAG AA compliance, keyboard navigation
 - **Performance**: Fast loading, smooth interactions
 - **Consistency**: Reuse components, maintain design patterns
 
 ### Color Palette
+
 - **Primary**: Indigo/Blue (`bg-indigo-600`, `text-indigo-600`)
 - **Secondary**: Amber/Gold (`bg-amber-500`, `text-amber-500`)
 - **Neutral**: Slate grays (`bg-slate-100`, `text-slate-900`)
@@ -313,6 +363,7 @@ After PR is created, update `docs/PROJECT_TRACKER.md`:
 - **Error**: Red (`bg-red-600`)
 
 ### Component Patterns
+
 - Use shadcn/ui components as base
 - Add custom styling with Tailwind
 - Ensure dark mode support (`dark:` prefix)
@@ -322,6 +373,7 @@ After PR is created, update `docs/PROJECT_TRACKER.md`:
 - Add error states (error messages, retry buttons)
 
 ### Responsive Breakpoints
+
 ```css
 /* Mobile */
 < 640px
@@ -338,9 +390,11 @@ After PR is created, update `docs/PROJECT_TRACKER.md`:
 ## 🗄️ Database Guidelines
 
 ### Prisma Schema
+
 Located at `prisma/schema.prisma`. Follow the schema defined in `docs/DESIGN_DOCUMENT.md`.
 
 ### Database Operations
+
 Always use Prisma client:
 
 ```typescript
@@ -349,7 +403,7 @@ import { prisma } from '@/lib/db'
 // Read
 const items = await prisma.item.findMany({
   where: { collectionType: 'VIDEOGAME' },
-  include: { videogame: true }
+  include: { videogame: true },
 })
 
 // Create
@@ -362,24 +416,25 @@ const item = await prisma.item.create({
       create: {
         platform: 'Nintendo Switch',
         // ...
-      }
-    }
-  }
+      },
+    },
+  },
 })
 
 // Update
 const updated = await prisma.item.update({
   where: { id: itemId },
-  data: { title: 'New Title' }
+  data: { title: 'New Title' },
 })
 
 // Delete
 await prisma.item.delete({
-  where: { id: itemId }
+  where: { id: itemId },
 })
 ```
 
 ### Migrations
+
 ```bash
 # Create migration
 npx prisma migrate dev --name description
@@ -399,6 +454,7 @@ npx prisma db seed
 ## 🧪 Testing Guidelines
 
 ### Unit Tests (Vitest or Jest)
+
 ```typescript
 // Example: lib/utils.test.ts
 import { describe, it, expect } from 'vitest'
@@ -413,6 +469,7 @@ describe('formatDate', () => {
 ```
 
 ### Component Tests (React Testing Library)
+
 ```typescript
 // Example: components/ItemCard.test.tsx
 import { render, screen } from '@testing-library/react'
@@ -427,6 +484,7 @@ describe('ItemCard', () => {
 ```
 
 ### API Tests
+
 ```typescript
 // Example: app/api/items/route.test.ts
 import { GET } from './route'
@@ -445,21 +503,28 @@ describe('GET /api/items', () => {
 ## 📊 Sprint Management
 
 ### Current Sprint Information
+
 Always check `docs/PROJECT_TRACKER.md` for:
+
 - Current sprint number and goal
 - Active user stories
 - Acceptance criteria checklist
 - Blockers and issues
 
 ### Sprint Velocity
+
 After completing each sprint, calculate velocity:
+
 ```
 Velocity = Completed Story Points / Sprint Duration
 ```
+
 Update in `docs/PROJECT_TRACKER.md` to improve future estimates.
 
 ### Definition of Done
+
 A user story is done when:
+
 - [ ] All acceptance criteria met
 - [ ] Code committed to feature branch
 - [ ] TypeScript types defined
@@ -479,6 +544,7 @@ A user story is done when:
 ## 🔍 Common Patterns
 
 ### Data Fetching (TanStack Query)
+
 ```typescript
 'use client'
 
@@ -491,7 +557,7 @@ export function useItems() {
       const res = await fetch('/api/items')
       if (!res.ok) throw new Error('Failed to fetch items')
       return res.json()
-    }
+    },
   })
 }
 
@@ -500,6 +566,7 @@ const { data, isLoading, error } = useItems()
 ```
 
 ### Forms (React Hook Form + Zod)
+
 ```typescript
 'use client'
 
@@ -533,6 +600,7 @@ export function ItemForm() {
 ```
 
 ### Server Actions (Next.js)
+
 ```typescript
 'use server'
 
@@ -543,7 +611,7 @@ export async function createItem(formData: FormData) {
   const title = formData.get('title') as string
 
   const item = await prisma.item.create({
-    data: { title, /* ... */ }
+    data: { title /* ... */ },
   })
 
   revalidatePath('/items')
@@ -556,6 +624,7 @@ export async function createItem(formData: FormData) {
 ## 🚨 Important Reminders
 
 ### DO:
+
 - ✅ Always read the current user story before starting
 - ✅ Check all acceptance criteria
 - ✅ Follow the git workflow exactly
@@ -569,6 +638,7 @@ export async function createItem(formData: FormData) {
 - ✅ Write tests with good coverage
 
 ### DON'T:
+
 - ❌ Commit directly to `main`
 - ❌ Skip acceptance criteria
 - ❌ Skip testing
@@ -593,6 +663,7 @@ export async function createItem(formData: FormData) {
 ## 📞 Need Help?
 
 If you encounter any issues or need clarification:
+
 1. Review relevant documentation (DESIGN_DOCUMENT.md, USER_STORIES.md)
 2. Check PROJECT_TRACKER.md for context
 3. Ask the user for clarification if acceptance criteria are unclear
