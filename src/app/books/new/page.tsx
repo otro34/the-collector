@@ -44,7 +44,7 @@ const bookSchema = z.object({
   coverUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   language: z.string().optional(),
   country: z.string().optional(),
-  copies: z.number().int().min(1).default(1),
+  copies: z.number().int().min(1).optional(),
   price: z.number().min(0).optional().nullable(),
   tags: z.string().optional(),
 })
@@ -57,7 +57,7 @@ export default function NewBookPage() {
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<BookFormData>({
-    resolver: zodResolver(bookSchema) as any,
+    resolver: zodResolver(bookSchema),
     defaultValues: {
       title: '',
       author: '',

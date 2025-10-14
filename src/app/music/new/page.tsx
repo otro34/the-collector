@@ -41,7 +41,7 @@ const musicSchema = z.object({
   coverUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   language: z.string().optional(),
   country: z.string().optional(),
-  copies: z.number().int().min(1).default(1),
+  copies: z.number().int().min(1).optional(),
   price: z.number().min(0).optional().nullable(),
   tags: z.string().optional(),
 })
@@ -54,7 +54,7 @@ export default function NewMusicPage() {
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<MusicFormData>({
-    resolver: zodResolver(musicSchema) as any,
+    resolver: zodResolver(musicSchema),
     defaultValues: {
       title: '',
       artist: '',
