@@ -1,0 +1,15 @@
+{
+  "collectionType": "BOOK",
+  "fileName": "books_manga_comics_catalog.csv",
+  "startTime": "2025-10-14T05:27:25.627Z",
+  "endTime": "2025-10-14T05:27:26.182Z",
+  "duration": 555,
+  "totalRows": 550,
+  "validRows": 550,
+  "invalidRows": 0,
+  "skippedRows": 0,
+  "importedRows": 550,
+  "failedRows": 0,
+  "errors": [],
+  "warnings": []
+}

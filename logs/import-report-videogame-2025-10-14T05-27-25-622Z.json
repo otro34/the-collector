@@ -1,0 +1,15 @@
+{
+  "collectionType": "VIDEOGAME",
+  "fileName": "videogames_catalog.csv",
+  "startTime": "2025-10-14T05:27:24.593Z",
+  "endTime": "2025-10-14T05:27:25.622Z",
+  "duration": 1029,
+  "totalRows": 468,
+  "validRows": 468,
+  "invalidRows": 0,
+  "skippedRows": 0,
+  "importedRows": 468,
+  "failedRows": 0,
+  "errors": [],
+  "warnings": []
+}

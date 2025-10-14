@@ -149,7 +149,7 @@ async function importVideogames(filePath: string): Promise<ImportReport> {
               customFields: undefined,
             },
             {
-              platform: game.platform,
+              platform: game.platform || 'Unknown',
               publisher: game.publisher || null,
               developer: game.developer || null,
               region: game.region || null,
@@ -247,7 +247,7 @@ async function importMusic(filePath: string): Promise<ImportReport> {
               customFields: undefined,
             },
             {
-              artist: music.artist,
+              artist: music.artist || 'Unknown Artist',
               publisher: music.publisher || null,
               format: music.format || 'Unknown',
               discCount: music.discCount || null,
@@ -342,8 +342,8 @@ async function importBooks(filePath: string): Promise<ImportReport> {
               customFields: undefined,
             },
             {
-              type: book.type,
-              author: book.author,
+              type: book.type || 'OTHER',
+              author: book.author || 'Unknown Author',
               volume: book.volume ? String(book.volume) : null,
               series: book.series || null,
               publisher: book.publisher || null,

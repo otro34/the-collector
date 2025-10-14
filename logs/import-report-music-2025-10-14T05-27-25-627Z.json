@@ -1,0 +1,15 @@
+{
+  "collectionType": "MUSIC",
+  "fileName": "music_catalog.csv",
+  "startTime": "2025-10-14T05:27:25.622Z",
+  "endTime": "2025-10-14T05:27:25.627Z",
+  "duration": 5,
+  "totalRows": 3,
+  "validRows": 3,
+  "invalidRows": 0,
+  "skippedRows": 0,
+  "importedRows": 3,
+  "failedRows": 0,
+  "errors": [],
+  "warnings": []
+}
