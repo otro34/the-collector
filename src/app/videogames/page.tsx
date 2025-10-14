@@ -1,13 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Grid, List, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { CollectionGrid } from '@/components/collections/collection-grid'
 import { CollectionList } from '@/components/collections/collection-list'
 import { ItemDetailModal } from '@/components/items/item-detail-modal'
+import { ConfirmDialog } from '@/components/shared/confirm-dialog'
+import { toast } from 'sonner'
 import type { Item, Videogame } from '@prisma/client'
 
 type ItemWithRelations = Item & {
@@ -27,10 +30,14 @@ interface VideogamesResponse {
 }
 
 export default function VideogamesPage() {
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [page, setPage] = useState(1)
   const [selectedItem, setSelectedItem] = useState<ItemWithRelations | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<ItemWithRelations | null>(null)
 
   const { data, isLoading, error } = useQuery<VideogamesResponse>({
     queryKey: ['videogames', page],
@@ -46,14 +53,38 @@ export default function VideogamesPage() {
     setModalOpen(true)
   }
 
-  const handleEdit = (_item: ItemWithRelations) => {
-    // TODO: Implement edit functionality in US-4.5
+  const handleEdit = (item: ItemWithRelations) => {
     setModalOpen(false)
+    router.push(`/videogames/${item.id}/edit`)
   }
 
-  const handleDelete = (_item: ItemWithRelations) => {
-    // TODO: Implement delete functionality in US-4.6
+  const handleDelete = (item: ItemWithRelations) => {
+    setItemToDelete(item)
     setModalOpen(false)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!itemToDelete) return
+
+    try {
+      const response = await fetch(`/api/items/${itemToDelete.id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete item')
+      }
+
+      // Invalidate queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['videogames'] })
+
+      toast.success('Video game deleted successfully')
+
+      setItemToDelete(null)
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to delete video game')
+    }
   }
 
   if (error) {
@@ -179,6 +210,18 @@ export default function VideogamesPage() {
         onOpenChange={setModalOpen}
         onEdit={handleEdit}
         onDelete={handleDelete}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        title="Delete Video Game"
+        description={`Are you sure you want to delete "${itemToDelete?.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
       />
     </div>
   )

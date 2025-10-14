@@ -28,14 +28,12 @@ import {
 } from '@/components/ui/select'
 
 // Form validation schema
-const videogameSchema = z.object({
+const musicSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  platform: z.string().min(1, 'Platform is required'),
-  year: z.number().int().min(1970).max(2100).optional().nullable(),
-  developer: z.string().optional(),
-  publisher: z.string().optional(),
-  region: z.string().optional(),
-  edition: z.string().optional(),
+  artist: z.string().min(1, 'Artist is required'),
+  year: z.number().int().min(1900).max(2100).optional().nullable(),
+  label: z.string().optional(),
+  format: z.string().optional(),
   genres: z.string().optional(),
   description: z.string().optional(),
   coverUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
@@ -44,28 +42,27 @@ const videogameSchema = z.object({
   copies: z.number().int().min(1).default(1),
   price: z.number().min(0).optional().nullable(),
   tags: z.string().optional(),
-  metacriticScore: z.number().int().min(0).max(100).optional().nullable(),
+  tracklist: z.string().optional(),
+  discCount: z.number().int().min(1).optional().nullable(),
 })
 
-type VideogameFormData = z.infer<typeof videogameSchema>
+type MusicFormData = z.infer<typeof musicSchema>
 
-export default function EditVideogamePage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditMusicPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [id, setId] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<VideogameFormData>({
-    resolver: zodResolver(videogameSchema),
+  const form = useForm<MusicFormData>({
+    resolver: zodResolver(musicSchema),
     defaultValues: {
       title: '',
-      platform: '',
+      artist: '',
       year: null,
-      developer: '',
-      publisher: '',
-      region: '',
-      edition: '',
+      label: '',
+      format: '',
       genres: '',
       description: '',
       coverUrl: '',
@@ -74,7 +71,8 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
       copies: 1,
       price: null,
       tags: '',
-      metacriticScore: null,
+      tracklist: '',
+      discCount: null,
     },
   })
 
@@ -95,17 +93,15 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
       const item = await response.json()
 
       // Parse genres and tags from JSON arrays to comma-separated strings
-      const genres = item.videogame?.genres ? JSON.parse(item.videogame.genres).join(', ') : ''
+      const genres = item.music?.genres ? JSON.parse(item.music.genres).join(', ') : ''
       const tags = item.tags ? JSON.parse(item.tags).join(', ') : ''
 
       form.reset({
         title: item.title || '',
-        platform: item.videogame?.platform || '',
+        artist: item.music?.artist || '',
         year: item.year,
-        developer: item.videogame?.developer || '',
-        publisher: item.videogame?.publisher || '',
-        region: item.videogame?.region || '',
-        edition: item.videogame?.edition || '',
+        label: item.music?.label || '',
+        format: item.music?.format || '',
         genres,
         description: item.description || '',
         coverUrl: item.coverUrl || '',
@@ -114,7 +110,8 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
         copies: item.copies || 1,
         price: item.price,
         tags,
-        metacriticScore: item.videogame?.metacriticScore,
+        tracklist: item.music?.tracklist || '',
+        discCount: item.music?.discCount,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load item')
@@ -123,7 +120,7 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
     }
   }
 
-  const onSubmit = async (data: VideogameFormData) => {
+  const onSubmit = async (data: MusicFormData) => {
     setIsSubmitting(true)
     setError(null)
 
@@ -138,11 +135,11 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to update videogame')
+        throw new Error(errorData.error || 'Failed to update music')
       }
 
-      // Redirect to videogames collection page
-      router.push(`/videogames`)
+      // Redirect to music collection page
+      router.push(`/music`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -163,14 +160,14 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
       {/* Header */}
       <div className="mb-8">
         <Link
-          href="/videogames"
+          href="/music"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Video Games
+          Back to Music
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">Edit Video Game</h1>
-        <p className="text-muted-foreground mt-2">Update video game information</p>
+        <h1 className="text-3xl font-bold tracking-tight">Edit Music</h1>
+        <p className="text-muted-foreground mt-2">Update music album information</p>
       </div>
 
       {/* Error Message */}
@@ -192,9 +189,9 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title *</FormLabel>
+                  <FormLabel>Album Title *</FormLabel>
                   <FormControl>
-                    <Input placeholder="The Legend of Zelda: Breath of the Wild" {...field} />
+                    <Input placeholder="Abbey Road" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -203,28 +200,13 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
 
             <FormField
               control={form.control}
-              name="platform"
+              name="artist"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Platform *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select platform" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Nintendo Switch">Nintendo Switch</SelectItem>
-                      <SelectItem value="PlayStation 5">PlayStation 5</SelectItem>
-                      <SelectItem value="PlayStation 4">PlayStation 4</SelectItem>
-                      <SelectItem value="Xbox Series X|S">Xbox Series X|S</SelectItem>
-                      <SelectItem value="Xbox One">Xbox One</SelectItem>
-                      <SelectItem value="PC">PC</SelectItem>
-                      <SelectItem value="Nintendo 3DS">Nintendo 3DS</SelectItem>
-                      <SelectItem value="PlayStation Vita">PlayStation Vita</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Artist *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="The Beatles" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -240,7 +222,7 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="2017"
+                        placeholder="1969"
                         {...field}
                         value={field.value ?? ''}
                         onChange={(e) =>
@@ -255,21 +237,22 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
 
               <FormField
                 control={form.control}
-                name="region"
+                name="format"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Region</FormLabel>
+                    <FormLabel>Format</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select region" />
+                          <SelectValue placeholder="Select format" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="NTSC-U">NTSC-U (North America)</SelectItem>
-                        <SelectItem value="PAL">PAL (Europe)</SelectItem>
-                        <SelectItem value="NTSC-J">NTSC-J (Japan)</SelectItem>
-                        <SelectItem value="Region Free">Region Free</SelectItem>
+                        <SelectItem value="CD">CD</SelectItem>
+                        <SelectItem value="Vinyl">Vinyl</SelectItem>
+                        <SelectItem value="Cassette">Cassette</SelectItem>
+                        <SelectItem value="Digital">Digital</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -286,7 +269,7 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Brief description of the game..."
+                      placeholder="Brief description of the album..."
                       className="resize-none"
                       rows={3}
                       {...field}
@@ -298,44 +281,23 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
             />
           </div>
 
-          {/* Publisher & Developer */}
+          {/* Label & Genres */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Publisher & Developer</h2>
+            <h2 className="text-xl font-semibold">Label & Genres</h2>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="developer"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Developer</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Nintendo" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="publisher"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Publisher</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Nintendo" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-
-          {/* Genre & Edition */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Genre & Edition</h2>
+            <FormField
+              control={form.control}
+              name="label"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Record Label</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Apple Records" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -344,54 +306,62 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
                 <FormItem>
                   <FormLabel>Genres</FormLabel>
                   <FormControl>
-                    <Input placeholder="Action, Adventure, RPG (comma-separated)" {...field} />
+                    <Input placeholder="Rock, Pop, Psychedelic (comma-separated)" {...field} />
                   </FormControl>
                   <FormDescription>Enter genres separated by commas</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+          </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="edition"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Edition</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Standard, Deluxe, Collector's..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          {/* Tracklist & Disc Count */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Tracklist & Disc Information</h2>
 
-              <FormField
-                control={form.control}
-                name="metacriticScore"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Metacritic Score</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="97"
-                        min="0"
-                        max="100"
-                        {...field}
-                        value={field.value ?? ''}
-                        onChange={(e) =>
-                          field.onChange(e.target.value ? parseInt(e.target.value) : null)
-                        }
-                      />
-                    </FormControl>
-                    <FormDescription>Score from 0-100</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="tracklist"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tracklist</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="1. Come Together&#10;2. Something&#10;3. Maxwell's Silver Hammer"
+                      className="resize-none"
+                      rows={5}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>Enter tracks, one per line</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="discCount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Disc Count</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="1"
+                      {...field}
+                      value={field.value ?? ''}
+                      onChange={(e) =>
+                        field.onChange(e.target.value ? parseInt(e.target.value) : null)
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>Number of discs</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {/* Collection Details */}
@@ -407,7 +377,7 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
                   <FormControl>
                     <Input placeholder="https://example.com/cover.jpg" {...field} />
                   </FormControl>
-                  <FormDescription>URL to the game's cover image</FormDescription>
+                  <FormDescription>URL to the album cover image</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -438,7 +408,7 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
                       <Input
                         type="number"
                         step="0.01"
-                        placeholder="59.99"
+                        placeholder="29.99"
                         {...field}
                         value={field.value ?? ''}
                         onChange={(e) =>
@@ -473,10 +443,7 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
                 <FormItem>
                   <FormLabel>Tags</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="favorite, wishlist, completed (comma-separated)"
-                      {...field}
-                    />
+                    <Input placeholder="favorite, wishlist, classic (comma-separated)" {...field} />
                   </FormControl>
                   <FormDescription>Enter tags separated by commas</FormDescription>
                   <FormMessage />
@@ -488,12 +455,12 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
           {/* Actions */}
           <div className="flex gap-4">
             <Button type="submit" disabled={isSubmitting} className="flex-1">
-              {isSubmitting ? 'Updating...' : 'Update Video Game'}
+              {isSubmitting ? 'Updating...' : 'Update Music'}
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push('/videogames')}
+              onClick={() => router.push('/music')}
               disabled={isSubmitting}
             >
               Cancel
