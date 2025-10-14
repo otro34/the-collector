@@ -3,12 +3,18 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Gamepad2, Music, BookOpen } from 'lucide-react'
-import type { Item, CollectionType } from '@prisma/client'
+import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
+
+type ItemWithRelations = Item & {
+  videogame?: Videogame | null
+  music?: MusicType | null
+  book?: Book | null
+}
 
 interface CollectionListProps {
-  items: Item[]
+  items: ItemWithRelations[]
   collectionType: CollectionType
-  onItemClick?: (item: Item) => void
+  onItemClick?: (item: ItemWithRelations) => void
 }
 
 export function CollectionList({ items, collectionType, onItemClick }: CollectionListProps) {
@@ -55,8 +61,9 @@ export function CollectionList({ items, collectionType, onItemClick }: Collectio
       {/* Desktop Header */}
       <div className="hidden md:grid md:grid-cols-12 gap-4 px-4 py-2 bg-muted/50 rounded-lg font-medium text-sm">
         <div className="col-span-1">Cover</div>
-        <div className="col-span-4">Title</div>
-        <div className="col-span-2">Year</div>
+        <div className="col-span-3">Title</div>
+        {collectionType === 'VIDEOGAME' && <div className="col-span-2">Platform</div>}
+        <div className={collectionType === 'VIDEOGAME' ? 'col-span-1' : 'col-span-2'}>Year</div>
         <div className="col-span-2">Language</div>
         <div className="col-span-2">Copies</div>
         <div className="col-span-1">Price</div>
@@ -107,6 +114,12 @@ export function CollectionList({ items, collectionType, onItemClick }: Collectio
                 <h3 className="font-semibold">{item.title}</h3>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
+                {collectionType === 'VIDEOGAME' && item.videogame?.platform && (
+                  <div>
+                    <span className="text-muted-foreground">Platform:</span>{' '}
+                    <span className="font-medium">{item.videogame.platform}</span>
+                  </div>
+                )}
                 {item.year && (
                   <div>
                     <span className="text-muted-foreground">Year:</span>{' '}
@@ -135,19 +148,28 @@ export function CollectionList({ items, collectionType, onItemClick }: Collectio
             </div>
 
             {/* Desktop: Table Layout */}
-            <div className="hidden md:block md:col-span-4">
+            <div
+              className={`hidden md:block ${collectionType === 'VIDEOGAME' ? 'md:col-span-3' : 'md:col-span-4'}`}
+            >
               <h3 className="font-semibold line-clamp-2">{item.title}</h3>
             </div>
-            <div className="hidden md:block md:col-span-2 flex items-center">
+            {collectionType === 'VIDEOGAME' && (
+              <div className="hidden md:flex md:col-span-2 items-center">
+                <span className="text-sm">{item.videogame?.platform || '—'}</span>
+              </div>
+            )}
+            <div
+              className={`hidden md:flex ${collectionType === 'VIDEOGAME' ? 'md:col-span-1' : 'md:col-span-2'} items-center`}
+            >
               <span className="text-sm">{item.year || '—'}</span>
             </div>
-            <div className="hidden md:block md:col-span-2 flex items-center">
+            <div className="hidden md:flex md:col-span-2 items-center">
               <span className="text-sm">{item.language || '—'}</span>
             </div>
-            <div className="hidden md:block md:col-span-2 flex items-center">
+            <div className="hidden md:flex md:col-span-2 items-center">
               <span className="text-sm">{item.copies ?? '—'}</span>
             </div>
-            <div className="hidden md:block md:col-span-1 flex items-center">
+            <div className="hidden md:flex md:col-span-1 items-center">
               <span className="text-sm">
                 {item.price !== null && item.price !== undefined
                   ? `$${item.price.toFixed(2)}`
