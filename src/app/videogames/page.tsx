@@ -7,7 +7,12 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { CollectionGrid } from '@/components/collections/collection-grid'
 import { CollectionList } from '@/components/collections/collection-list'
-import type { Item } from '@prisma/client'
+import { ItemDetailModal } from '@/components/items/item-detail-modal'
+import type { Item, Videogame } from '@prisma/client'
+
+type ItemWithRelations = Item & {
+  videogame?: Videogame | null
+}
 
 interface PaginationInfo {
   page: number
@@ -24,6 +29,8 @@ interface VideogamesResponse {
 export default function VideogamesPage() {
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [page, setPage] = useState(1)
+  const [selectedItem, setSelectedItem] = useState<ItemWithRelations | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
 
   const { data, isLoading, error } = useQuery<VideogamesResponse>({
     queryKey: ['videogames', page],
@@ -33,6 +40,21 @@ export default function VideogamesPage() {
       return res.json()
     },
   })
+
+  const handleItemClick = (item: ItemWithRelations) => {
+    setSelectedItem(item)
+    setModalOpen(true)
+  }
+
+  const handleEdit = (_item: ItemWithRelations) => {
+    // TODO: Implement edit functionality in US-4.5
+    setModalOpen(false)
+  }
+
+  const handleDelete = (_item: ItemWithRelations) => {
+    // TODO: Implement delete functionality in US-4.6
+    setModalOpen(false)
+  }
 
   if (error) {
     return (
@@ -112,9 +134,17 @@ export default function VideogamesPage() {
       {!isLoading && data && (
         <>
           {view === 'grid' ? (
-            <CollectionGrid items={data.items} collectionType="VIDEOGAME" />
+            <CollectionGrid
+              items={data.items}
+              collectionType="VIDEOGAME"
+              onItemClick={handleItemClick}
+            />
           ) : (
-            <CollectionList items={data.items} collectionType="VIDEOGAME" />
+            <CollectionList
+              items={data.items}
+              collectionType="VIDEOGAME"
+              onItemClick={handleItemClick}
+            />
           )}
 
           {/* Pagination */}
@@ -141,6 +171,15 @@ export default function VideogamesPage() {
           )}
         </>
       )}
+
+      {/* Item Detail Modal */}
+      <ItemDetailModal
+        item={selectedItem}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   )
 }
