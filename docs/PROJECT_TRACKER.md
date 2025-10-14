@@ -4,25 +4,25 @@
 
 ## Current Sprint: Sprint 4 - Item Details & CRUD Operations
 
-**Status**: ⚪ Not Started
-**Start Date**: TBD
+**Status**: 🟡 In Progress
+**Start Date**: 2025-10-14
 **End Date**: TBD
 
 ---
 
 ## Sprint Progress Overview
 
-| Sprint   | Status       | Start Date | End Date   | Completed Stories | Total Stories |
-| -------- | ------------ | ---------- | ---------- | ----------------- | ------------- |
-| Sprint 0 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 2 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 3 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 4 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 5 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 6 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 7 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 8 | ⚪ Planned   | -          | -          | 0                 | 10            |
+| Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
+| -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
+| Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
+| Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 4 | 🟡 In Progress | 2025-10-14 | -          | 2                 | 6             |
+| Sprint 5 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -321,19 +321,108 @@
 
 ---
 
+## Sprint 4: Item Details & CRUD Operations
+
+### User Stories
+
+#### US-4.1: Create Item Detail Modal
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [x] Modal opens when clicking an item
+  - [x] Large cover image display
+  - [x] All metadata fields shown
+  - [x] Edit and Delete buttons
+  - [x] Close button
+  - [x] Responsive layout
+
+#### US-4.2: Create "Add Videogame" Form
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [x] Form with all videogame fields
+  - [x] Form validation (required fields)
+  - [x] Cover URL validation
+  - [x] Genre multi-select
+  - [x] Success/error messages
+  - [x] Form resets after submission
+  - [x] Redirect to game detail after save
+
+#### US-4.3: Create "Add Music" Form
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Form with all music fields
+  - [ ] Form validation
+  - [ ] Genre multi-select
+  - [ ] Success/error messages
+  - [ ] Form resets after submission
+
+#### US-4.4: Create "Add Book" Form
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Form with all book fields
+  - [ ] Form validation
+  - [ ] Book type selector (Manga, Comic, etc.)
+  - [ ] Genre multi-select
+  - [ ] Success/error messages
+
+#### US-4.5: Implement Edit Functionality
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Edit button opens form pre-filled with current data
+  - [ ] Form validation works
+  - [ ] Save updates the database
+  - [ ] Success/error messages
+  - [ ] Detail view refreshes after save
+
+#### US-4.6: Implement Delete Functionality
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Delete button in item detail
+  - [ ] Confirmation dialog before deleting
+  - [ ] Item removed from database
+  - [ ] User redirected to collection page
+  - [ ] Success message shown
+
+**Sprint 4 Total**: 31 story points (13 completed, 18 remaining)
+
+---
+
 ## Overall Project Progress
 
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 82
-- **Overall Progress**: 31.8%
+- **Completed Story Points**: 95
+- **Overall Progress**: 36.8%
 
 ### Milestone Tracker
 
 - [x] **Milestone 1**: Foundation Complete (Sprint 0-1)
-- [ ] **Milestone 2**: Core UI & Collections (Sprint 2-3)
-- [ ] **Milestone 3**: CRUD Operations (Sprint 4)
+- [x] **Milestone 2**: Core UI & Collections (Sprint 2-3)
+- [ ] **Milestone 3**: CRUD Operations (Sprint 4) - 42% complete
 - [ ] **Milestone 4**: Search & Data Management (Sprint 5-6)
 - [ ] **Milestone 5**: Backup & Polish (Sprint 7-8)
 - [ ] **Milestone 6**: MVP Launch
@@ -371,7 +460,45 @@
 
 ## Notes & Decisions
 
-### 2025-10-14 (Latest - Sprint 3 Complete! 🎉)
+### 2025-10-14 (Latest - Sprint 4 Started! 🚀)
+
+- **Sprint 4 IN PROGRESS**: 2 of 6 user stories completed
+- Item detail modal and add videogame form fully implemented
+- Features completed:
+  - **US-4.1**: Item Detail Modal with full metadata display
+    - Created ItemDetailModal component with type-specific rendering
+    - Integrated modal into music and videogames pages with click handlers
+    - GET API route at `/api/items/[id]` for fetching item details
+    - PUT and DELETE route stubs prepared for US-4.5 and US-4.6
+    - Fixed schema field mappings (tags, type, volume, publisher)
+    - Displays cover images with Next.js Image optimization
+    - Shows type-specific metadata (platform, artist, author, etc.)
+    - Responsive design with proper mobile, tablet, and desktop layouts
+  - **US-4.2**: Add Videogame Form with comprehensive validation
+    - Created form page at `/videogames/new` with React Hook Form + Zod
+    - All videogame fields included (title*, platform*, year, developer, publisher, region, edition, genres, metacritic score, description)
+    - Collection details (cover URL, copies, price, language, tags)
+    - Genre and tag input with comma-separated values
+    - Created Form, Textarea UI components from shadcn/ui
+    - Enhanced POST endpoint at `/api/items/videogames` with validation
+    - Fixed Next.js 15 async params handling for dynamic routes
+    - Proper error handling and success messages
+    - Form redirects to collection page after successful submission
+- Technical improvements:
+  - Fixed TypeScript generic type issues with Form component
+  - Updated [id] route to handle Next.js 15 async params pattern
+  - Added Zod validation schemas for API endpoints
+  - Implemented proper error responses with validation details
+  - All code passes TypeScript type checking and build successfully
+- Commits:
+  - `5f6562d`: feat(items): integrate Item Detail Modal [US-4.1]
+  - `742baad`: feat(videogames): add videogame form with validation [US-4.2]
+- **Overall Progress**: 95/258 story points (36.8%)
+- **Sprint 4 Progress**: 13/31 story points (42%)
+- **Next Tasks**: US-4.3 (Add Music Form), US-4.4 (Add Book Form), US-4.5 (Edit), US-4.6 (Delete)
+- Ready to continue with remaining CRUD operations
+
+### 2025-10-14 (Earlier - Sprint 3 Complete! 🎉)
 
 - **Sprint 3 COMPLETED**: All 6 user stories finished in 1 day!
 - Collection display pages fully implemented for all three collection types
