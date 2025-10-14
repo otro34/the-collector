@@ -15,7 +15,7 @@
 | Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
 | -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
 | Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟡 In Progress | 2025-10-14 | -          | 3                 | 5             |
+| Sprint 1 | 🟡 In Progress | 2025-10-14 | -          | 4                 | 5             |
 | Sprint 2 | ⚪ Planned     | -          | -          | 0                 | 5             |
 | Sprint 3 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 4 | ⚪ Planned     | -          | -          | 0                 | 6             |
@@ -123,8 +123,17 @@
 
 #### US-1.4: Import Existing CSV Data
 
-- **Status**: ⚪ Planned
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 8
+- **PR**: [#8](https://github.com/otro34/the-collector/pull/8)
+- **Acceptance Criteria**:
+  - [x] Script to import books CSV
+  - [x] Script to import music CSV
+  - [x] Script to import videogames CSV
+  - [x] All valid data imported successfully
+  - [x] Data integrity verified
+  - [x] Import logs/reports generated
 
 #### US-1.5: Create Seed Data Script
 
@@ -140,8 +149,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 18
-- **Overall Progress**: 7.0%
+- **Completed Story Points**: 26
+- **Overall Progress**: 10.1%
 
 ### Milestone Tracker
 
@@ -162,7 +171,6 @@
 
 ### To Do
 
-- US-1.4: Import Existing CSV Data
 - US-1.5: Create Seed Data Script
 
 ### Done
@@ -172,7 +180,8 @@
 - US-0.3: Set Up Development Tools ✅ [PR #4](https://github.com/otro34/the-collector/pull/4)
 - US-1.1: Define Database Schema ✅ [PR #5](https://github.com/otro34/the-collector/pull/5)
 - US-1.2: Create Database Utilities ✅ [PR #6](https://github.com/otro34/the-collector/pull/6)
-- US-1.3: Build CSV Parser ✅ [PR TBD](https://github.com/otro34/the-collector/pull/TBD)
+- US-1.3: Build CSV Parser ✅ [PR #7](https://github.com/otro34/the-collector/pull/7)
+- US-1.4: Import Existing CSV Data ✅ [PR #8](https://github.com/otro34/the-collector/pull/8)
 
 ---
 
@@ -190,7 +199,39 @@
 
 ## Notes & Decisions
 
-### 2025-10-14 (Latest - US-1.3)
+### 2025-10-14 (Latest - US-1.4)
+
+- **US-1.4 Completed**: CSV import script created and successfully imported all data
+- Created scripts/import-csv.ts (480+ lines) with comprehensive import functionality
+- Unified import script handles all three collection types (videogames, music, books)
+- Import results:
+  - Videogames: 321/468 valid rows imported (147 invalid due to missing required data)
+  - Music: 3/3 valid rows imported
+  - Books: 355/550 valid rows imported (195 invalid due to missing required data)
+  - Total: 679 items successfully imported in 1.15 seconds
+- Features implemented:
+  - Reads CSV files from original-data/ directory
+  - Uses csv-parser utility for parsing and validation
+  - Uses db-utils CRUD functions for database operations
+  - Progress indicators for long-running imports (every 50-100 items)
+  - Error tracking and reporting (saves error CSV files to logs/)
+  - Import reports saved as JSON to logs/ directory
+  - Final summary with statistics and database verification
+  - Handles data type conversions (price parsing, volume string conversion, etc.)
+  - Default values for required fields (genres='[]', format='Unknown')
+- Fixed multiple architectural issues during development:
+  - Moved year, language, copies, price, customFields from child models to parent Item model
+  - Changed field name from priceEstimate to price (matching Prisma schema)
+  - Fixed volume field to be String (not Int) for books
+  - Moved country field from Book model to Item model
+  - Changed null to undefined for optional Prisma fields
+  - Default empty arrays for required genre fields
+- Import logs stored in logs/ directory with timestamps
+- Database verified: 321 videogames, 3 music, 355 books, 679 total items
+- All code passes TypeScript type checking and ESLint validation
+- npm script added: `npm run db:import`
+
+### 2025-10-14 (Earlier - US-1.3)
 
 - **US-1.3 Completed**: CSV parser utility created with full validation and error reporting
 - Created src/lib/csv-parser.ts with PapaParse integration (650+ lines)

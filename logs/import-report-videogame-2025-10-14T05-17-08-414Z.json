@@ -1,0 +1,17 @@
+{
+  "collectionType": "VIDEOGAME",
+  "fileName": "videogames_catalog.csv",
+  "startTime": "2025-10-14T05:17:07.590Z",
+  "endTime": "2025-10-14T05:17:08.414Z",
+  "duration": 824,
+  "totalRows": 468,
+  "validRows": 321,
+  "invalidRows": 147,
+  "skippedRows": 0,
+  "importedRows": 321,
+  "failedRows": 0,
+  "errors": [],
+  "warnings": [
+    "Validation errors saved to: /Users/jromaina/Documents/codebase/ia-playground/the-collector/logs/import-errors-videogame-2025-10-14T05-17-08-147Z.csv"
+  ]
+}

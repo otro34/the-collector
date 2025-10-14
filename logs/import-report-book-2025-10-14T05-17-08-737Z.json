@@ -1,0 +1,17 @@
+{
+  "collectionType": "BOOK",
+  "fileName": "books_manga_comics_catalog.csv",
+  "startTime": "2025-10-14T05:17:08.418Z",
+  "endTime": "2025-10-14T05:17:08.737Z",
+  "duration": 319,
+  "totalRows": 550,
+  "validRows": 355,
+  "invalidRows": 195,
+  "skippedRows": 0,
+  "importedRows": 355,
+  "failedRows": 0,
+  "errors": [],
+  "warnings": [
+    "Validation errors saved to: /Users/jromaina/Documents/codebase/ia-playground/the-collector/logs/import-errors-book-2025-10-14T05-17-08-432Z.csv"
+  ]
+}

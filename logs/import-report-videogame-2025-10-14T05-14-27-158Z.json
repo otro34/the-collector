@@ -1,0 +1,19 @@
+{
+  "collectionType": "VIDEOGAME",
+  "fileName": "videogames_catalog.csv",
+  "startTime": "2025-10-14T05:14:26.910Z",
+  "endTime": "2025-10-14T05:14:27.158Z",
+  "duration": 248,
+  "totalRows": 468,
+  "validRows": 321,
+  "invalidRows": 147,
+  "skippedRows": 0,
+  "importedRows": 320,
+  "failedRows": 1,
+  "errors": [
+    "Failed to import \"Soilcalipr\": \nInvalid `prisma.item.create()` invocation in\n/Users/jromaina/Documents/codebase/ia-playground/the-collector/src/lib/db-utils.ts:20:22\n\n  17   itemData: Omit<Prisma.ItemCreateInput, 'collectionType' | 'videogame'>,\n  18   videogameData: Omit<Prisma.VideogameCreateWithoutItemInput, 'id'>\n  19 ) {\n→ 20   return prisma.item.create({\n         data: {\n           title: \"Soilcalipr\",\n           description: null,\n           coverUrl: null,\n           tags: \"[]\",\n           year: null,\n           language: \"English\",\n           copies: 1,\n           price: null,\n           customFields: null,\n           collectionType: \"VIDEOGAME\",\n           videogame: {\n             create: {\n               platform: \"PlayStation 3\",\n               publisher: null,\n               developer: null,\n               region: \"NTSC\",\n               edition: \"Standard\",\n               metacriticScore: null,\n       +       genres: String\n             }\n           }\n         },\n         include: {\n           videogame: true\n         }\n       })\n\nArgument `genres` must not be null."
+  ],
+  "warnings": [
+    "Validation errors saved to: /Users/jromaina/Documents/codebase/ia-playground/the-collector/logs/import-errors-videogame-2025-10-14T05-14-26-924Z.csv"
+  ]
+}
