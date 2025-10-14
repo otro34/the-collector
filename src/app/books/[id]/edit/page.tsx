@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,15 +28,13 @@ import {
 } from '@/components/ui/select'
 
 // Form validation schema
-const musicSchema = z.object({
+const bookSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  artist: z.string().min(1, 'Artist is required'),
-  format: z.string().min(1, 'Format is required'),
+  author: z.string().min(1, 'Author is required'),
   year: z.number().int().min(1900).max(2100).optional().nullable(),
   publisher: z.string().optional(),
-  discCount: z.string().optional(),
+  type: z.string().optional(),
   genres: z.string().optional(),
-  tracklist: z.string().optional(),
   description: z.string().optional(),
   coverUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   language: z.string().optional(),
@@ -44,26 +42,30 @@ const musicSchema = z.object({
   copies: z.number().int().min(1).optional(),
   price: z.number().min(0).optional().nullable(),
   tags: z.string().optional(),
+  isbn: z.string().optional(),
+  series: z.string().optional(),
+  volume: z.string().optional(),
+  coverType: z.string().optional(),
 })
 
-type MusicFormData = z.infer<typeof musicSchema>
+type BookFormData = z.infer<typeof bookSchema>
 
-export default function NewMusicPage() {
+export default function EditBookPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
+  const [id, setId] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<MusicFormData>({
-    resolver: zodResolver(musicSchema),
+  const form = useForm<BookFormData>({
+    resolver: zodResolver(bookSchema),
     defaultValues: {
       title: '',
-      artist: '',
-      format: '',
+      author: '',
       year: null,
       publisher: '',
-      discCount: '',
+      type: '',
       genres: '',
-      tracklist: '',
       description: '',
       coverUrl: '',
       language: '',
@@ -71,16 +73,66 @@ export default function NewMusicPage() {
       copies: 1,
       price: null,
       tags: '',
+      isbn: '',
+      series: '',
+      volume: '',
+      coverType: '',
     },
   })
 
-  const onSubmit = async (data: MusicFormData) => {
+  useEffect(() => {
+    params.then(({ id }) => {
+      setId(id)
+      fetchItem(id)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params])
+
+  const fetchItem = async (itemId: string) => {
+    try {
+      const response = await fetch(`/api/items/${itemId}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch item')
+      }
+      const item = await response.json()
+
+      // Parse genres and tags from JSON arrays to comma-separated strings
+      const genres = item.book?.genres ? JSON.parse(item.book.genres).join(', ') : ''
+      const tags = item.tags ? JSON.parse(item.tags).join(', ') : ''
+
+      form.reset({
+        title: item.title || '',
+        author: item.book?.author || '',
+        year: item.year,
+        publisher: item.book?.publisher || '',
+        type: item.book?.type || '',
+        genres,
+        description: item.description || '',
+        coverUrl: item.coverUrl || '',
+        language: item.language || '',
+        country: item.country || '',
+        copies: item.copies || 1,
+        price: item.price,
+        tags,
+        isbn: item.book?.isbn || '',
+        series: item.book?.series || '',
+        volume: item.book?.volume || '',
+        coverType: item.book?.coverType || '',
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load item')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const onSubmit = async (data: BookFormData) => {
     setIsSubmitting(true)
     setError(null)
 
     try {
-      const response = await fetch('/api/items/music', {
-        method: 'POST',
+      const response = await fetch(`/api/items/${id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -89,16 +141,11 @@ export default function NewMusicPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create music item')
+        throw new Error(errorData.error || 'Failed to update book')
       }
 
-      const result = await response.json()
-
-      // Reset form
-      form.reset()
-
-      // Redirect to the music collection page
-      router.push(`/music?new=${result.item.id}`)
+      // Redirect to books collection page
+      router.push(`/books`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -106,19 +153,27 @@ export default function NewMusicPage() {
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="container max-w-3xl py-8">
+        <div className="text-center">Loading...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="container max-w-3xl py-8">
       {/* Header */}
       <div className="mb-8">
         <Link
-          href="/music"
+          href="/books"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Music
+          Back to Books
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">Add Music Album</h1>
-        <p className="text-muted-foreground mt-2">Add a new album or single to your collection</p>
+        <h1 className="text-3xl font-bold tracking-tight">Edit Book</h1>
+        <p className="text-muted-foreground mt-2">Update book information</p>
       </div>
 
       {/* Error Message */}
@@ -142,7 +197,7 @@ export default function NewMusicPage() {
                 <FormItem>
                   <FormLabel>Title *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Abbey Road" {...field} />
+                    <Input placeholder="One Piece" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -151,12 +206,12 @@ export default function NewMusicPage() {
 
             <FormField
               control={form.control}
-              name="artist"
+              name="author"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Artist *</FormLabel>
+                  <FormLabel>Author *</FormLabel>
                   <FormControl>
-                    <Input placeholder="The Beatles" {...field} />
+                    <Input placeholder="Eiichiro Oda" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,31 +221,6 @@ export default function NewMusicPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
-                name="format"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Format *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select format" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="CD">CD</SelectItem>
-                        <SelectItem value="Vinyl">Vinyl</SelectItem>
-                        <SelectItem value="Cassette">Cassette</SelectItem>
-                        <SelectItem value="Digital">Digital</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="year"
                 render={({ field }) => (
                   <FormItem>
@@ -198,7 +228,7 @@ export default function NewMusicPage() {
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="1969"
+                        placeholder="1997"
                         {...field}
                         value={field.value ?? ''}
                         onChange={(e) =>
@@ -206,6 +236,30 @@ export default function NewMusicPage() {
                         }
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Type</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Manga">Manga</SelectItem>
+                        <SelectItem value="Comic">Comic</SelectItem>
+                        <SelectItem value="Graphic Novel">Graphic Novel</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -220,7 +274,7 @@ export default function NewMusicPage() {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Brief description of the album..."
+                      placeholder="Brief description of the book..."
                       className="resize-none"
                       rows={3}
                       {...field}
@@ -232,19 +286,33 @@ export default function NewMusicPage() {
             />
           </div>
 
-          {/* Album Details */}
+          {/* Publisher & Series */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Album Details</h2>
+            <h2 className="text-xl font-semibold">Publisher & Series</h2>
+
+            <FormField
+              control={form.control}
+              name="publisher"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Publisher</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Shueisha" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
-                name="publisher"
+                name="series"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Publisher / Label</FormLabel>
+                    <FormLabel>Series</FormLabel>
                     <FormControl>
-                      <Input placeholder="Apple Records" {...field} />
+                      <Input placeholder="One Piece" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -253,19 +321,23 @@ export default function NewMusicPage() {
 
               <FormField
                 control={form.control}
-                name="discCount"
+                name="volume"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Disc Count</FormLabel>
+                    <FormLabel>Volume</FormLabel>
                     <FormControl>
-                      <Input placeholder="1, 2, etc." {...field} />
+                      <Input placeholder="1, 1-3, etc." {...field} />
                     </FormControl>
-                    <FormDescription>Number of discs/records</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+          </div>
+
+          {/* Genres & ISBN */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Genres & ISBN</h2>
 
             <FormField
               control={form.control}
@@ -274,7 +346,7 @@ export default function NewMusicPage() {
                 <FormItem>
                   <FormLabel>Genres</FormLabel>
                   <FormControl>
-                    <Input placeholder="Rock, Pop, Alternative (comma-separated)" {...field} />
+                    <Input placeholder="Adventure, Fantasy, Shonen (comma-separated)" {...field} />
                   </FormControl>
                   <FormDescription>Enter genres separated by commas</FormDescription>
                   <FormMessage />
@@ -282,27 +354,45 @@ export default function NewMusicPage() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="tracklist"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tracklist</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="1. Come Together&#10;2. Something&#10;3. Maxwell's Silver Hammer..."
-                      className="resize-none"
-                      rows={5}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    List the tracks (one per line or comma-separated)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="isbn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ISBN</FormLabel>
+                    <FormControl>
+                      <Input placeholder="978-1-56931-280-3" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="coverType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cover Type</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select cover type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Paperback">Paperback</SelectItem>
+                        <SelectItem value="Hardcover">Hardcover</SelectItem>
+                        <SelectItem value="Digital">Digital</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
           {/* Collection Details */}
@@ -316,9 +406,9 @@ export default function NewMusicPage() {
                 <FormItem>
                   <FormLabel>Cover Image URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com/album-cover.jpg" {...field} />
+                    <Input placeholder="https://example.com/cover.jpg" {...field} />
                   </FormControl>
-                  <FormDescription>URL to the album's cover image</FormDescription>
+                  <FormDescription>URL to the book cover image</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -332,7 +422,13 @@ export default function NewMusicPage() {
                   <FormItem>
                     <FormLabel>Copies</FormLabel>
                     <FormControl>
-                      <Input type="number" min="1" {...field} />
+                      <Input
+                        type="number"
+                        min="1"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -349,7 +445,7 @@ export default function NewMusicPage() {
                       <Input
                         type="number"
                         step="0.01"
-                        placeholder="19.99"
+                        placeholder="9.99"
                         {...field}
                         value={field.value ?? ''}
                         onChange={(e) =>
@@ -384,10 +480,7 @@ export default function NewMusicPage() {
                 <FormItem>
                   <FormLabel>Tags</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="favorite, wishlist, limited-edition (comma-separated)"
-                      {...field}
-                    />
+                    <Input placeholder="favorite, wishlist, reading (comma-separated)" {...field} />
                   </FormControl>
                   <FormDescription>Enter tags separated by commas</FormDescription>
                   <FormMessage />
@@ -399,12 +492,12 @@ export default function NewMusicPage() {
           {/* Actions */}
           <div className="flex gap-4">
             <Button type="submit" disabled={isSubmitting} className="flex-1">
-              {isSubmitting ? 'Adding...' : 'Add Music Album'}
+              {isSubmitting ? 'Updating...' : 'Update Book'}
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push('/music')}
+              onClick={() => router.push('/books')}
               disabled={isSubmitting}
             >
               Cancel

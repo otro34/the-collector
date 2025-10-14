@@ -1,13 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Grid, List, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { CollectionGrid } from '@/components/collections/collection-grid'
 import { CollectionList } from '@/components/collections/collection-list'
-import type { Item } from '@prisma/client'
+import { ItemDetailModal } from '@/components/items/item-detail-modal'
+import { ConfirmDialog } from '@/components/shared/confirm-dialog'
+import { toast } from 'sonner'
+import type { Item, Book as BookType } from '@prisma/client'
+
+type ItemWithRelations = Item & {
+  book?: BookType | null
+}
 
 interface PaginationInfo {
   page: number
@@ -22,8 +30,14 @@ interface BooksResponse {
 }
 
 export default function BooksPage() {
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [page, setPage] = useState(1)
+  const [selectedItem, setSelectedItem] = useState<ItemWithRelations | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<ItemWithRelations | null>(null)
 
   const { data, isLoading, error } = useQuery<BooksResponse>({
     queryKey: ['books', page],
@@ -33,6 +47,45 @@ export default function BooksPage() {
       return res.json()
     },
   })
+
+  const handleItemClick = (item: ItemWithRelations) => {
+    setSelectedItem(item)
+    setModalOpen(true)
+  }
+
+  const handleEdit = (item: ItemWithRelations) => {
+    setModalOpen(false)
+    router.push(`/books/${item.id}/edit`)
+  }
+
+  const handleDelete = (item: ItemWithRelations) => {
+    setItemToDelete(item)
+    setModalOpen(false)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!itemToDelete) return
+
+    try {
+      const response = await fetch(`/api/items/${itemToDelete.id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete item')
+      }
+
+      // Invalidate queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['books'] })
+
+      toast.success('Book deleted successfully')
+
+      setItemToDelete(null)
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to delete book')
+    }
+  }
 
   if (error) {
     return (
@@ -112,9 +165,17 @@ export default function BooksPage() {
       {!isLoading && data && (
         <>
           {view === 'grid' ? (
-            <CollectionGrid items={data.items} collectionType="BOOK" />
+            <CollectionGrid
+              items={data.items}
+              collectionType="BOOK"
+              onItemClick={handleItemClick}
+            />
           ) : (
-            <CollectionList items={data.items} collectionType="BOOK" />
+            <CollectionList
+              items={data.items}
+              collectionType="BOOK"
+              onItemClick={handleItemClick}
+            />
           )}
 
           {/* Pagination */}
@@ -141,6 +202,27 @@ export default function BooksPage() {
           )}
         </>
       )}
+
+      {/* Item Detail Modal */}
+      <ItemDetailModal
+        item={selectedItem}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        title="Delete Book"
+        description={`Are you sure you want to delete "${itemToDelete?.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   )
 }
