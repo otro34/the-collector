@@ -16,7 +16,7 @@
 | -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
 | Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
 | Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 2 | 🟡 In Progress | 2025-10-14 | -          | 0                 | 5             |
+| Sprint 2 | 🟡 In Progress | 2025-10-14 | -          | 3                 | 5             |
 | Sprint 3 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 4 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 5 | ⚪ Planned     | -          | -          | 0                 | 6             |
@@ -157,28 +157,28 @@
 
 #### US-2.1: Create Main Layout Component
 
-- **Status**: 🔴 Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#10](https://github.com/otro34/the-collector/pull/10)
 - **Acceptance Criteria**:
-  - [ ] Root layout with header and main content area
-  - [ ] Responsive header with navigation
-  - [ ] Mobile menu (hamburger)
-  - [ ] Theme toggle (light/dark)
-  - [ ] Footer component
+  - [x] Root layout with header and main content area
+  - [x] Responsive header with navigation
+  - [x] Mobile menu (hamburger)
+  - [x] Theme toggle (light/dark)
+  - [x] Footer component
 
 #### US-2.2: Implement Navigation
 
-- **Status**: 🔴 Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 3
-- **PR**: TBD
+- **PR**: [#10](https://github.com/otro34/the-collector/pull/10)
 - **Acceptance Criteria**:
-  - [ ] Navigation menu with links to all sections
-  - [ ] Active link highlighting
-  - [ ] Navigation works on mobile and desktop
-  - [ ] Search bar in header (UI only for now)
+  - [x] Navigation menu with links to all sections
+  - [x] Active link highlighting
+  - [x] Navigation works on mobile and desktop
+  - [x] Search bar in header (UI only for now)
 
 #### US-2.3: Build Dashboard Page
 
@@ -212,16 +212,16 @@
 
 #### US-2.5: Implement Dark Mode
 
-- **Status**: 🔴 Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 3
-- **PR**: TBD
+- **PR**: [#10](https://github.com/otro34/the-collector/pull/10)
 - **Acceptance Criteria**:
-  - [ ] Theme provider set up
-  - [ ] Dark mode toggle in header
-  - [ ] Theme preference persisted in localStorage
-  - [ ] All pages styled for both themes
-  - [ ] Smooth theme transitions
+  - [x] Theme provider set up
+  - [x] Dark mode toggle in header
+  - [x] Theme preference persisted in localStorage
+  - [x] All pages styled for both themes
+  - [x] Smooth theme transitions
 
 **Sprint 2 Total**: 22 story points
 
