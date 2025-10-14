@@ -15,7 +15,7 @@
 | Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
 | -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
 | Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟡 In Progress | 2025-10-14 | -          | 1                 | 5             |
+| Sprint 1 | 🟡 In Progress | 2025-10-14 | -          | 2                 | 5             |
 | Sprint 2 | ⚪ Planned     | -          | -          | 0                 | 5             |
 | Sprint 3 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 4 | ⚪ Planned     | -          | -          | 0                 | 6             |
@@ -95,8 +95,18 @@
 
 #### US-1.2: Create Database Utilities
 
-- **Status**: ⚪ Planned
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 3
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [x] Database connection helpers created (testConnection, disconnect, getHealthStatus)
+  - [x] CRUD operations for items (create, read, update, delete for all collection types)
+  - [x] Custom error handling with typed errors (DatabaseError, NotFoundError, etc.)
+  - [x] TypeScript types exported for type safety
+  - [x] All functions properly typed
+  - [x] Error handling utilities (handlePrismaError, safeDbOperation, formatErrorResponse)
+  - [x] JSON parsing helpers for array fields (parseJsonArray, stringifyArray, parseItem functions)
 
 #### US-1.3: Build CSV Parser
 
@@ -122,8 +132,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 10
-- **Overall Progress**: 3.9%
+- **Completed Story Points**: 13
+- **Overall Progress**: 5.0%
 
 ### Milestone Tracker
 
@@ -144,7 +154,6 @@
 
 ### To Do
 
-- US-1.2: Create Database Utilities
 - US-1.3: Build CSV Parser
 - US-1.4: Import Existing CSV Data
 - US-1.5: Create Seed Data Script
@@ -154,7 +163,8 @@
 - US-0.1: Initialize Next.js Project ✅ [PR #1](https://github.com/otro34/the-collector/pull/1)
 - US-0.2: Install Core Dependencies ✅ [PR #3](https://github.com/otro34/the-collector/pull/3)
 - US-0.3: Set Up Development Tools ✅ [PR #4](https://github.com/otro34/the-collector/pull/4)
-- US-1.1: Define Database Schema ✅ [PR TBD](https://github.com/otro34/the-collector/pull/TBD)
+- US-1.1: Define Database Schema ✅ [PR #5](https://github.com/otro34/the-collector/pull/5)
+- US-1.2: Create Database Utilities ✅ [PR TBD](https://github.com/otro34/the-collector/pull/TBD)
 
 ---
 
@@ -172,7 +182,20 @@
 
 ## Notes & Decisions
 
-### 2025-10-14 (Later)
+### 2025-10-14 (Later - US-1.2)
+
+- **US-1.2 Completed**: Database utilities created with comprehensive functionality
+- Created src/lib/db-utils.ts with CRUD operations for all collection types
+- Created src/lib/db-errors.ts with custom error handling (DatabaseError, NotFoundError, ValidationError, etc.)
+- Created src/types/database.ts with TypeScript types and JSON parsing helpers
+- Enhanced src/lib/db.ts with connection helpers (testConnection, disconnect, getHealthStatus)
+- Fixed SQLite compatibility issues (removed 'mode: insensitive', fixed type handling)
+- All functions properly typed with Prisma-generated types
+- JSON array parsing utilities created for tags and genres fields
+- Error handling utilities map Prisma errors to custom typed errors
+- All code passes TypeScript type checking and ESLint validation
+
+### 2025-10-14 (Earlier - US-1.1)
 
 - **US-1.1 Completed**: Database schema defined and initial migration created
 - Updated Prisma schema with proper types (Json for customFields and Settings.value)
@@ -181,6 +204,7 @@
 - Database indexes added on collectionType and title fields for performance
 - Initial migration applied successfully, database file created at prisma/dev.db
 - Database connection tested and verified working
+- Critical fix: Manually edited migration.sql to replace JSONB with TEXT for SQLite compatibility
 - Sprint 1 officially started
 
 ### 2025-10-14
