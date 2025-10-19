@@ -75,6 +75,7 @@ function MusicPageContent() {
     const params = new URLSearchParams(searchParams.toString())
     params.set('sortField', option.field)
     params.set('sortDirection', option.direction)
+    params.set('page', '1')
     router.push(`/music?${params.toString()}`, { scroll: false })
   }
 
