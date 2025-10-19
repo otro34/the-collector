@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const page = parseInt(searchParams.get('page') || '1', 10)
     const limit = parseInt(searchParams.get('limit') || '50', 10)
-    const skip = (page - 1) * limit
 
     // Parse sort parameters
     const sortField = searchParams.get('sortField') || 'createdAt'
@@ -56,10 +55,6 @@ export async function GET(request: NextRequest) {
       videogameFilters.push({ publisher: { in: publishers } })
     }
 
-    // Note: Genre filtering with JSON strings is complex in SQLite
-    // For now, we'll filter genres in memory after fetching
-    // A more robust solution would involve full-text search or separate genre table
-
     if (videogameFilters.length > 0) {
       where.videogame = { AND: videogameFilters }
     }
@@ -94,16 +89,17 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    let items = await getAllItems({
+    // Fetch ALL items that match the database filters (without pagination)
+    // Note: Genre filtering with JSON strings is complex in SQLite, so we filter in memory
+    let allItems = await getAllItems({
       where,
-      take: limit,
-      skip,
       orderBy,
     })
 
     // Filter by genres in memory if genres filter is provided
+    // This must happen BEFORE pagination to ensure consistent page sizes
     if (genres && genres.length > 0) {
-      items = items.filter((item) => {
+      allItems = allItems.filter((item) => {
         if (!item.videogame?.genres) return false
         try {
           const itemGenres = JSON.parse(item.videogame.genres) as string[]
@@ -114,23 +110,13 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    const totalCountItems = await getAllItems({
-      where,
-    })
+    // Calculate pagination after all filtering is complete
+    const totalCount = allItems.length
+    const totalPages = Math.ceil(totalCount / limit)
+    const skip = (page - 1) * limit
 
-    // Also filter total count by genres if needed
-    let totalCount = totalCountItems.length
-    if (genres && genres.length > 0) {
-      totalCount = totalCountItems.filter((item) => {
-        if (!item.videogame?.genres) return false
-        try {
-          const itemGenres = JSON.parse(item.videogame.genres) as string[]
-          return genres.some((genre) => itemGenres.includes(genre))
-        } catch {
-          return false
-        }
-      }).length
-    }
+    // Apply pagination to the filtered results
+    const items = allItems.slice(skip, skip + limit)
 
     return NextResponse.json({
       items,
@@ -138,7 +124,7 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: totalCount,
-        totalPages: Math.ceil(totalCount / limit),
+        totalPages,
       },
     })
   } catch (error) {
