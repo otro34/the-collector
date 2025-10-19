@@ -19,7 +19,7 @@
 | Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
 | Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 5 | 🟡 In Progress | 2025-10-19 | -          | 2                 | 6             |
+| Sprint 5 | 🟡 In Progress | 2025-10-19 | -          | 3                 | 6             |
 | Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
@@ -465,7 +465,7 @@
 
 ### 2025-10-19 (Latest - Sprint 5 In Progress! 🚀)
 
-- **Sprint 5 IN PROGRESS**: 2 of 6 user stories completed (33% overall)
+- **Sprint 5 IN PROGRESS**: 3 of 6 user stories completed (50% overall)
 - Search & Filtering sprint making excellent progress
 - Features completed:
   - **US-5.1**: Global Search (Completed) ✅
@@ -508,23 +508,59 @@
     - Sort preferences persist via URL query parameters
     - Fixed ESLint warnings (no-explicit-any, no-unused-vars)
     - All code passes type-check and build successfully
+  - **US-5.3**: Create Filter Sidebar for Videogames (Completed) ✅
+    - Created reusable `FilterSidebar` component with accordion-based interface:
+      - Platform multi-select filter (20 unique platforms)
+      - Genre multi-select filter (parsed from JSON data)
+      - Publisher multi-select filter (20+ unique publishers)
+      - Year range slider (1987-2025)
+      - Active filter count badge
+      - Apply and Clear all actions
+      - Responsive design (desktop permanent sidebar, mobile slide-out sheet)
+    - Updated `/api/items/videogames` endpoint to accept filter parameters:
+      - Query params: platforms, genres, publishers, minYear, maxYear
+      - Platform and publisher filtering at database level
+      - Genre filtering handled in-memory (due to JSON storage in SQLite)
+      - Properly integrated with existing sort and pagination
+    - Created `/api/items/videogames/filters` endpoint:
+      - Fetches unique platforms, genres, publishers from database
+      - Calculates year range from existing items
+      - Parses JSON genre data for unique values
+    - Integrated FilterSidebar into videogames page:
+      - Desktop (lg+): permanent sidebar on left side (264px width, sticky positioning)
+      - Mobile: slide-out sheet triggered by filter button with active count badge
+      - Filter state management with React state
+      - Active filter count indicator updates dynamically
+      - Resets pagination to page 1 when filters change
+      - Query cache properly invalidated on filter changes
+    - Installed shadcn/ui components: Checkbox, Slider, Accordion
+    - Component is fully reusable for US-5.4 (Music) and US-5.5 (Books)
+    - All code passes type-check and build successfully
 - Technical improvements:
   - Proper Prisma type safety with ItemWithVideogame/Music/Book types
   - Next.js 15 Suspense boundary compliance
   - Efficient parallel database queries with Promise.all
   - Clean URL management for persistence
   - Type-safe sort implementation with custom OrderByInput type
+  - Reusable filter component architecture for all collection types
+  - Responsive breakpoint strategy (mobile < lg, desktop >= lg)
 - New files created:
   - `src/app/api/search/route.ts` - Search API endpoint
   - `src/components/shared/global-search.tsx` - Search component
   - `src/components/shared/sort-control.tsx` - Reusable sort control component
+  - `src/components/collections/filter-sidebar.tsx` - Reusable filter sidebar component
+  - `src/app/api/items/videogames/filters/route.ts` - Filter options API endpoint
+  - `src/components/ui/accordion.tsx` - shadcn/ui Accordion component
+  - `src/components/ui/checkbox.tsx` - shadcn/ui Checkbox component
+  - `src/components/ui/slider.tsx` - shadcn/ui Slider component
 - PRs created:
   - [#20](https://github.com/otro34/the-collector/pull/20) - US-5.1 Global Search
   - [#21](https://github.com/otro34/the-collector/pull/21) - US-5.2 Add Sorting
-- Copilot reviews requested for both PRs
-- **Overall Progress**: 126/258 story points (48.8%)
-- **Sprint 5 Progress**: 13/36 story points (36.1% complete)
-- Ready to begin US-5.3: Create Filter Sidebar for Videogames
+  - [#23](https://github.com/otro34/the-collector/pull/23) - US-5.3 Filter Sidebar for Videogames
+- Copilot reviews requested for all PRs
+- **Overall Progress**: 134/258 story points (51.9%)
+- **Sprint 5 Progress**: 21/36 story points (58.3% complete)
+- Ready to begin US-5.4: Create Filter Sidebar for Music
 
 ### 2025-10-14 (Earlier - Sprint 4 Complete! 🎉)
 
