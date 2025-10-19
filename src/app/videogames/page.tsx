@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Grid, List, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { CollectionGrid } from '@/components/collections/collection-grid'
 import { CollectionList } from '@/components/collections/collection-list'
@@ -29,8 +29,9 @@ interface VideogamesResponse {
   pagination: PaginationInfo
 }
 
-export default function VideogamesPage() {
+function VideogamesPageContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [page, setPage] = useState(1)
@@ -47,6 +48,34 @@ export default function VideogamesPage() {
       return res.json()
     },
   })
+
+  // Handle opening item from URL query parameter (e.g., from search results)
+  useEffect(() => {
+    const itemId = searchParams.get('itemId')
+    if (itemId && data?.items) {
+      const item = data.items.find((i) => i.id === itemId)
+      if (item) {
+        setSelectedItem(item as ItemWithRelations)
+        setModalOpen(true)
+        // Clear the query parameter
+        router.replace('/videogames', { scroll: false })
+      } else {
+        // Item not on current page, fetch it directly
+        fetch(`/api/items/${itemId}`)
+          .then((res) => res.json())
+          .then((item) => {
+            if (item && item.collectionType === 'VIDEOGAME') {
+              setSelectedItem(item)
+              setModalOpen(true)
+            }
+            router.replace('/videogames', { scroll: false })
+          })
+          .catch(() => {
+            router.replace('/videogames', { scroll: false })
+          })
+      }
+    }
+  }, [searchParams, data, router])
 
   const handleItemClick = (item: ItemWithRelations) => {
     setSelectedItem(item)
@@ -224,5 +253,26 @@ export default function VideogamesPage() {
         variant="destructive"
       />
     </div>
+  )
+}
+
+export default function VideogamesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container py-8">
+          <div className="animate-pulse space-y-6">
+            <div className="h-12 bg-muted rounded-lg w-1/3" />
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="aspect-[2/3] bg-muted rounded-lg" />
+              ))}
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <VideogamesPageContent />
+    </Suspense>
   )
 }
