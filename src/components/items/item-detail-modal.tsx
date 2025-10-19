@@ -1,7 +1,17 @@
 'use client'
 
 import Image from 'next/image'
-import { Gamepad2, Music, BookOpen, Calendar, Tag, User, Building2, Disc } from 'lucide-react'
+import {
+  Gamepad2,
+  Music,
+  BookOpen,
+  Calendar,
+  Tag,
+  User,
+  Building2,
+  Disc,
+  DollarSign,
+} from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -35,6 +45,13 @@ export function ItemDetailModal({
   onDelete,
 }: ItemDetailModalProps) {
   if (!item) return null
+
+  const getShortDescription = (description: string | null) => {
+    if (!description) return null
+    const firstSentenceEnd = description.indexOf('.')
+    if (firstSentenceEnd === -1) return description
+    return description.substring(0, firstSentenceEnd + 1)
+  }
 
   const getPlaceholderIcon = (type: CollectionType) => {
     switch (type) {
@@ -173,7 +190,9 @@ export function ItemDetailModal({
         <DialogHeader>
           <DialogTitle className="text-2xl">{item.title}</DialogTitle>
           {item.description && (
-            <DialogDescription className="text-base">{item.description}</DialogDescription>
+            <DialogDescription className="text-base">
+              {getShortDescription(item.description)}
+            </DialogDescription>
           )}
         </DialogHeader>
 
@@ -206,6 +225,15 @@ export function ItemDetailModal({
                   <div>
                     <p className="text-sm font-medium">Year</p>
                     <p className="text-sm text-muted-foreground">{item.year}</p>
+                  </div>
+                </div>
+              )}
+              {item.price !== null && item.price !== undefined && (
+                <div className="flex items-start gap-2">
+                  <DollarSign className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Estimated Price</p>
+                    <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
                   </div>
                 </div>
               )}
