@@ -211,6 +211,63 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  try {
+    const body = await request.json()
+
+    // Get existing item
+    const existingItem = await getItemById(id)
+    if (!existingItem) {
+      return NextResponse.json({ error: 'Item not found' }, { status: 404 })
+    }
+
+    // Simple schema for partial updates (mainly for coverUrl)
+    const patchSchema = z.object({
+      coverUrl: z.string().url('Must be a valid URL').optional(),
+    })
+
+    const validatedData = patchSchema.parse(body)
+
+    // Update only the provided fields
+    const updatedItem = await prisma.item.update({
+      where: { id },
+      data: validatedData,
+      include: {
+        videogame: true,
+        music: true,
+        book: true,
+      },
+    })
+
+    return NextResponse.json({
+      success: true,
+      item: updatedItem,
+      message: 'Item updated successfully',
+    })
+  } catch (error) {
+    console.error('Patch item error:', error)
+
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: error.issues,
+        },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      {
+        error: 'Failed to update item',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    )
+  }
+}
+
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   try {

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import {
   Gamepad2,
@@ -11,6 +12,7 @@ import {
   Building2,
   Disc,
   DollarSign,
+  ImageIcon,
 } from 'lucide-react'
 import {
   Dialog,
@@ -21,6 +23,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { ImageSearchDialog } from './image-search-dialog'
 import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
 
 type ItemWithRelations = Item & {
@@ -44,7 +47,37 @@ export function ItemDetailModal({
   onEdit,
   onDelete,
 }: ItemDetailModalProps) {
+  const [imageSearchOpen, setImageSearchOpen] = useState(false)
+  const [updatingImage, setUpdatingImage] = useState(false)
+
   if (!item) return null
+
+  const handleImageSelect = async (imageUrl: string) => {
+    setUpdatingImage(true)
+    try {
+      const response = await fetch(`/api/items/${item.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          coverUrl: imageUrl,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update cover image')
+      }
+
+      // Refresh the page or update the item in the parent component
+      window.location.reload()
+    } catch (error) {
+      console.error('Error updating cover image:', error)
+      alert('Failed to update cover image. Please try again.')
+    } finally {
+      setUpdatingImage(false)
+    }
+  }
 
   const getShortDescription = (description: string | null) => {
     if (!description) return null
@@ -198,21 +231,32 @@ export function ItemDetailModal({
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Cover Image */}
-          <div className="relative aspect-[2/3] bg-muted rounded-lg overflow-hidden">
-            {item.coverUrl ? (
-              <Image
-                src={item.coverUrl}
-                alt={item.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                {getPlaceholderIcon(item.collectionType)}
-              </div>
-            )}
+          <div className="space-y-2">
+            <div className="relative aspect-[2/3] bg-muted rounded-lg overflow-hidden">
+              {item.coverUrl ? (
+                <Image
+                  src={item.coverUrl}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {getPlaceholderIcon(item.collectionType)}
+                </div>
+              )}
+            </div>
+            <Button
+              onClick={() => setImageSearchOpen(true)}
+              variant="outline"
+              className="w-full"
+              disabled={updatingImage}
+            >
+              <ImageIcon className="h-4 w-4 mr-2" />
+              {updatingImage ? 'Updating...' : 'Change Cover Image'}
+            </Button>
           </div>
 
           {/* Metadata */}
@@ -281,6 +325,14 @@ export function ItemDetailModal({
           </div>
         )}
       </DialogContent>
+
+      {/* Image Search Dialog */}
+      <ImageSearchDialog
+        open={imageSearchOpen}
+        onOpenChange={setImageSearchOpen}
+        initialQuery={item.title}
+        onSelectImage={handleImageSelect}
+      />
     </Dialog>
   )
 }
