@@ -1,28 +1,28 @@
 # The Collector - Project Tracker
 
-**Last Updated**: 2025-10-14
+**Last Updated**: 2025-10-19
 
 ## Current Sprint: Sprint 5 - Search & Filtering
 
-**Status**: ⚪ Planned
-**Start Date**: TBD
+**Status**: 🟡 In Progress
+**Start Date**: 2025-10-19
 **End Date**: TBD
 
 ---
 
 ## Sprint Progress Overview
 
-| Sprint   | Status       | Start Date | End Date   | Completed Stories | Total Stories |
-| -------- | ------------ | ---------- | ---------- | ----------------- | ------------- |
-| Sprint 0 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 2 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 3 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 4 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 5 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 6 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 7 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 8 | ⚪ Planned   | -          | -          | 0                 | 10            |
+| Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
+| -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
+| Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
+| Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 5 | 🟡 In Progress | 2025-10-19 | -          | 1                 | 6             |
+| Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -463,7 +463,48 @@
 
 ## Notes & Decisions
 
-### 2025-10-14 (Latest - Sprint 4 Complete! 🎉)
+### 2025-10-19 (Latest - Sprint 5 Started! 🚀)
+
+- **Sprint 5 IN PROGRESS**: 1 of 6 user stories completed (17% overall)
+- Search & Filtering sprint officially started
+- Features completed:
+  - **US-5.1**: Global Search (Completed) ✅
+    - Created `/api/search` endpoint with cross-collection search
+    - Searches across videogames, music, and books simultaneously
+    - Supports partial text matching in titles, descriptions, and metadata fields
+    - Returns up to 5 results per collection type
+    - Created GlobalSearch component with full UX features:
+      - 300ms debounced search for performance
+      - Keyboard navigation (arrow keys, enter, escape)
+      - Real-time results dropdown with cover images
+      - Color-coded collection badges (blue/amber/green)
+      - Loading spinner and empty state
+      - Click-outside-to-close functionality
+    - Updated Header to use GlobalSearch component
+    - Enhanced all collection pages (videogames, music, books):
+      - Added support for `itemId` query parameter
+      - Automatic item detail modal opening from search results
+      - Direct API fetch if item not in current page
+      - Wrapped in Suspense boundaries for Next.js 15 compliance
+      - Loading fallback with skeleton animations
+    - Fixed TypeScript types for Item relations
+    - Fixed ESLint type-only import warnings
+    - All code passes type-check and build successfully
+- Technical improvements:
+  - Proper Prisma type safety with ItemWithVideogame/Music/Book types
+  - Next.js 15 Suspense boundary compliance
+  - Efficient parallel database queries with Promise.all
+  - Clean URL management (query params cleared after navigation)
+- New files created:
+  - `src/app/api/search/route.ts` - Search API endpoint
+  - `src/components/shared/global-search.tsx` - Search component
+- PR created: [#20](https://github.com/otro34/the-collector/pull/20)
+- Copilot review requested
+- **Overall Progress**: 121/258 story points (46.9%)
+- **Sprint 5 Progress**: 8/36 story points (22.2% complete)
+- Ready to begin US-5.2: Add Sorting to Collection Pages
+
+### 2025-10-14 (Earlier - Sprint 4 Complete! 🎉)
 
 - **Sprint 4 IN PROGRESS**: 4 of 6 user stories fully completed, 2 partially completed (74% overall)
 - All "Add" forms completed for videogames, music, and books
@@ -753,7 +794,7 @@
 | Sprint 2 | 22             | 22               | 22.0 points/day |
 | Sprint 3 | 31             | 31               | 31.0 points/day |
 | Sprint 4 | 31             | 31               | 31.0 points/day |
-| Sprint 5 | 36             | -                | -               |
+| Sprint 5 | 36             | 8 (in progress)  | TBD             |
 | Sprint 6 | 34             | -                | -               |
 | Sprint 7 | 36             | -                | -               |
 | Sprint 8 | 39             | -                | -               |

@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { ThemeToggle } from '@/components/layout/theme-toggle'
 import { MainNav } from '@/components/layout/main-nav'
 import { MobileNav } from '@/components/layout/mobile-nav'
+import { GlobalSearch } from '@/components/shared/global-search'
 
 export function Header() {
   return (
@@ -22,14 +23,9 @@ export function Header() {
 
         {/* Right side - Search and Theme Toggle */}
         <div className="flex flex-1 items-center justify-end space-x-4">
-          {/* Search placeholder */}
+          {/* Global Search */}
           <div className="hidden md:block w-full max-w-sm">
-            <input
-              type="search"
-              placeholder="Search collections..."
-              className="w-full px-4 py-2 rounded-md border bg-background text-sm outline-none focus:border-primary"
-              disabled
-            />
+            <GlobalSearch />
           </div>
 
           <ThemeToggle />
