@@ -19,7 +19,7 @@
 | Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
 | Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 5 | 🟡 In Progress | 2025-10-19 | -          | 1                 | 6             |
+| Sprint 5 | 🟡 In Progress | 2025-10-19 | -          | 2                 | 6             |
 | Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
@@ -463,10 +463,10 @@
 
 ## Notes & Decisions
 
-### 2025-10-19 (Latest - Sprint 5 Started! 🚀)
+### 2025-10-19 (Latest - Sprint 5 In Progress! 🚀)
 
-- **Sprint 5 IN PROGRESS**: 1 of 6 user stories completed (17% overall)
-- Search & Filtering sprint officially started
+- **Sprint 5 IN PROGRESS**: 2 of 6 user stories completed (33% overall)
+- Search & Filtering sprint making excellent progress
 - Features completed:
   - **US-5.1**: Global Search (Completed) ✅
     - Created `/api/search` endpoint with cross-collection search
@@ -490,19 +490,41 @@
     - Fixed TypeScript types for Item relations
     - Fixed ESLint type-only import warnings
     - All code passes type-check and build successfully
+  - **US-5.2**: Add Sorting to Collection Pages (Completed) ✅
+    - Created reusable `SortControl` component with dropdown and direction toggle
+    - Sort options: Title, Year, Date Added, Genre
+    - Ascending/Descending toggle with visual arrow indicators
+    - Updated API routes for videogames, music, and books:
+      - Accept `sortField` and `sortDirection` query parameters
+      - Map sort fields to proper Prisma `orderBy` clauses
+      - Type-safe implementation with `OrderByInput` type
+      - Support for nested sorting (genre via relation)
+    - Integrated sort controls in all collection pages:
+      - State management for sort field and direction
+      - URL parameter synchronization for persistence
+      - Query key includes sort params for cache invalidation
+      - Pagination resets on sort change
+    - Clean, responsive design matching existing UI patterns
+    - Sort preferences persist via URL query parameters
+    - Fixed ESLint warnings (no-explicit-any, no-unused-vars)
+    - All code passes type-check and build successfully
 - Technical improvements:
   - Proper Prisma type safety with ItemWithVideogame/Music/Book types
   - Next.js 15 Suspense boundary compliance
   - Efficient parallel database queries with Promise.all
-  - Clean URL management (query params cleared after navigation)
+  - Clean URL management for persistence
+  - Type-safe sort implementation with custom OrderByInput type
 - New files created:
   - `src/app/api/search/route.ts` - Search API endpoint
   - `src/components/shared/global-search.tsx` - Search component
-- PR created: [#20](https://github.com/otro34/the-collector/pull/20)
-- Copilot review requested
-- **Overall Progress**: 121/258 story points (46.9%)
-- **Sprint 5 Progress**: 8/36 story points (22.2% complete)
-- Ready to begin US-5.2: Add Sorting to Collection Pages
+  - `src/components/shared/sort-control.tsx` - Reusable sort control component
+- PRs created:
+  - [#20](https://github.com/otro34/the-collector/pull/20) - US-5.1 Global Search
+  - [#21](https://github.com/otro34/the-collector/pull/21) - US-5.2 Add Sorting
+- Copilot reviews requested for both PRs
+- **Overall Progress**: 126/258 story points (48.8%)
+- **Sprint 5 Progress**: 13/36 story points (36.1% complete)
+- Ready to begin US-5.3: Create Filter Sidebar for Videogames
 
 ### 2025-10-14 (Earlier - Sprint 4 Complete! 🎉)
 

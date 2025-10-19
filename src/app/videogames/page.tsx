@@ -10,6 +10,12 @@ import { CollectionGrid } from '@/components/collections/collection-grid'
 import { CollectionList } from '@/components/collections/collection-list'
 import { ItemDetailModal } from '@/components/items/item-detail-modal'
 import { ConfirmDialog } from '@/components/shared/confirm-dialog'
+import {
+  SortControl,
+  type SortOption,
+  type SortField,
+  type SortDirection,
+} from '@/components/shared/sort-control'
 import { toast } from 'sonner'
 import type { Item, Videogame } from '@prisma/client'
 
@@ -40,14 +46,38 @@ function VideogamesPageContent() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<ItemWithRelations | null>(null)
 
+  // Sort state - use URL params for persistence
+  const [sortField, setSortField] = useState<SortField>(
+    (searchParams.get('sortField') as SortField) || 'createdAt'
+  )
+  const [sortDirection, setSortDirection] = useState<SortDirection>(
+    (searchParams.get('sortDirection') as SortDirection) || 'desc'
+  )
+
   const { data, isLoading, error } = useQuery<VideogamesResponse>({
-    queryKey: ['videogames', page],
+    queryKey: ['videogames', page, sortField, sortDirection],
     queryFn: async () => {
-      const res = await fetch(`/api/items/videogames?page=${page}&limit=50`)
+      const res = await fetch(
+        `/api/items/videogames?page=${page}&limit=50&sortField=${sortField}&sortDirection=${sortDirection}`
+      )
       if (!res.ok) throw new Error('Failed to fetch video games')
       return res.json()
     },
   })
+
+  // Handle sort change
+  const handleSortChange = (option: SortOption) => {
+    setSortField(option.field)
+    setSortDirection(option.direction)
+    setPage(1) // Reset to first page when sorting changes
+
+    // Update URL params for persistence
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('sortField', option.field)
+    params.set('sortDirection', option.direction)
+    params.set('page', '1')
+    router.push(`/videogames?${params.toString()}`, { scroll: false })
+  }
 
   // Handle opening item from URL query parameter (e.g., from search results)
   useEffect(() => {
@@ -141,6 +171,14 @@ function VideogamesPageContent() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Sort Control */}
+          <SortControl
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSortChange={handleSortChange}
+            collectionType="VIDEOGAME"
+          />
+
           {/* View Toggle */}
           <div className="flex items-center rounded-lg border bg-background p-1">
             <Button
