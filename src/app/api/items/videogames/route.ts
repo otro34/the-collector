@@ -15,6 +15,62 @@ export async function GET(request: NextRequest) {
     const sortField = searchParams.get('sortField') || 'createdAt'
     const sortDirection = (searchParams.get('sortDirection') || 'desc') as 'asc' | 'desc'
 
+    // Parse filter parameters
+    const platforms = searchParams.get('platforms')?.split(',').filter(Boolean)
+    const genres = searchParams.get('genres')?.split(',').filter(Boolean)
+    const publishers = searchParams.get('publishers')?.split(',').filter(Boolean)
+    const minYear = searchParams.get('minYear')
+      ? parseInt(searchParams.get('minYear')!, 10)
+      : undefined
+    const maxYear = searchParams.get('maxYear')
+      ? parseInt(searchParams.get('maxYear')!, 10)
+      : undefined
+
+    // Build where clause with filters
+    const where: {
+      collectionType: CollectionType
+      videogame?: {
+        AND?: Array<{
+          platform?: { in: string[] }
+          genres?: { contains: string }
+          publisher?: { in: string[] }
+        }>
+      }
+      year?: { gte?: number; lte?: number }
+    } = {
+      collectionType: CollectionType.VIDEOGAME,
+    }
+
+    // Apply videogame-specific filters
+    const videogameFilters: Array<{
+      platform?: { in: string[] }
+      genres?: { contains: string }
+      publisher?: { in: string[] }
+    }> = []
+
+    if (platforms && platforms.length > 0) {
+      videogameFilters.push({ platform: { in: platforms } })
+    }
+
+    if (publishers && publishers.length > 0) {
+      videogameFilters.push({ publisher: { in: publishers } })
+    }
+
+    // Note: Genre filtering with JSON strings is complex in SQLite
+    // For now, we'll filter genres in memory after fetching
+    // A more robust solution would involve full-text search or separate genre table
+
+    if (videogameFilters.length > 0) {
+      where.videogame = { AND: videogameFilters }
+    }
+
+    // Apply year range filter
+    if (minYear !== undefined || maxYear !== undefined) {
+      where.year = {}
+      if (minYear !== undefined) where.year.gte = minYear
+      if (maxYear !== undefined) where.year.lte = maxYear
+    }
+
     // Map sort field to proper orderBy clause
     type OrderByInput = Record<string, 'asc' | 'desc' | Record<string, 'asc' | 'desc'>>
     let orderBy: OrderByInput = { createdAt: sortDirection }
@@ -38,24 +94,51 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    const items = await getAllItems({
-      where: { collectionType: CollectionType.VIDEOGAME },
+    let items = await getAllItems({
+      where,
       take: limit,
       skip,
       orderBy,
     })
 
-    const totalCount = await getAllItems({
-      where: { collectionType: CollectionType.VIDEOGAME },
+    // Filter by genres in memory if genres filter is provided
+    if (genres && genres.length > 0) {
+      items = items.filter((item) => {
+        if (!item.videogame?.genres) return false
+        try {
+          const itemGenres = JSON.parse(item.videogame.genres) as string[]
+          return genres.some((genre) => itemGenres.includes(genre))
+        } catch {
+          return false
+        }
+      })
+    }
+
+    const totalCountItems = await getAllItems({
+      where,
     })
+
+    // Also filter total count by genres if needed
+    let totalCount = totalCountItems.length
+    if (genres && genres.length > 0) {
+      totalCount = totalCountItems.filter((item) => {
+        if (!item.videogame?.genres) return false
+        try {
+          const itemGenres = JSON.parse(item.videogame.genres) as string[]
+          return genres.some((genre) => itemGenres.includes(genre))
+        } catch {
+          return false
+        }
+      }).length
+    }
 
     return NextResponse.json({
       items,
       pagination: {
         page,
         limit,
-        total: totalCount.length,
-        totalPages: Math.ceil(totalCount.length / limit),
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
       },
     })
   } catch (error) {
