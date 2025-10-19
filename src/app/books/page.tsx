@@ -75,6 +75,7 @@ function BooksPageContent() {
     const params = new URLSearchParams(searchParams.toString())
     params.set('sortField', option.field)
     params.set('sortDirection', option.direction)
+    params.set('page', '1')
     router.push(`/books?${params.toString()}`, { scroll: false })
   }
 
