@@ -104,8 +104,8 @@ export function GlobalSearch() {
 
   // Navigate to item detail
   const navigateToItem = (result: SearchResult) => {
-    const collectionPath = result.collectionType.toLowerCase() + 's'
-    router.push(`/${collectionPath}?itemId=${result.id}`)
+    const pathMap = { VIDEOGAME: 'videogames', MUSIC: 'music', BOOK: 'books' }
+    router.push(`/${pathMap[result.collectionType]}?itemId=${result.id}`)
     setQuery('')
     setIsOpen(false)
     inputRef.current?.blur()
