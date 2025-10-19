@@ -57,6 +57,9 @@ export async function GET(request: NextRequest) {
         // For genre, we'll sort by the book genres field
         orderBy = { book: { genres: sortDirection } }
         break
+      case 'price':
+        orderBy = { price: sortDirection }
+        break
     }
 
     const items = await getAllItems({

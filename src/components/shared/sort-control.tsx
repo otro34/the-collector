@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export type SortField = 'title' | 'year' | 'createdAt' | 'genre'
+export type SortField = 'title' | 'year' | 'createdAt' | 'genre' | 'price'
 export type SortDirection = 'asc' | 'desc'
 
 export interface SortOption {
@@ -40,12 +40,14 @@ export function SortControl({
         return 'Date Added'
       case 'genre':
         return 'Genre'
+      case 'price':
+        return 'Price'
       default:
         return field
     }
   }
 
-  const sortOptions: SortField[] = ['title', 'year', 'createdAt', 'genre']
+  const sortOptions: SortField[] = ['title', 'year', 'createdAt', 'genre', 'price']
 
   const toggleDirection = () => {
     onSortChange({
