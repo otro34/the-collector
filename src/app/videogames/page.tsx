@@ -75,6 +75,7 @@ function VideogamesPageContent() {
     const params = new URLSearchParams(searchParams.toString())
     params.set('sortField', option.field)
     params.set('sortDirection', option.direction)
+    params.set('page', '1')
     router.push(`/videogames?${params.toString()}`, { scroll: false })
   }
 
