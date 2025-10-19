@@ -31,11 +31,35 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50', 10)
     const skip = (page - 1) * limit
 
+    // Parse sort parameters
+    const sortField = searchParams.get('sortField') || 'createdAt'
+    const sortDirection = (searchParams.get('sortDirection') || 'desc') as 'asc' | 'desc'
+
+    // Map sort field to proper orderBy clause
+    type OrderByInput = Record<string, 'asc' | 'desc' | Record<string, 'asc' | 'desc'>>
+    let orderBy: OrderByInput = { createdAt: sortDirection }
+
+    switch (sortField) {
+      case 'title':
+        orderBy = { title: sortDirection }
+        break
+      case 'year':
+        orderBy = { year: sortDirection }
+        break
+      case 'createdAt':
+        orderBy = { createdAt: sortDirection }
+        break
+      case 'genre':
+        // For genre, we'll sort by the music genres field
+        orderBy = { music: { genres: sortDirection } }
+        break
+    }
+
     const items = await getAllItems({
       where: { collectionType: CollectionType.MUSIC },
       take: limit,
       skip,
-      orderBy: { createdAt: 'desc' },
+      orderBy,
     })
 
     const totalCount = await getAllItems({
