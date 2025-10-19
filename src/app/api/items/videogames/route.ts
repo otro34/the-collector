@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { CollectionType } from '@prisma/client'
 import { getAllItems, createVideogameItem } from '@/lib/db-utils'
+import { prisma } from '@/lib/db'
 import { z } from 'zod'
 
 export async function GET(request: NextRequest) {
@@ -9,11 +10,62 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const page = parseInt(searchParams.get('page') || '1', 10)
     const limit = parseInt(searchParams.get('limit') || '50', 10)
-    const skip = (page - 1) * limit
 
     // Parse sort parameters
     const sortField = searchParams.get('sortField') || 'createdAt'
     const sortDirection = (searchParams.get('sortDirection') || 'desc') as 'asc' | 'desc'
+
+    // Parse filter parameters
+    const platforms = searchParams.get('platforms')?.split(',').filter(Boolean)
+    const genres = searchParams.get('genres')?.split(',').filter(Boolean)
+    const publishers = searchParams.get('publishers')?.split(',').filter(Boolean)
+    const minYear = searchParams.get('minYear')
+      ? parseInt(searchParams.get('minYear')!, 10)
+      : undefined
+    const maxYear = searchParams.get('maxYear')
+      ? parseInt(searchParams.get('maxYear')!, 10)
+      : undefined
+
+    // Build where clause with filters
+    const where: {
+      collectionType: CollectionType
+      videogame?: {
+        AND?: Array<{
+          platform?: { in: string[] }
+          genres?: { contains: string }
+          publisher?: { in: string[] }
+        }>
+      }
+      year?: { gte?: number; lte?: number }
+    } = {
+      collectionType: CollectionType.VIDEOGAME,
+    }
+
+    // Apply videogame-specific filters
+    const videogameFilters: Array<{
+      platform?: { in: string[] }
+      genres?: { contains: string }
+      publisher?: { in: string[] }
+    }> = []
+
+    if (platforms && platforms.length > 0) {
+      videogameFilters.push({ platform: { in: platforms } })
+    }
+
+    if (publishers && publishers.length > 0) {
+      videogameFilters.push({ publisher: { in: publishers } })
+    }
+
+    if (videogameFilters.length > 0) {
+      where.videogame = { AND: videogameFilters }
+    }
+
+    // Apply year range filter
+    if (minYear !== undefined || maxYear !== undefined) {
+      where.year = {}
+      if (minYear !== undefined) where.year.gte = minYear
+      if (maxYear !== undefined) where.year.lte = maxYear
+    }
 
     // Map sort field to proper orderBy clause
     type OrderByInput = Record<string, 'asc' | 'desc' | Record<string, 'asc' | 'desc'>>
@@ -38,24 +90,63 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    const items = await getAllItems({
-      where: { collectionType: CollectionType.VIDEOGAME },
-      take: limit,
-      skip,
-      orderBy,
-    })
+    // Check if we need to filter by genres (which requires fetching all items)
+    // Genre filtering with JSON strings in SQLite requires in-memory filtering
+    const needsGenreFiltering = genres && genres.length > 0
 
-    const totalCount = await getAllItems({
-      where: { collectionType: CollectionType.VIDEOGAME },
-    })
+    let items
+    let totalCount
+    let totalPages
+
+    if (needsGenreFiltering) {
+      // Fetch ALL items for genre filtering (in-memory operation)
+      let allItems = await getAllItems({
+        where,
+        orderBy,
+      })
+
+      // Filter by genres in memory - must happen BEFORE pagination
+      allItems = allItems.filter((item) => {
+        if (!item.videogame?.genres) return false
+        try {
+          const itemGenres = JSON.parse(item.videogame.genres) as string[]
+          return genres.some((genre) => itemGenres.includes(genre))
+        } catch {
+          return false
+        }
+      })
+
+      // Calculate pagination after filtering
+      totalCount = allItems.length
+      totalPages = Math.ceil(totalCount / limit)
+      const skip = (page - 1) * limit
+
+      // Apply pagination to filtered results
+      items = allItems.slice(skip, skip + limit)
+    } else {
+      // No genre filtering needed - use efficient count() and pagination
+      const skip = (page - 1) * limit
+
+      // Fetch paginated items directly from database
+      items = await getAllItems({
+        where,
+        take: limit,
+        skip,
+        orderBy,
+      })
+
+      // Use Prisma's count() for efficient total count
+      totalCount = await prisma.item.count({ where })
+      totalPages = Math.ceil(totalCount / limit)
+    }
 
     return NextResponse.json({
       items,
       pagination: {
         page,
         limit,
-        total: totalCount.length,
-        totalPages: Math.ceil(totalCount.length / limit),
+        total: totalCount,
+        totalPages,
       },
     })
   } catch (error) {
