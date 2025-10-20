@@ -19,6 +19,7 @@ import {
   type SortField,
   type SortDirection,
 } from '@/components/shared/sort-control'
+import { CollectionSearch } from '@/components/shared/collection-search'
 import { toast } from 'sonner'
 import type { Item, Music as MusicType } from '@prisma/client'
 
@@ -58,6 +59,9 @@ function MusicPageContent() {
     (searchParams.get('sortDirection') as SortDirection) || 'desc'
   )
 
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('')
+
   // Filter state
   const [filters, setFilters] = useState<FilterOptions>({})
   const [activeFiltersCount, setActiveFiltersCount] = useState(0)
@@ -87,13 +91,18 @@ function MusicPageContent() {
     },
   })
 
-  // Build query string from filters
+  // Build query string from search, filters, and sort
   const buildQueryString = () => {
     const params = new URLSearchParams()
     params.set('page', page.toString())
     params.set('limit', '50')
     params.set('sortField', sortField)
     params.set('sortDirection', sortDirection)
+
+    // Add search query
+    if (searchQuery.trim()) {
+      params.set('q', searchQuery.trim())
+    }
 
     if (filters.formats && filters.formats.length > 0) {
       params.set('formats', filters.formats.join(','))
@@ -113,7 +122,7 @@ function MusicPageContent() {
   }
 
   const { data, isLoading, error } = useQuery<MusicResponse>({
-    queryKey: ['music', page, sortField, sortDirection, filters],
+    queryKey: ['music', page, sortField, sortDirection, searchQuery, filters],
     queryFn: async () => {
       const queryString = buildQueryString()
       const res = await fetch(`/api/items/music?${queryString}`)
@@ -121,6 +130,12 @@ function MusicPageContent() {
       return res.json()
     },
   })
+
+  // Handle search change
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
+    setPage(1) // Reset to first page when search changes
+  }
 
   // Handle sort change
   const handleSortChange = (option: SortOption) => {
@@ -243,85 +258,95 @@ function MusicPageContent() {
         {/* Main Content */}
         <div className="flex-1 space-y-6 min-w-0">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Music</h1>
-              {data && (
-                <p className="text-muted-foreground mt-1">
-                  {data.pagination.total} album{data.pagination.total !== 1 ? 's' : ''} in your
-                  collection
-                </p>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* Mobile Filter Button */}
-              <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="lg:hidden">
-                    <FilterIcon className="h-4 w-4 mr-2" />
-                    Filters
-                    {activeFiltersCount > 0 && (
-                      <Badge variant="default" className="ml-2 px-1.5 py-0.5 text-xs">
-                        {activeFiltersCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-80">
-                  {filterOptions && (
-                    <FilterSidebar
-                      collectionType="MUSIC"
-                      filterOptions={filters}
-                      availableFilters={{
-                        formats: filterOptions.formats || [],
-                        genres: filterOptions.genres || [],
-                        artists: filterOptions.artists || [],
-                        yearRange: filterOptions.yearRange,
-                      }}
-                      onFilterChange={handleFilterChange}
-                      onClose={() => setFilterSheetOpen(false)}
-                    />
-                  )}
-                </SheetContent>
-              </Sheet>
-
-              {/* Sort Control */}
-              <SortControl
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSortChange={handleSortChange}
-                collectionType="MUSIC"
-              />
-
-              {/* View Toggle */}
-              <div className="flex items-center rounded-lg border bg-background p-1">
-                <Button
-                  variant={view === 'grid' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setView('grid')}
-                  className="h-8"
-                >
-                  <Grid className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={view === 'list' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setView('list')}
-                  className="h-8"
-                >
-                  <List className="h-4 w-4" />
-                </Button>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Music</h1>
+                {data && (
+                  <p className="text-muted-foreground mt-1">
+                    {data.pagination.total} album{data.pagination.total !== 1 ? 's' : ''} in your
+                    collection
+                  </p>
+                )}
               </div>
 
-              {/* Add Button */}
-              <Button asChild>
-                <Link href="/music/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Album
-                </Link>
-              </Button>
+              <div className="flex items-center gap-2">
+                {/* Mobile Filter Button */}
+                <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="sm" className="lg:hidden">
+                      <FilterIcon className="h-4 w-4 mr-2" />
+                      Filters
+                      {activeFiltersCount > 0 && (
+                        <Badge variant="default" className="ml-2 px-1.5 py-0.5 text-xs">
+                          {activeFiltersCount}
+                        </Badge>
+                      )}
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="p-0 w-80">
+                    {filterOptions && (
+                      <FilterSidebar
+                        collectionType="MUSIC"
+                        filterOptions={filters}
+                        availableFilters={{
+                          formats: filterOptions.formats || [],
+                          genres: filterOptions.genres || [],
+                          artists: filterOptions.artists || [],
+                          yearRange: filterOptions.yearRange,
+                        }}
+                        onFilterChange={handleFilterChange}
+                        onClose={() => setFilterSheetOpen(false)}
+                      />
+                    )}
+                  </SheetContent>
+                </Sheet>
+
+                {/* Sort Control */}
+                <SortControl
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  onSortChange={handleSortChange}
+                  collectionType="MUSIC"
+                />
+
+                {/* View Toggle */}
+                <div className="flex items-center rounded-lg border bg-background p-1">
+                  <Button
+                    variant={view === 'grid' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setView('grid')}
+                    className="h-8"
+                  >
+                    <Grid className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={view === 'list' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setView('list')}
+                    className="h-8"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Add Button */}
+                <Button asChild>
+                  <Link href="/music/new">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Album
+                  </Link>
+                </Button>
+              </div>
             </div>
+
+            {/* Search Box */}
+            <CollectionSearch
+              value={searchQuery}
+              onSearchChange={handleSearchChange}
+              placeholder="Search by title, artist, publisher, or description..."
+              className="w-full"
+            />
           </div>
 
           {/* Loading State */}

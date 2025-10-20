@@ -34,6 +34,9 @@ export async function GET(request: NextRequest) {
     const sortField = searchParams.get('sortField') || 'createdAt'
     const sortDirection = (searchParams.get('sortDirection') || 'desc') as 'asc' | 'desc'
 
+    // Parse search query
+    const searchQuery = searchParams.get('q')?.trim()
+
     // Parse filter parameters
     const formats = searchParams.get('formats')?.split(',').filter(Boolean)
     const genres = searchParams.get('genres')?.split(',').filter(Boolean)
@@ -45,9 +48,19 @@ export async function GET(request: NextRequest) {
       ? parseInt(searchParams.get('maxYear')!, 10)
       : undefined
 
-    // Build where clause with filters
+    // Build where clause with filters and search
     const where: {
       collectionType: CollectionType
+      OR?: Array<{
+        title?: { contains: string }
+        description?: { contains: string }
+        music?: {
+          OR?: Array<{
+            artist?: { contains: string }
+            publisher?: { contains: string }
+          }>
+        }
+      }>
       music?: {
         AND?: Array<{
           format?: { in: string[] }
@@ -58,6 +71,19 @@ export async function GET(request: NextRequest) {
       year?: { gte?: number; lte?: number }
     } = {
       collectionType: CollectionType.MUSIC,
+    }
+
+    // Apply search query if provided (searches title, description, artist, publisher)
+    if (searchQuery) {
+      where.OR = [
+        { title: { contains: searchQuery } },
+        { description: { contains: searchQuery } },
+        {
+          music: {
+            OR: [{ artist: { contains: searchQuery } }, { publisher: { contains: searchQuery } }],
+          },
+        },
+      ]
     }
 
     // Apply music-specific filters
