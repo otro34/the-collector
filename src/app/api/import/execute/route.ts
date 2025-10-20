@@ -269,9 +269,12 @@ export async function POST(request: NextRequest) {
                       artist: rowData.artist as string,
                       format: (rowData.format as string) || 'Unknown',
                       publisher: (rowData.publisher as string) || null,
-                      discCount: rowData.discCount !== undefined && rowData.discCount !== null && rowData.discCount !== ''
-                        ? Number(rowData.discCount)
-                        : null,
+                      discCount:
+                        rowData.discCount !== undefined &&
+                        rowData.discCount !== null &&
+                        rowData.discCount !== ''
+                          ? String(rowData.discCount)
+                          : null,
                       genres: parseGenresToJSON(rowData.genres as string),
                       tracklist: (rowData.tracklist as string) || null,
                     },
