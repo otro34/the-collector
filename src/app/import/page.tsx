@@ -24,6 +24,15 @@ export default function ImportPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
 
+  // Validate and set file
+  const validateAndSetFile = useCallback((file: File) => {
+    if (file.name.endsWith('.csv')) {
+      setSelectedFile(file)
+    } else {
+      toast.error('Please select a CSV file')
+    }
+  }, [])
+
   // Handle drag events
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -42,30 +51,29 @@ export default function ImportPage() {
     e.stopPropagation()
   }, [])
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsDragging(false)
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setIsDragging(false)
 
-    const files = Array.from(e.dataTransfer.files)
-    const csvFile = files.find((file) => file.name.endsWith('.csv'))
+      const files = Array.from(e.dataTransfer.files)
+      const csvFile = files.find((file) => file.name.endsWith('.csv'))
 
-    if (csvFile) {
-      setSelectedFile(csvFile)
-    } else {
-      toast.error('Please select a CSV file')
-    }
-  }, [])
+      if (csvFile) {
+        validateAndSetFile(csvFile)
+      } else {
+        toast.error('Please select a CSV file')
+      }
+    },
+    [validateAndSetFile]
+  )
 
   // Handle file input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      if (file.name.endsWith('.csv')) {
-        setSelectedFile(file)
-      } else {
-        toast.error('Please select a CSV file')
-      }
+      validateAndSetFile(file)
     }
   }
 
