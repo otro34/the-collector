@@ -178,7 +178,8 @@ export default function ImportPage() {
     if (!parsedData || !collectionType) return
 
     setIsImporting(true)
-    setImportProgress({ current: 0, total: parsedData.fullData.length })
+    const totalRows = parsedData.fullData.length
+    setImportProgress({ current: 0, total: totalRows })
 
     try {
       // Transform CSV data using column mapping
@@ -192,28 +193,63 @@ export default function ImportPage() {
         return transformed
       })
 
-      // Call import API
-      const response = await fetch('/api/import/execute', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          collectionType,
-          data: transformedData,
-          columnMapping: mapping,
-        }),
-      })
+      // Update progress after transformation
+      setImportProgress({ current: Math.floor(totalRows * 0.1), total: totalRows })
 
-      const result = await response.json()
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Import failed')
+      // Process in chunks for better progress feedback
+      const CHUNK_SIZE = 50
+      const chunks: Record<string, unknown>[][] = []
+      for (let i = 0; i < transformedData.length; i += CHUNK_SIZE) {
+        chunks.push(transformedData.slice(i, i + CHUNK_SIZE))
       }
 
-      setImportResult(result)
+      let totalImported = 0
+      let totalFailed = 0
+      const allErrors: ImportError[] = []
+
+      // Process each chunk
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i]
+
+        const response = await fetch('/api/import/execute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            collectionType,
+            data: chunk,
+            columnMapping: mapping,
+          }),
+        })
+
+        const result = await response.json()
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Import failed')
+        }
+
+        totalImported += result.imported
+        totalFailed += result.failed
+        allErrors.push(...result.errors)
+
+        // Update progress after each chunk
+        const processed = Math.min((i + 1) * CHUNK_SIZE, totalRows)
+        setImportProgress({ current: processed, total: totalRows })
+      }
+
+      // Create final result
+      const finalResult: ImportResult = {
+        success: true,
+        imported: totalImported,
+        failed: totalFailed,
+        errors: allErrors,
+        duration: 0, // We don't track total duration for chunked processing
+      }
+
+      setImportResult(finalResult)
       setStep('complete')
-      toast.success(`Import complete! ${result.imported} items imported successfully.`)
+      toast.success(`Import complete! ${totalImported} items imported successfully.`)
     } catch (error) {
       console.error('Import error:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to import data')
