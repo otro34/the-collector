@@ -12,17 +12,17 @@
 
 ## Sprint Progress Overview
 
-| Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
-| -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
-| Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 5 | 🟡 In Progress | 2025-10-19 | -          | 5                 | 6             |
-| Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
-| Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
-| Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
+| Sprint   | Status       | Start Date | End Date   | Completed Stories | Total Stories |
+| -------- | ------------ | ---------- | ---------- | ----------------- | ------------- |
+| Sprint 0 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 3                 | 3             |
+| Sprint 1 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 2 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 3 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 4 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 5 | 🟢 Completed | 2025-10-19 | 2025-10-19 | 6                 | 6             |
+| Sprint 6 | ⚪ Planned   | -          | -          | 0                 | 6             |
+| Sprint 7 | ⚪ Planned   | -          | -          | 0                 | 6             |
+| Sprint 8 | ⚪ Planned   | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -463,10 +463,10 @@
 
 ## Notes & Decisions
 
-### 2025-10-19 (Latest - Sprint 5 In Progress! 🚀)
+### 2025-10-19 (Latest - Sprint 5 Complete! 🎉)
 
-- **Sprint 5 IN PROGRESS**: 5 of 6 user stories completed (83% overall)
-- Search & Filtering sprint making excellent progress
+- **Sprint 5 COMPLETED**: All 6 user stories completed (100%)
+- Search & Filtering sprint finished successfully
 - Features completed:
   - **US-5.1**: Global Search (Completed) ✅
     - Created `/api/search` endpoint with cross-collection search
@@ -572,6 +572,29 @@
       - Filter state management with active filter count
     - All code passes type-check and build successfully
     - PR #25 merged
+  - **US-5.6**: Add Search Within Collection (Completed) ✅
+    - Created `CollectionSearch` component:
+      - Reusable search input with 300ms debouncing
+      - Clear button with visual feedback
+      - Accessible with screen reader support
+      - Responsive design matching UI patterns
+    - Updated API routes with search parameter support:
+      - Videogames: searches title, description, developer, publisher
+      - Music: searches title, description, artist, publisher
+      - Books: searches title, description, author, series, publisher
+      - SQLite case-insensitive LIKE operations via Prisma
+      - OR queries for multiple field matching
+    - Integrated search into all collection pages:
+      - Search box prominently placed below page header
+      - Full-width responsive design
+      - Search state management with React hooks
+      - Pagination resets to page 1 on search change
+      - Query cache properly invalidated
+    - Works seamlessly with filters and sort:
+      - Combined search + filter + sort queries work correctly
+      - No conflicts with pagination or view toggles
+    - All code passes type-check and build successfully
+    - PR #26 created with Copilot review requested
 - Technical improvements:
   - Proper Prisma type safety with ItemWithVideogame/Music/Book types
   - Next.js 15 Suspense boundary compliance
@@ -595,10 +618,12 @@
   - [#23](https://github.com/otro34/the-collector/pull/23) - US-5.3 Filter Sidebar for Videogames (merged)
   - [#24](https://github.com/otro34/the-collector/pull/24) - US-5.4 Filter Sidebar for Music (merged)
   - [#25](https://github.com/otro34/the-collector/pull/25) - US-5.5 Filter Sidebar for Books (merged)
+  - [#26](https://github.com/otro34/the-collector/pull/26) - US-5.6 Add Search Within Collection (pending review)
 - Copilot reviews requested for all PRs
-- **Overall Progress**: 144/258 story points (55.8%)
-- **Sprint 5 Progress**: 31/36 story points (86.1% complete)
-- Ready to begin US-5.6: Add Search Within Collection (5 story points remaining)
+- **Overall Progress**: 149/258 story points (57.8%)
+- **Sprint 5 Progress**: 36/36 story points (100% complete)
+- **Sprint 5 Complete!** 🎉 All search and filtering features implemented
+- Ready to begin Sprint 6: Data Import & Export
 
 ### 2025-10-14 (Earlier - Sprint 4 Complete! 🎉)
 
