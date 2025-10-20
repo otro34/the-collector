@@ -514,16 +514,16 @@
 
 #### US-6.2: Implement CSV Upload & Parsing
 
-- **Status**: ⚪ Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#28](https://github.com/otro34/the-collector/pull/28)
 - **Acceptance Criteria**:
-  - [ ] File upload accepts .csv files only
-  - [ ] CSV is parsed on upload
-  - [ ] Preview of first 10 rows shown
-  - [ ] Detected column names displayed
-  - [ ] Error handling for invalid CSV
+  - [x] File upload accepts .csv files only
+  - [x] CSV is parsed on upload
+  - [x] Preview of first 10 rows shown
+  - [x] Detected column names displayed
+  - [x] Error handling for invalid CSV
 
 #### US-6.3: Build Column Mapping Interface
 
@@ -577,7 +577,7 @@
   - [ ] Well-formatted JSON output
   - [ ] Download JSON file
 
-**Sprint 6 Total**: 34 story points (5 completed - 14.7% complete)
+**Sprint 6 Total**: 34 story points (10 completed - 29.4% complete)
 
 ---
 
