@@ -20,7 +20,7 @@
 | Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
-| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 1                 | 6             |
+| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 2                 | 6             |
 | Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
@@ -527,16 +527,16 @@
 
 #### US-6.3: Build Column Mapping Interface
 
-- **Status**: ⚪ Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 8
-- **PR**: TBD
+- **PR**: [#29](https://github.com/otro34/the-collector/pull/29)
 - **Acceptance Criteria**:
-  - [ ] Auto-detect column mapping when possible
-  - [ ] Manual dropdown to map each column
-  - [ ] Show required vs optional fields
-  - [ ] Validation before proceeding
-  - [ ] Save mapping for future imports
+  - [x] Auto-detect column mapping when possible
+  - [x] Manual dropdown to map each column
+  - [x] Show required vs optional fields
+  - [x] Validation before proceeding
+  - [x] Save mapping for future imports
 
 #### US-6.4: Implement Data Validation & Import
 
@@ -577,7 +577,7 @@
   - [ ] Well-formatted JSON output
   - [ ] Download JSON file
 
-**Sprint 6 Total**: 34 story points (10 completed - 29.4% complete)
+**Sprint 6 Total**: 34 story points (18 completed - 52.9% complete)
 
 ---
 
@@ -586,8 +586,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 154 (Sprints 0-5 complete, Sprint 6: 1/6 stories)
-- **Overall Progress**: 59.7%
+- **Completed Story Points**: 162 (Sprints 0-5 complete, Sprint 6: 2/6 stories)
+- **Overall Progress**: 62.8%
 
 ### Milestone Tracker
 
@@ -631,7 +631,57 @@
 
 ## Notes & Decisions
 
-### 2025-10-19 (Latest - Sprint 5 Complete! 🎉)
+### 2025-10-19 (Latest - Sprint 6 Progress: US-6.3 Complete! 📊)
+
+- **US-6.3 COMPLETED**: Build Column Mapping Interface (8 story points)
+- Column mapping functionality fully implemented and merged
+- Features completed:
+  - ✅ Auto-detect column mapping with fuzzy matching
+    - Matches CSV columns to database fields using label/key comparison
+    - Handles exact matches and partial matches
+    - Special cases for common field names (game→title, genre→genres, price→priceEstimate)
+  - ✅ Manual column mapping UI with dropdowns
+    - SelectTrigger component for each CSV column
+    - Shows all available database fields for the collection type
+    - "Don't import" option for unmapped columns
+    - Clean, table-based layout with CSV column → Database field mapping
+  - ✅ Required vs optional field indicators
+    - Red "Required" badges on required fields in dropdown
+    - Required fields displayed in the Info column
+    - Visual warnings when required fields are missing
+  - ✅ Validation before proceeding
+    - Real-time validation as mapping changes
+    - Shows count of required fields mapped (e.g., "2/2 required fields mapped")
+    - Displays missing required fields with AlertCircle icon
+    - "Continue to Import" button disabled until all required fields mapped
+  - ✅ Save mapping for future imports
+    - Mappings saved to localStorage by collection type
+    - Automatically loads saved mapping on future imports
+    - Falls back to auto-detect if saved mapping doesn't match current CSV
+    - "Auto-Detect Again" button to reset mapping
+- Technical implementation:
+  - Created `ColumnMapping` component in `src/components/import/column-mapping.tsx`
+  - Created `import-fields.ts` library with field definitions and utilities:
+    - `DATABASE_FIELDS` - Complete field definitions for VIDEOGAME, MUSIC, BOOK
+    - `autoDetectColumnMapping()` - Fuzzy matching algorithm
+    - `validateMapping()` - Required field validation
+    - `saveColumnMapping()` / `loadColumnMapping()` - LocalStorage persistence
+  - Integrated into import flow with step-based navigation (Upload → Mapping → Import)
+  - Uses shadcn/ui Select, Badge, Button components
+  - Responsive table layout with hover states
+  - Helpful tips section with mapping guidance
+- Files created/modified:
+  - `src/components/import/column-mapping.tsx` (255 lines)
+  - `src/lib/import-fields.ts` (219 lines)
+  - `src/app/import/page.tsx` (updated to include mapping step)
+- PR merged: [#29](https://github.com/otro34/the-collector/pull/29)
+- Commit: `a9bdb73 - feat(import): build column mapping interface [US-6.3]`
+- All code passes type-check and lint
+- **Sprint 6 Progress**: 18/34 story points (52.9% complete)
+- **Overall Progress**: 162/258 story points (62.8%)
+- Ready to begin US-6.4: Implement Data Validation & Import
+
+### 2025-10-19 (Earlier - Sprint 5 Complete! 🎉)
 
 - **Sprint 5 COMPLETED**: All 6 user stories completed (100%)
 - Search & Filtering sprint finished successfully
