@@ -20,7 +20,7 @@
 | Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
-| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 0                 | 6             |
+| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 1                 | 6             |
 | Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
@@ -500,17 +500,17 @@
 
 #### US-6.1: Create Import Page UI
 
-- **Status**: 🟡 In Progress
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#27](https://github.com/otro34/the-collector/pull/27)
 - **Acceptance Criteria**:
-  - [ ] Import page at `/import`
-  - [ ] File upload area (drag & drop)
-  - [ ] Collection type selector
-  - [ ] Upload button
-  - [ ] Instructions/help text
-  - [ ] Loading state during upload
+  - [x] Import page at `/import`
+  - [x] File upload area (drag & drop)
+  - [x] Collection type selector
+  - [x] Upload button
+  - [x] Instructions/help text
+  - [x] Loading state during upload
 
 #### US-6.2: Implement CSV Upload & Parsing
 
@@ -577,7 +577,7 @@
   - [ ] Well-formatted JSON output
   - [ ] Download JSON file
 
-**Sprint 6 Total**: 34 story points (0 completed - 0% complete)
+**Sprint 6 Total**: 34 story points (5 completed - 14.7% complete)
 
 ---
 
@@ -586,8 +586,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 149 (Sprints 0-5 complete)
-- **Overall Progress**: 57.8%
+- **Completed Story Points**: 154 (Sprints 0-5 complete, Sprint 6: 1/6 stories)
+- **Overall Progress**: 59.7%
 
 ### Milestone Tracker
 
