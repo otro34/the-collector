@@ -19,7 +19,7 @@
 | Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
 | Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 5 | 🟡 In Progress | 2025-10-19 | -          | 3                 | 6             |
+| Sprint 5 | 🟡 In Progress | 2025-10-19 | -          | 5                 | 6             |
 | Sprint 6 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
@@ -465,7 +465,7 @@
 
 ### 2025-10-19 (Latest - Sprint 5 In Progress! 🚀)
 
-- **Sprint 5 IN PROGRESS**: 3 of 6 user stories completed (50% overall)
+- **Sprint 5 IN PROGRESS**: 5 of 6 user stories completed (83% overall)
 - Search & Filtering sprint making excellent progress
 - Features completed:
   - **US-5.1**: Global Search (Completed) ✅
@@ -536,6 +536,42 @@
     - Installed shadcn/ui components: Checkbox, Slider, Accordion
     - Component is fully reusable for US-5.4 (Music) and US-5.5 (Books)
     - All code passes type-check and build successfully
+  - **US-5.4**: Create Filter Sidebar for Music (Completed) ✅
+    - Created `/api/items/music/filters` endpoint:
+      - Fetches unique formats (CD, Vinyl, Cassette, Digital)
+      - Extracts unique genres from JSON data
+      - Builds list of unique artists
+      - Calculates year range from existing items
+    - Updated `/api/items/music` endpoint with filter support:
+      - Accepts filter parameters: formats, genres, artists, minYear, maxYear
+      - Database-level filtering for formats and artists
+      - In-memory filtering for genres (due to JSON storage in SQLite)
+      - Combined with existing sort and pagination functionality
+    - Integrated FilterSidebar into music page:
+      - Desktop: permanent sidebar (264px width, sticky positioning)
+      - Mobile: slide-out sheet with filter button and active count badge
+      - Reused FilterSidebar component from US-5.3
+      - Filter state management and query cache invalidation
+    - All code passes type-check and build successfully
+    - PR #24 merged
+  - **US-5.5**: Create Filter Sidebar for Books (Completed) ✅
+    - Created `/api/items/books/filters` endpoint:
+      - Fetches unique book types (MANGA, COMIC, GRAPHIC_NOVEL, OTHER)
+      - Extracts unique genres from JSON data
+      - Retrieves unique authors, series, and publishers
+      - Calculates year range from existing items
+    - Updated `/api/items/books` endpoint with filter support:
+      - Accepts filter parameters: bookTypes, genres, authors, series, publishers, minYear, maxYear
+      - Database-level filtering for book type, author, series, and publisher
+      - In-memory genre filtering (due to JSON storage in SQLite)
+      - Properly integrated with sort and pagination
+    - Integrated FilterSidebar into books page:
+      - Desktop: permanent sidebar (264px width, sticky positioning)
+      - Mobile: slide-out sheet with filter button and active count badge
+      - Successfully reused FilterSidebar component
+      - Filter state management with active filter count
+    - All code passes type-check and build successfully
+    - PR #25 merged
 - Technical improvements:
   - Proper Prisma type safety with ItemWithVideogame/Music/Book types
   - Next.js 15 Suspense boundary compliance
@@ -553,14 +589,16 @@
   - `src/components/ui/accordion.tsx` - shadcn/ui Accordion component
   - `src/components/ui/checkbox.tsx` - shadcn/ui Checkbox component
   - `src/components/ui/slider.tsx` - shadcn/ui Slider component
-- PRs created:
-  - [#20](https://github.com/otro34/the-collector/pull/20) - US-5.1 Global Search
-  - [#21](https://github.com/otro34/the-collector/pull/21) - US-5.2 Add Sorting
-  - [#23](https://github.com/otro34/the-collector/pull/23) - US-5.3 Filter Sidebar for Videogames
+- PRs created and merged:
+  - [#20](https://github.com/otro34/the-collector/pull/20) - US-5.1 Global Search (merged)
+  - [#21](https://github.com/otro34/the-collector/pull/21) - US-5.2 Add Sorting (merged)
+  - [#23](https://github.com/otro34/the-collector/pull/23) - US-5.3 Filter Sidebar for Videogames (merged)
+  - [#24](https://github.com/otro34/the-collector/pull/24) - US-5.4 Filter Sidebar for Music (merged)
+  - [#25](https://github.com/otro34/the-collector/pull/25) - US-5.5 Filter Sidebar for Books (merged)
 - Copilot reviews requested for all PRs
-- **Overall Progress**: 134/258 story points (51.9%)
-- **Sprint 5 Progress**: 21/36 story points (58.3% complete)
-- Ready to begin US-5.4: Create Filter Sidebar for Music
+- **Overall Progress**: 144/258 story points (55.8%)
+- **Sprint 5 Progress**: 31/36 story points (86.1% complete)
+- Ready to begin US-5.6: Add Search Within Collection (5 story points remaining)
 
 ### 2025-10-14 (Earlier - Sprint 4 Complete! 🎉)
 

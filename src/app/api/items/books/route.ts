@@ -39,6 +39,9 @@ export async function GET(request: NextRequest) {
     const sortField = searchParams.get('sortField') || 'createdAt'
     const sortDirection = (searchParams.get('sortDirection') || 'desc') as 'asc' | 'desc'
 
+    // Parse search query
+    const searchQuery = searchParams.get('q')?.trim()
+
     // Parse filter parameters
     const bookTypesParam = searchParams.get('bookTypes')
     const genresParam = searchParams.get('genres')
@@ -48,9 +51,20 @@ export async function GET(request: NextRequest) {
     const minYear = searchParams.get('minYear')
     const maxYear = searchParams.get('maxYear')
 
-    // Build where clause with filters
+    // Build where clause with filters and search
     const where: {
       collectionType: CollectionType
+      OR?: Array<{
+        title?: { contains: string }
+        description?: { contains: string }
+        book?: {
+          is?: {
+            author?: { contains: string }
+            series?: { contains: string }
+            publisher?: { contains: string }
+          }
+        }
+      }>
       book?: {
         is?: {
           type?: { in: BookType[] }
@@ -62,6 +76,35 @@ export async function GET(request: NextRequest) {
       year?: { gte?: number; lte?: number }
     } = {
       collectionType: CollectionType.BOOK,
+    }
+
+    // Apply search query if provided (searches title, description, author, series, publisher)
+    if (searchQuery) {
+      where.OR = [
+        { title: { contains: searchQuery } },
+        { description: { contains: searchQuery } },
+        {
+          book: {
+            is: {
+              author: { contains: searchQuery },
+            },
+          },
+        },
+        {
+          book: {
+            is: {
+              series: { contains: searchQuery },
+            },
+          },
+        },
+        {
+          book: {
+            is: {
+              publisher: { contains: searchQuery },
+            },
+          },
+        },
+      ]
     }
 
     // Book type filter
