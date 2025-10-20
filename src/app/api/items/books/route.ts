@@ -39,6 +39,78 @@ export async function GET(request: NextRequest) {
     const sortField = searchParams.get('sortField') || 'createdAt'
     const sortDirection = (searchParams.get('sortDirection') || 'desc') as 'asc' | 'desc'
 
+    // Parse filter parameters
+    const bookTypesParam = searchParams.get('bookTypes')
+    const genresParam = searchParams.get('genres')
+    const authorsParam = searchParams.get('authors')
+    const seriesParam = searchParams.get('series')
+    const publishersParam = searchParams.get('publishers')
+    const minYear = searchParams.get('minYear')
+    const maxYear = searchParams.get('maxYear')
+
+    // Build where clause with filters
+    const where: {
+      collectionType: CollectionType
+      book?: {
+        is?: {
+          type?: { in: BookType[] }
+          author?: { in: string[] }
+          series?: { in: string[] }
+          publisher?: { in: string[] }
+        }
+      }
+      year?: { gte?: number; lte?: number }
+    } = {
+      collectionType: CollectionType.BOOK,
+    }
+
+    // Book type filter
+    if (bookTypesParam) {
+      const bookTypes = bookTypesParam.split(',').filter(Boolean) as BookType[]
+      if (bookTypes.length > 0) {
+        if (!where.book) where.book = {}
+        if (!where.book.is) where.book.is = {}
+        where.book.is.type = { in: bookTypes }
+      }
+    }
+
+    // Author filter
+    if (authorsParam) {
+      const authors = authorsParam.split(',').filter(Boolean)
+      if (authors.length > 0) {
+        if (!where.book) where.book = {}
+        if (!where.book.is) where.book.is = {}
+        where.book.is.author = { in: authors }
+      }
+    }
+
+    // Series filter
+    if (seriesParam) {
+      const series = seriesParam.split(',').filter(Boolean)
+      if (series.length > 0) {
+        if (!where.book) where.book = {}
+        if (!where.book.is) where.book.is = {}
+        where.book.is.series = { in: series }
+      }
+    }
+
+    // Publisher filter
+    if (publishersParam) {
+      const publishers = publishersParam.split(',').filter(Boolean)
+      if (publishers.length > 0) {
+        if (!where.book) where.book = {}
+        if (!where.book.is) where.book.is = {}
+        where.book.is.publisher = { in: publishers }
+      }
+    }
+
+    // Year range filter
+    if (minYear || maxYear) {
+      where.year = {}
+      if (minYear) where.year.gte = parseInt(minYear, 10)
+      if (maxYear) where.year.lte = parseInt(maxYear, 10)
+    }
+
     // Map sort field to proper orderBy clause
     type OrderByInput = Record<string, 'asc' | 'desc' | Record<string, 'asc' | 'desc'>>
     let orderBy: OrderByInput = { createdAt: sortDirection }
@@ -62,24 +134,42 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    const items = await getAllItems({
-      where: { collectionType: CollectionType.BOOK },
-      take: limit,
-      skip,
+    // Fetch all items with database filters (without pagination for genre filtering)
+    let allItems = await getAllItems({
+      where,
       orderBy,
     })
 
-    const totalCount = await getAllItems({
-      where: { collectionType: CollectionType.BOOK },
-    })
+    // Genre filtering (in-memory, as genres are stored as JSON)
+    // Apply genre filter BEFORE pagination to ensure correct page slices
+    if (genresParam) {
+      const genresFilter = genresParam.split(',').filter(Boolean)
+      if (genresFilter.length > 0) {
+        allItems = allItems.filter((item) => {
+          if (!item.book?.genres) return false
+          try {
+            const genres = JSON.parse(item.book.genres)
+            if (!Array.isArray(genres)) return false
+            return genresFilter.some((genre) => genres.includes(genre))
+          } catch {
+            return false
+          }
+        })
+      }
+    }
+
+    // Apply pagination AFTER genre filtering
+    const total = allItems.length
+    const totalPages = Math.ceil(total / limit)
+    const items = allItems.slice(skip, skip + limit)
 
     return NextResponse.json({
       items,
       pagination: {
         page,
         limit,
-        total: totalCount.length,
-        totalPages: Math.ceil(totalCount.length / limit),
+        total,
+        totalPages,
       },
     })
   } catch (error) {
