@@ -2,7 +2,7 @@
 
 **Last Updated**: 2025-10-19
 
-## Current Sprint: Sprint 5 - Search & Filtering
+## Current Sprint: Sprint 6 - Data Import & Export
 
 **Status**: 🟡 In Progress
 **Start Date**: 2025-10-19
@@ -12,17 +12,17 @@
 
 ## Sprint Progress Overview
 
-| Sprint   | Status       | Start Date | End Date   | Completed Stories | Total Stories |
-| -------- | ------------ | ---------- | ---------- | ----------------- | ------------- |
-| Sprint 0 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 2 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 3 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 4 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 5 | 🟢 Completed | 2025-10-19 | 2025-10-19 | 6                 | 6             |
-| Sprint 6 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 7 | ⚪ Planned   | -          | -          | 0                 | 6             |
-| Sprint 8 | ⚪ Planned   | -          | -          | 0                 | 10            |
+| Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
+| -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
+| Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
+| Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
+| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 1                 | 6             |
+| Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -413,20 +413,188 @@
 
 ---
 
+## Sprint 5: Search & Filtering
+
+### User Stories
+
+#### US-5.1: Implement Global Search
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: [#20](https://github.com/otro34/the-collector/pull/20)
+- **Acceptance Criteria**:
+  - [x] Search bar in header searches across all collections
+  - [x] Results show item type (game, music, book)
+  - [x] Click result navigates to item detail
+  - [x] Debounced search (300ms)
+  - [x] Keyboard navigation support
+
+#### US-5.2: Add Sorting to Collection Pages
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: [#21](https://github.com/otro34/the-collector/pull/21)
+- **Acceptance Criteria**:
+  - [x] Sort by title, year, date added
+  - [x] Ascending/descending toggle
+  - [x] Sort persists in URL
+  - [x] Works with pagination
+
+#### US-5.3: Create Filter Sidebar for Videogames
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: [#23](https://github.com/otro34/the-collector/pull/23)
+- **Acceptance Criteria**:
+  - [x] Filter by platform, genre, publisher
+  - [x] Filter by year range (slider)
+  - [x] Active filter count badge
+  - [x] Clear all filters
+  - [x] Responsive (sidebar on desktop, sheet on mobile)
+
+#### US-5.4: Create Filter Sidebar for Music
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: [#24](https://github.com/otro34/the-collector/pull/24)
+- **Acceptance Criteria**:
+  - [x] Filter by format, genre, artist
+  - [x] Filter by year range
+  - [x] Reused FilterSidebar component
+  - [x] Active filter count
+
+#### US-5.5: Create Filter Sidebar for Books
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: [#25](https://github.com/otro34/the-collector/pull/25)
+- **Acceptance Criteria**:
+  - [x] Filter by book type, genre, author, series, publisher
+  - [x] Filter by year range
+  - [x] Reused FilterSidebar component
+
+#### US-5.6: Add Search Within Collection
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 7
+- **PR**: [#26](https://github.com/otro34/the-collector/pull/26)
+- **Acceptance Criteria**:
+  - [x] Search box on each collection page
+  - [x] Searches title, description, and key metadata
+  - [x] Works with filters and sort
+  - [x] Resets pagination on search
+
+**Sprint 5 Total**: 36 story points (all completed - 100% complete)
+
+---
+
+## Sprint 6: Data Import & Export
+
+### User Stories
+
+#### US-6.1: Create Import Page UI
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: [#27](https://github.com/otro34/the-collector/pull/27)
+- **Acceptance Criteria**:
+  - [x] Import page at `/import`
+  - [x] File upload area (drag & drop)
+  - [x] Collection type selector
+  - [x] Upload button
+  - [x] Instructions/help text
+  - [x] Loading state during upload
+
+#### US-6.2: Implement CSV Upload & Parsing
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] File upload accepts .csv files only
+  - [ ] CSV is parsed on upload
+  - [ ] Preview of first 10 rows shown
+  - [ ] Detected column names displayed
+  - [ ] Error handling for invalid CSV
+
+#### US-6.3: Build Column Mapping Interface
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Auto-detect column mapping when possible
+  - [ ] Manual dropdown to map each column
+  - [ ] Show required vs optional fields
+  - [ ] Validation before proceeding
+  - [ ] Save mapping for future imports
+
+#### US-6.4: Implement Data Validation & Import
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Validate each row before import
+  - [ ] Show validation errors (row number, field, error)
+  - [ ] Option to skip invalid rows or fix them
+  - [ ] Progress bar during import
+  - [ ] Import summary (success count, error count)
+  - [ ] Option to download error report
+
+#### US-6.5: Implement CSV Export
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Export button on each collection page
+  - [ ] Export all items or filtered subset
+  - [ ] Choose fields to include
+  - [ ] Download CSV file
+  - [ ] Maintain original CSV format compatibility
+
+#### US-6.6: Implement JSON Export
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Export button for JSON
+  - [ ] Export entire database or specific collection
+  - [ ] Well-formatted JSON output
+  - [ ] Download JSON file
+
+**Sprint 6 Total**: 34 story points (5 completed - 14.7% complete)
+
+---
+
 ## Overall Project Progress
 
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 113 (Sprints 0-4 complete)
-- **Overall Progress**: 43.8%
+- **Completed Story Points**: 154 (Sprints 0-5 complete, Sprint 6: 1/6 stories)
+- **Overall Progress**: 59.7%
 
 ### Milestone Tracker
 
 - [x] **Milestone 1**: Foundation Complete (Sprint 0-1)
 - [x] **Milestone 2**: Core UI & Collections (Sprint 2-3)
 - [x] **Milestone 3**: CRUD Operations (Sprint 4)
-- [ ] **Milestone 4**: Search & Data Management (Sprint 5-6)
+- [ ] **Milestone 4**: Search & Data Management (Sprint 5-6) - 50% complete (Sprint 5 done)
 - [ ] **Milestone 5**: Backup & Polish (Sprint 7-8)
 - [ ] **Milestone 6**: MVP Launch
 
