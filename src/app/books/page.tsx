@@ -20,6 +20,7 @@ import {
   type SortDirection,
 } from '@/components/shared/sort-control'
 import { CollectionSearch } from '@/components/shared/collection-search'
+import { ExportButton } from '@/components/shared/export-button'
 import { toast } from 'sonner'
 import type { Item, Book as BookType } from '@prisma/client'
 
@@ -310,6 +311,25 @@ function BooksPageContent() {
               </div>
 
               <div className="flex items-center gap-2">
+                {/* Export Button */}
+                {data && (
+                  <ExportButton
+                    collectionType="BOOK"
+                    currentFilters={{
+                      q: searchQuery || undefined,
+                      bookTypes: filters.bookTypes,
+                      genres: filters.genres,
+                      authors: filters.authors,
+                      series: filters.series,
+                      publishers: filters.publishers,
+                      minYear: filters.yearRange?.[0],
+                      maxYear: filters.yearRange?.[1],
+                    }}
+                    totalItems={data.pagination.total}
+                    className="hidden sm:flex"
+                  />
+                )}
+
                 {/* Mobile Filter Button */}
                 <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
                   <SheetTrigger asChild>
