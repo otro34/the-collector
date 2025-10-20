@@ -17,12 +17,27 @@ import { toast } from 'sonner'
 
 type CollectionType = 'VIDEOGAME' | 'MUSIC' | 'BOOK'
 
+interface ParsedPreview {
+  preview: Record<string, unknown>[]
+  columns: string[]
+  totalRows: number
+  validRows: number
+  invalidRows: number
+  errors: Array<{
+    row: number
+    field: string
+    message: string
+    value: unknown
+  }>
+}
+
 export default function ImportPage() {
   const router = useRouter()
   const [collectionType, setCollectionType] = useState<CollectionType>()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [parsedData, setParsedData] = useState<ParsedPreview | null>(null)
 
   // Validate and set file
   const validateAndSetFile = useCallback((file: File) => {
@@ -87,14 +102,32 @@ export default function ImportPage() {
     setIsUploading(true)
 
     try {
-      // TODO: Implement actual upload in US-6.2
-      // For now, just show a success message
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      toast.success('File uploaded successfully')
-      // router.push('/import/mapping') // Will navigate to mapping page in US-6.3
+      const formData = new FormData()
+      formData.append('file', selectedFile)
+      formData.append('collectionType', collectionType)
+
+      const response = await fetch('/api/import/parse', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to parse CSV file')
+      }
+
+      setParsedData(result)
+      toast.success(`CSV parsed successfully! Found ${result.validRows} valid rows.`)
+
+      // Show warning if there are invalid rows
+      if (result.invalidRows > 0) {
+        toast.warning(`${result.invalidRows} rows have validation errors`)
+      }
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error('Failed to upload file')
+      toast.error(error instanceof Error ? error.message : 'Failed to upload file')
+      setParsedData(null)
     } finally {
       setIsUploading(false)
     }
@@ -102,6 +135,7 @@ export default function ImportPage() {
 
   const handleClearFile = () => {
     setSelectedFile(null)
+    setParsedData(null)
   }
 
   return (
@@ -274,6 +308,123 @@ export default function ImportPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Preview Card - Only shown after successful upload */}
+        {parsedData && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Data Preview</CardTitle>
+              <CardDescription>
+                Preview of first 10 rows ({parsedData.validRows} valid rows,{' '}
+                {parsedData.invalidRows} invalid rows out of {parsedData.totalRows} total)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Column names */}
+              <div>
+                <h3 className="font-medium text-sm mb-2">
+                  Detected Columns ({parsedData.columns.length})
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {parsedData.columns.map((column, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full font-medium"
+                    >
+                      {column}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preview table */}
+              <div>
+                <h3 className="font-medium text-sm mb-2">First 10 Rows</h3>
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted">
+                        <tr>
+                          <th className="px-3 py-2 text-left font-medium text-xs">#</th>
+                          {parsedData.columns.map((column, index) => (
+                            <th key={index} className="px-3 py-2 text-left font-medium text-xs">
+                              {column}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {parsedData.preview.map((row, rowIndex) => (
+                          <tr key={rowIndex} className="border-t hover:bg-muted/50">
+                            <td className="px-3 py-2 text-muted-foreground">{rowIndex + 1}</td>
+                            {parsedData.columns.map((column, colIndex) => (
+                              <td key={colIndex} className="px-3 py-2">
+                                {typeof row[column] === 'object'
+                                  ? JSON.stringify(row[column])
+                                  : String(row[column] ?? '')}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* Validation errors (if any) */}
+              {parsedData.errors.length > 0 && (
+                <div>
+                  <h3 className="font-medium text-sm mb-2 text-destructive">
+                    Validation Errors (showing first 20)
+                  </h3>
+                  <div className="border rounded-lg border-destructive/20 bg-destructive/5 p-3 max-h-60 overflow-y-auto">
+                    <div className="space-y-2">
+                      {parsedData.errors.map((error, index) => (
+                        <div key={index} className="text-xs">
+                          <span className="font-medium">Row {error.row}:</span>{' '}
+                          <span className="text-muted-foreground">{error.field}</span> -{' '}
+                          {error.message}
+                          {error.value !== null && error.value !== undefined && (
+                            <span className="ml-1 text-muted-foreground">
+                              (value:{' '}
+                              {typeof error.value === 'object'
+                                ? JSON.stringify(error.value)
+                                : String(error.value)}
+                              )
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Next step button */}
+              <div className="flex justify-end gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setParsedData(null)
+                    setSelectedFile(null)
+                  }}
+                >
+                  Upload Different File
+                </Button>
+                <Button
+                  onClick={() => {
+                    // TODO: Navigate to column mapping page in US-6.3
+                    toast.info('Column mapping feature coming in US-6.3')
+                  }}
+                >
+                  Continue to Mapping
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   )
