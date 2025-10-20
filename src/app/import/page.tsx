@@ -15,13 +15,16 @@ import {
 } from '@/components/ui/select'
 import { toast } from 'sonner'
 import { ColumnMapping } from '@/components/import/column-mapping'
+import { ImportProgress } from '@/components/import/import-progress'
+import { ImportSummary } from '@/components/import/import-summary'
 
 type CollectionType = 'VIDEOGAME' | 'MUSIC' | 'BOOK'
 
-type ImportStep = 'upload' | 'mapping' | 'import'
+type ImportStep = 'upload' | 'mapping' | 'import' | 'complete'
 
 interface ParsedPreview {
   preview: Record<string, unknown>[]
+  fullData: Record<string, unknown>[]
   columns: string[]
   totalRows: number
   validRows: number
@@ -34,6 +37,21 @@ interface ParsedPreview {
   }>
 }
 
+interface ImportError {
+  row: number
+  field?: string
+  message: string
+  value?: unknown
+}
+
+interface ImportResult {
+  success: boolean
+  imported: number
+  failed: number
+  errors: ImportError[]
+  duration: number
+}
+
 export default function ImportPage() {
   const router = useRouter()
   const [step, setStep] = useState<ImportStep>('upload')
@@ -42,7 +60,9 @@ export default function ImportPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [parsedData, setParsedData] = useState<ParsedPreview | null>(null)
-  const [_columnMapping, setColumnMapping] = useState<Record<string, string>>({})
+  const [isImporting, setIsImporting] = useState(false)
+  const [importProgress, setImportProgress] = useState({ current: 0, total: 0 })
+  const [importResult, setImportResult] = useState<ImportResult | null>(null)
 
   // Validate and set file
   const validateAndSetFile = useCallback((file: File) => {
@@ -143,14 +163,139 @@ export default function ImportPage() {
     setParsedData(null)
   }
 
-  const handleMappingComplete = (mapping: Record<string, string>) => {
-    setColumnMapping(mapping)
+  const handleMappingComplete = async (mapping: Record<string, string>) => {
     setStep('import')
-    // TODO: Implement import step in US-6.4
-    toast.info('Import functionality coming in US-6.4')
+
+    // Start import process
+    await executeImport(mapping)
   }
 
   const handleBackToUpload = () => {
+    setStep('upload')
+  }
+
+  const executeImport = async (mapping: Record<string, string>) => {
+    if (!parsedData || !collectionType) return
+
+    setIsImporting(true)
+    const totalRows = parsedData.fullData.length
+    setImportProgress({ current: 0, total: totalRows })
+
+    try {
+      // Transform CSV data using column mapping
+      const transformedData = parsedData.fullData.map((row) => {
+        const transformed: Record<string, unknown> = {}
+        for (const [csvCol, dbField] of Object.entries(mapping)) {
+          if (dbField && row[csvCol] !== undefined) {
+            transformed[dbField] = row[csvCol]
+          }
+        }
+        return transformed
+      })
+
+      // Update progress after transformation
+      setImportProgress({ current: Math.floor(totalRows * 0.1), total: totalRows })
+
+      // Process in chunks for better progress feedback
+      const CHUNK_SIZE = 50
+      const chunks: Record<string, unknown>[][] = []
+      for (let i = 0; i < transformedData.length; i += CHUNK_SIZE) {
+        chunks.push(transformedData.slice(i, i + CHUNK_SIZE))
+      }
+
+      let totalImported = 0
+      let totalFailed = 0
+      const allErrors: ImportError[] = []
+
+      // Process each chunk
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i]
+
+        const response = await fetch('/api/import/execute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            collectionType,
+            data: chunk,
+            columnMapping: mapping,
+          }),
+        })
+
+        const result = await response.json()
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Import failed')
+        }
+
+        totalImported += result.imported
+        totalFailed += result.failed
+        allErrors.push(...result.errors)
+
+        // Update progress after each chunk
+        const processed = Math.min((i + 1) * CHUNK_SIZE, totalRows)
+        setImportProgress({ current: processed, total: totalRows })
+      }
+
+      // Create final result
+      const finalResult: ImportResult = {
+        success: true,
+        imported: totalImported,
+        failed: totalFailed,
+        errors: allErrors,
+        duration: 0, // We don't track total duration for chunked processing
+      }
+
+      setImportResult(finalResult)
+      setStep('complete')
+      toast.success(`Import complete! ${totalImported} items imported successfully.`)
+    } catch (error) {
+      console.error('Import error:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to import data')
+      setStep('mapping')
+    } finally {
+      setIsImporting(false)
+    }
+  }
+
+  const handleDownloadErrorReport = () => {
+    if (!importResult || importResult.errors.length === 0) return
+
+    // Create CSV content
+    const csvContent = [
+      ['Row', 'Field', 'Error', 'Value'].join(','),
+      ...importResult.errors.map((err) =>
+        [
+          err.row,
+          err.field || 'N/A',
+          `"${err.message.replace(/"/g, '""')}"`,
+          err.value !== null && err.value !== undefined
+            ? `"${String(err.value).replace(/"/g, '""')}"`
+            : '-',
+        ].join(',')
+      ),
+    ].join('\n')
+
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `import-errors-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+
+    toast.success('Error report downloaded')
+  }
+
+  const handleFinish = () => {
+    // Reset state and go back to upload
+    setParsedData(null)
+    setSelectedFile(null)
+    setImportResult(null)
     setStep('upload')
   }
 
@@ -507,6 +652,31 @@ export default function ImportPage() {
             />
           </CardContent>
         </Card>
+      )}
+
+      {/* Import Step */}
+      {step === 'import' && isImporting && (
+        <div className="flex justify-center">
+          <div className="w-full max-w-2xl">
+            <ImportProgress
+              current={importProgress.current}
+              total={importProgress.total}
+              status="Validating and importing items..."
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Complete Step */}
+      {step === 'complete' && importResult && (
+        <ImportSummary
+          imported={importResult.imported}
+          failed={importResult.failed}
+          errors={importResult.errors}
+          duration={importResult.duration}
+          onDownloadErrors={importResult.errors.length > 0 ? handleDownloadErrorReport : undefined}
+          onFinish={handleFinish}
+        />
       )}
     </div>
   )

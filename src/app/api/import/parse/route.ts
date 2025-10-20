@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       preview,
+      fullData: parseResult.data, // Include full dataset for import
       columns,
       totalRows: parseResult.stats.totalRows,
       validRows: parseResult.stats.validRows,
