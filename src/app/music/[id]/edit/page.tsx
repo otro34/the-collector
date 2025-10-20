@@ -92,9 +92,22 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
       }
       const item = await response.json()
 
-      // Parse genres and tags from JSON arrays to comma-separated strings
-      const genres = item.music?.genres ? JSON.parse(item.music.genres).join(', ') : ''
-      const tags = item.tags ? JSON.parse(item.tags).join(', ') : ''
+      // Helper function to safely parse JSON arrays or return as-is if already a string
+      const parseGenresOrTags = (data: string | null | undefined): string => {
+        if (!data) return ''
+        try {
+          const parsed = JSON.parse(data)
+          if (Array.isArray(parsed)) {
+            return parsed.join(', ')
+          }
+          return String(data) // Return as-is if not an array
+        } catch {
+          return String(data) // Return as-is if JSON parse fails
+        }
+      }
+
+      const genres = parseGenresOrTags(item.music?.genres)
+      const tags = parseGenresOrTags(item.tags)
 
       form.reset({
         title: item.title || '',
@@ -241,7 +254,11 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Format</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select format" />

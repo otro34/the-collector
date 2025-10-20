@@ -164,14 +164,39 @@ export default function NewVideogamePage() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      <SelectItem value="PC">PC</SelectItem>
                       <SelectItem value="Nintendo Switch">Nintendo Switch</SelectItem>
+                      <SelectItem value="Nintendo Wii U">Nintendo Wii U</SelectItem>
+                      <SelectItem value="Nintendo Wii">Nintendo Wii</SelectItem>
+                      <SelectItem value="Nintendo GameCube">Nintendo GameCube</SelectItem>
+                      <SelectItem value="Nintendo 64">Nintendo 64</SelectItem>
+                      <SelectItem value="Super Nintendo (SNES)">Super Nintendo (SNES)</SelectItem>
+                      <SelectItem value="Nintendo (NES)">Nintendo (NES)</SelectItem>
+                      <SelectItem value="Nintendo 3DS">Nintendo 3DS</SelectItem>
+                      <SelectItem value="Nintendo DS">Nintendo DS</SelectItem>
+                      <SelectItem value="Game Boy Advance">Game Boy Advance</SelectItem>
+                      <SelectItem value="Game Boy Color">Game Boy Color</SelectItem>
+                      <SelectItem value="Game Boy">Game Boy</SelectItem>
                       <SelectItem value="PlayStation 5">PlayStation 5</SelectItem>
                       <SelectItem value="PlayStation 4">PlayStation 4</SelectItem>
+                      <SelectItem value="PlayStation 3">PlayStation 3</SelectItem>
+                      <SelectItem value="PlayStation 2">PlayStation 2</SelectItem>
+                      <SelectItem value="PlayStation">PlayStation</SelectItem>
+                      <SelectItem value="PlayStation Vita">PlayStation Vita</SelectItem>
+                      <SelectItem value="PlayStation Portable (PSP)">
+                        PlayStation Portable (PSP)
+                      </SelectItem>
                       <SelectItem value="Xbox Series X|S">Xbox Series X|S</SelectItem>
                       <SelectItem value="Xbox One">Xbox One</SelectItem>
-                      <SelectItem value="PC">PC</SelectItem>
-                      <SelectItem value="Nintendo 3DS">Nintendo 3DS</SelectItem>
-                      <SelectItem value="PlayStation Vita">PlayStation Vita</SelectItem>
+                      <SelectItem value="Xbox 360">Xbox 360</SelectItem>
+                      <SelectItem value="Xbox">Xbox</SelectItem>
+                      <SelectItem value="Sega Dreamcast">Sega Dreamcast</SelectItem>
+                      <SelectItem value="Sega Saturn">Sega Saturn</SelectItem>
+                      <SelectItem value="Sega Genesis">Sega Genesis</SelectItem>
+                      <SelectItem value="Sega Master System">Sega Master System</SelectItem>
+                      <SelectItem value="Sega Game Gear">Sega Game Gear</SelectItem>
+                      <SelectItem value="Atari 2600">Atari 2600</SelectItem>
+                      <SelectItem value="Atari 7800">Atari 7800</SelectItem>
                       <SelectItem value="Other">Other</SelectItem>
                     </SelectContent>
                   </Select>
