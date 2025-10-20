@@ -9,7 +9,12 @@ This guide covers deploying The Collector to Vercel with a PostgreSQL database.
 
 ## Database Setup
 
-The application supports both SQLite (local development) and PostgreSQL (production).
+The application uses SQLite for local development and PostgreSQL for production deployment on Vercel.
+
+**Important**: Before deploying to production, you must manually update `prisma/schema.prisma`:
+
+- Change `provider = "sqlite"` to `provider = "postgresql"` in the datasource block
+- Commit this change to your production branch
 
 ### Option 1: Vercel Postgres (Recommended)
 
@@ -45,7 +50,6 @@ Go to your Vercel project → **Settings** → **Environment Variables** and add
 
 ```bash
 # Database (Production)
-DATABASE_PROVIDER=postgresql
 DATABASE_URL=postgresql://user:password@host:5432/database?sslmode=require
 
 # Google Custom Search API
@@ -77,7 +81,6 @@ After setting up your database and environment variables:
 ```bash
 # Set production DATABASE_URL temporarily
 export DATABASE_URL="your-production-database-url"
-export DATABASE_PROVIDER="postgresql"
 
 # Run migrations
 npm run db:migrate:deploy
@@ -106,7 +109,6 @@ cp .env.local.example .env.local
 2. Update `.env.local` with your credentials:
 
 ```bash
-DATABASE_PROVIDER=sqlite
 DATABASE_URL=file:./dev.db
 ```
 
