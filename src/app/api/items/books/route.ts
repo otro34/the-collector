@@ -134,35 +134,14 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    // Fetch items with filters
-    let items = await getAllItems({
+    // Fetch all items with database filters (without pagination for genre filtering)
+    let allItems = await getAllItems({
       where,
-      take: limit,
-      skip,
       orderBy,
     })
 
     // Genre filtering (in-memory, as genres are stored as JSON)
-    if (genresParam) {
-      const genresFilter = genresParam.split(',').filter(Boolean)
-      if (genresFilter.length > 0) {
-        items = items.filter((item) => {
-          if (!item.book?.genres) return false
-          try {
-            const genres = JSON.parse(item.book.genres)
-            if (!Array.isArray(genres)) return false
-            return genresFilter.some((genre) => genres.includes(genre))
-          } catch {
-            return false
-          }
-        })
-      }
-    }
-
-    // Get total count with same filters
-    let allItems = await getAllItems({ where })
-
-    // Apply genre filter to total count as well
+    // Apply genre filter BEFORE pagination to ensure correct page slices
     if (genresParam) {
       const genresFilter = genresParam.split(',').filter(Boolean)
       if (genresFilter.length > 0) {
@@ -179,13 +158,18 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Apply pagination AFTER genre filtering
+    const total = allItems.length
+    const totalPages = Math.ceil(total / limit)
+    const items = allItems.slice(skip, skip + limit)
+
     return NextResponse.json({
       items,
       pagination: {
         page,
         limit,
-        total: allItems.length,
-        totalPages: Math.ceil(allItems.length / limit),
+        total,
+        totalPages,
       },
     })
   } catch (error) {
