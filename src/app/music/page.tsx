@@ -44,7 +44,9 @@ function MusicPageContent() {
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const [view, setView] = useState<'grid' | 'list'>('grid')
-  const [page, setPage] = useState(1)
+
+  // Always read page from URL - single source of truth
+  const page = parseInt(searchParams.get('page') || '1', 10)
   const [selectedItem, setSelectedItem] = useState<ItemWithRelations | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -133,17 +135,24 @@ function MusicPageContent() {
 
   // Handle search change
   const handleSearchChange = (query: string) => {
-    setSearchQuery(query)
-    setPage(1) // Reset to first page when search changes
+    // Only reset page if the search query actually changed
+    if (query !== searchQuery) {
+      setSearchQuery(query)
+      // Reset to first page when search changes
+      if (page !== 1) {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('page', '1')
+        router.push(`/music?${params.toString()}`)
+      }
+    }
   }
 
   // Handle sort change
   const handleSortChange = (option: SortOption) => {
     setSortField(option.field)
     setSortDirection(option.direction)
-    setPage(1) // Reset to first page when sorting changes
 
-    // Update URL params for persistence
+    // Update URL params for persistence and reset to page 1
     const params = new URLSearchParams(searchParams.toString())
     params.set('sortField', option.field)
     params.set('sortDirection', option.direction)
@@ -154,7 +163,12 @@ function MusicPageContent() {
   // Handle filter change
   const handleFilterChange = (newFilters: FilterOptions) => {
     setFilters(newFilters)
-    setPage(1) // Reset to first page when filters change
+    // Reset to first page when filters change
+    if (page !== 1) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('page', '1')
+      router.push(`/music?${params.toString()}`)
+    }
     setFilterSheetOpen(false) // Close mobile sheet
   }
 
@@ -390,7 +404,12 @@ function MusicPageContent() {
                 <div className="flex items-center justify-center gap-2 mt-8">
                   <Button
                     variant="outline"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    onClick={() => {
+                      const newPage = Math.max(1, page - 1)
+                      const params = new URLSearchParams(searchParams.toString())
+                      params.set('page', newPage.toString())
+                      router.push(`/music?${params.toString()}`)
+                    }}
                     disabled={page === 1}
                   >
                     Previous
@@ -400,7 +419,12 @@ function MusicPageContent() {
                   </span>
                   <Button
                     variant="outline"
-                    onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
+                    onClick={() => {
+                      const newPage = Math.min(data.pagination.totalPages, page + 1)
+                      const params = new URLSearchParams(searchParams.toString())
+                      params.set('page', newPage.toString())
+                      router.push(`/music?${params.toString()}`)
+                    }}
                     disabled={page === data.pagination.totalPages}
                   >
                     Next
