@@ -6,13 +6,14 @@ import { Github } from 'lucide-react'
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: { callbackUrl?: string }
+  searchParams: Promise<{ callbackUrl?: string }>
 }) {
   const session = await auth()
+  const params = await searchParams
 
   // If already logged in, redirect to callback URL or home
   if (session) {
-    redirect(searchParams.callbackUrl || '/')
+    redirect(params.callbackUrl || '/')
   }
 
   return (
@@ -29,8 +30,9 @@ export default async function SignInPage({
           <form
             action={async () => {
               'use server'
+              const resolvedParams = await searchParams
               await signIn('github', {
-                redirectTo: searchParams.callbackUrl || '/',
+                redirectTo: resolvedParams.callbackUrl || '/',
               })
             }}
           >
