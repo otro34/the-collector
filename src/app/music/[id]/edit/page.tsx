@@ -151,8 +151,8 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
         throw new Error(errorData.error || 'Failed to update music')
       }
 
-      // Redirect to music collection page
-      router.push(`/music`)
+      // Redirect back to collection page with itemId to reopen the modal
+      router.push(`/music?itemId=${id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {

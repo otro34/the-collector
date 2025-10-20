@@ -224,6 +224,19 @@ function BooksPageContent() {
     setDeleteDialogOpen(true)
   }
 
+  const handleImageUpdate = (itemId: string, newCoverUrl: string) => {
+    // Update the selected item with the new cover URL
+    if (selectedItem && selectedItem.id === itemId) {
+      setSelectedItem({
+        ...selectedItem,
+        coverUrl: newCoverUrl,
+      })
+    }
+
+    // Invalidate queries to refresh the list in the background
+    queryClient.invalidateQueries({ queryKey: ['books'] })
+  }
+
   const confirmDelete = async () => {
     if (!itemToDelete) return
 
@@ -455,6 +468,7 @@ function BooksPageContent() {
             onOpenChange={setModalOpen}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onImageUpdate={handleImageUpdate}
           />
 
           {/* Delete Confirmation Dialog */}

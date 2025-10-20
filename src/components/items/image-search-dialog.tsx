@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Search, Loader2 } from 'lucide-react'
 import {
@@ -40,6 +40,16 @@ export function ImageSearchDialog({
   const [error, setError] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
+  // Reset query and clear state when dialog opens or initialQuery changes
+  useEffect(() => {
+    if (open) {
+      setQuery(initialQuery)
+      setImages([])
+      setError(null)
+      setSelectedImage(null)
+    }
+  }, [open, initialQuery])
+
   const searchImages = async () => {
     if (!query.trim()) return
 
@@ -73,10 +83,7 @@ export function ImageSearchDialog({
     if (selectedImage) {
       onSelectImage(selectedImage)
       onOpenChange(false)
-      // Reset state
-      setImages([])
-      setSelectedImage(null)
-      setQuery(initialQuery)
+      // State will be reset by useEffect when dialog reopens
     }
   }
 

@@ -154,8 +154,8 @@ export default function EditVideogamePage({ params }: { params: Promise<{ id: st
         throw new Error(errorData.error || 'Failed to update videogame')
       }
 
-      // Redirect to videogames collection page
-      router.push(`/videogames`)
+      // Redirect back to collection page with itemId to reopen the modal
+      router.push(`/videogames?itemId=${id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {

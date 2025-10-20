@@ -157,8 +157,8 @@ export default function EditBookPage({ params }: { params: Promise<{ id: string 
         throw new Error(errorData.error || 'Failed to update book')
       }
 
-      // Redirect to books collection page
-      router.push(`/books`)
+      // Redirect back to collection page with itemId to reopen the modal
+      router.push(`/books?itemId=${id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -271,10 +271,10 @@ export default function EditBookPage({ params }: { params: Promise<{ id: string 
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Manga">Manga</SelectItem>
-                        <SelectItem value="Comic">Comic</SelectItem>
-                        <SelectItem value="Graphic Novel">Graphic Novel</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
+                        <SelectItem value="MANGA">Manga</SelectItem>
+                        <SelectItem value="COMIC">Comic</SelectItem>
+                        <SelectItem value="GRAPHIC_NOVEL">Graphic Novel</SelectItem>
+                        <SelectItem value="OTHER">Other</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

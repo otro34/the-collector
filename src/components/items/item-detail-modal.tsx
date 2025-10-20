@@ -38,6 +38,7 @@ interface ItemDetailModalProps {
   onOpenChange: (open: boolean) => void
   onEdit?: (item: ItemWithRelations) => void
   onDelete?: (item: ItemWithRelations) => void
+  onImageUpdate?: (itemId: string, newCoverUrl: string) => void
 }
 
 export function ItemDetailModal({
@@ -46,6 +47,7 @@ export function ItemDetailModal({
   onOpenChange,
   onEdit,
   onDelete,
+  onImageUpdate,
 }: ItemDetailModalProps) {
   const [imageSearchOpen, setImageSearchOpen] = useState(false)
   const [updatingImage, setUpdatingImage] = useState(false)
@@ -69,8 +71,13 @@ export function ItemDetailModal({
         throw new Error('Failed to update cover image')
       }
 
-      // Refresh the page or update the item in the parent component
-      window.location.reload()
+      // Update the item in the parent component
+      if (onImageUpdate) {
+        onImageUpdate(item.id, imageUrl)
+      }
+
+      // Close the image search dialog
+      setImageSearchOpen(false)
     } catch (error) {
       console.error('Error updating cover image:', error)
       alert('Failed to update cover image. Please try again.')
