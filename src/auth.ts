@@ -1,9 +1,7 @@
 import NextAuth from 'next-auth'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/db'
 import { authConfig } from './auth.config'
 import type { NextAuthConfig } from 'next-auth'
-
-const prisma = new PrismaClient()
 
 // Extend the edge-compatible config with Prisma operations for Node.js runtime
 const config: NextAuthConfig = {
