@@ -9,13 +9,27 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { LogOut, User } from 'lucide-react'
+import { LogOut, User, Shield } from 'lucide-react'
+import Link from 'next/link'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export async function UserMenu() {
   const session = await auth()
 
   if (!session?.user) {
     return null
+  }
+
+  // Get user role from database
+  let userRole = 'USER'
+  if (session.user.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { role: true },
+    })
+    userRole = user?.role || 'USER'
   }
 
   const userInitials =
@@ -43,6 +57,17 @@ export async function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {userRole === 'ADMIN' && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/users" className="cursor-pointer">
+                <Shield className="mr-2 h-4 w-4" />
+                <span>User Management</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <DropdownMenuItem disabled>
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
