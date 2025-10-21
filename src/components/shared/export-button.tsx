@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Download } from 'lucide-react'
+import { Download, FileJson } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -14,14 +14,16 @@ import {
 } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { toast } from 'sonner'
 import type { CollectionType } from '@prisma/client'
 
 interface ExportButtonProps {
-  collectionType: CollectionType
+  collectionType?: CollectionType
   currentFilters?: Record<string, unknown>
   totalItems: number
   className?: string
+  exportAll?: boolean // For exporting entire database
 }
 
 // Field definitions for each collection type
@@ -86,13 +88,15 @@ export function ExportButton({
   currentFilters = {},
   totalItems,
   className,
+  exportAll: exportAllCollections = false,
 }: ExportButtonProps) {
   const [open, setOpen] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
   const [selectedFields, setSelectedFields] = useState<string[]>([])
   const [exportAll, setExportAll] = useState(true)
+  const [exportFormat, setExportFormat] = useState<'csv' | 'json'>('csv')
 
-  const fields = FIELD_OPTIONS[collectionType]
+  const fields = collectionType ? FIELD_OPTIONS[collectionType] : []
   const requiredFields = fields.filter((f) => f.required).map((f) => f.value)
 
   // Initialize with all fields selected
@@ -125,9 +129,15 @@ export function ExportButton({
   }
 
   const handleExport = async () => {
-    if (selectedFields.length === 0) {
-      toast.error('Please select at least one field to export')
-      return
+    if (exportFormat === 'csv') {
+      if (!collectionType) {
+        toast.error('CSV export requires a specific collection type')
+        return
+      }
+      if (selectedFields.length === 0) {
+        toast.error('Please select at least one field to export')
+        return
+      }
     }
 
     setIsExporting(true)
@@ -135,11 +145,23 @@ export function ExportButton({
     try {
       // Build query string
       const params = new URLSearchParams()
-      params.set('type', collectionType)
-      params.set('fields', selectedFields.join(','))
+
+      if (exportFormat === 'csv') {
+        params.set('type', collectionType!)
+        params.set('fields', selectedFields.join(','))
+      } else {
+        // JSON export
+        if (exportAllCollections) {
+          params.set('all', 'true')
+        } else if (collectionType) {
+          params.set('type', collectionType)
+        } else {
+          params.set('all', 'true')
+        }
+      }
 
       // Add current filters if exporting filtered data
-      if (!exportAll) {
+      if (!exportAll && collectionType) {
         Object.entries(currentFilters).forEach(([key, value]) => {
           if (value !== undefined && value !== null && value !== '') {
             if (Array.isArray(value) && value.length > 0) {
@@ -151,8 +173,9 @@ export function ExportButton({
         })
       }
 
-      // Fetch CSV
-      const response = await fetch(`/api/export?${params.toString()}`)
+      // Fetch data based on format
+      const endpoint = exportFormat === 'csv' ? '/api/export' : '/api/export/json'
+      const response = await fetch(`${endpoint}?${params.toString()}`)
 
       if (!response.ok) {
         throw new Error('Export failed')
@@ -161,7 +184,8 @@ export function ExportButton({
       // Get filename from Content-Disposition header
       const contentDisposition = response.headers.get('Content-Disposition')
       const filenameMatch = contentDisposition?.match(/filename="(.+)"/)
-      const filename = filenameMatch ? filenameMatch[1] : 'export.csv'
+      const defaultExt = exportFormat === 'csv' ? 'csv' : 'json'
+      const filename = filenameMatch ? filenameMatch[1] : `export.${defaultExt}`
 
       // Download file
       const blob = await response.blob()
@@ -194,18 +218,51 @@ export function ExportButton({
       <DialogTrigger asChild>
         <Button variant="outline" className={className}>
           <Download className="mr-2 h-4 w-4" />
-          Export CSV
+          Export
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Export to CSV</DialogTitle>
+          <DialogTitle>Export Collection</DialogTitle>
           <DialogDescription>
-            Choose which fields to include in your export. Required fields cannot be deselected.
+            Choose the export format and configure your export options.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
+          {/* Export format selection */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Export Format</Label>
+            <RadioGroup
+              value={exportFormat}
+              onValueChange={(value) => setExportFormat(value as 'csv' | 'json')}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="csv" id="format-csv" />
+                <Label
+                  htmlFor="format-csv"
+                  className="text-sm font-normal cursor-pointer flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  CSV Format
+                  <span className="text-xs text-muted-foreground">(Spreadsheet compatible)</span>
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="json" id="format-json" />
+                <Label
+                  htmlFor="format-json"
+                  className="text-sm font-normal cursor-pointer flex items-center gap-2"
+                >
+                  <FileJson className="h-4 w-4" />
+                  JSON Format
+                  <span className="text-xs text-muted-foreground">
+                    (Well-formatted, structured data)
+                  </span>
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
           {/* Export scope */}
           {hasFilters && (
             <div className="space-y-3">
@@ -235,45 +292,68 @@ export function ExportButton({
             </div>
           )}
 
-          {/* Field selection */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium">Fields to Export</Label>
-              <div className="space-x-2">
-                <Button variant="ghost" size="sm" onClick={selectAll}>
-                  Select All
-                </Button>
-                <Button variant="ghost" size="sm" onClick={deselectAll}>
-                  Deselect All
-                </Button>
-              </div>
+          {/* CSV export not available for all collections */}
+          {exportFormat === 'csv' && !collectionType && (
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                CSV export is only available for individual collections. Please use JSON format to
+                export all collections at once.
+              </p>
             </div>
+          )}
 
-            <div className="grid grid-cols-2 gap-3 p-4 border rounded-lg">
-              {fields.map((field) => (
-                <div key={field.value} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={field.value}
-                    checked={selectedFields.includes(field.value)}
-                    onCheckedChange={() => toggleField(field.value)}
-                  />
-                  <Label
-                    htmlFor={field.value}
-                    className="text-sm font-normal cursor-pointer flex items-center gap-2"
-                  >
-                    {field.label}
-                    {field.required && (
-                      <span className="text-xs text-muted-foreground">(required)</span>
-                    )}
-                  </Label>
+          {/* Field selection (CSV only) */}
+          {exportFormat === 'csv' && collectionType && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium">Fields to Export</Label>
+                <div className="space-x-2">
+                  <Button variant="ghost" size="sm" onClick={selectAll}>
+                    Select All
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={deselectAll}>
+                    Deselect All
+                  </Button>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            <p className="text-xs text-muted-foreground">
-              {selectedFields.length} of {fields.length} fields selected
-            </p>
-          </div>
+              <div className="grid grid-cols-2 gap-3 p-4 border rounded-lg">
+                {fields.map((field) => (
+                  <div key={field.value} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={field.value}
+                      checked={selectedFields.includes(field.value)}
+                      onCheckedChange={() => toggleField(field.value)}
+                    />
+                    <Label
+                      htmlFor={field.value}
+                      className="text-sm font-normal cursor-pointer flex items-center gap-2"
+                    >
+                      {field.label}
+                      {field.required && (
+                        <span className="text-xs text-muted-foreground">(required)</span>
+                      )}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                {selectedFields.length} of {fields.length} fields selected
+              </p>
+            </div>
+          )}
+
+          {/* JSON export info */}
+          {exportFormat === 'json' && (
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                JSON export includes all fields with proper structure and formatting. Arrays like
+                genres and tags will be exported as proper JSON arrays instead of comma-separated
+                strings.
+              </p>
+            </div>
+          )}
         </div>
 
         <DialogFooter>
