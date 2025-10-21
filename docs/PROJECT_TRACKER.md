@@ -1,11 +1,11 @@
 # The Collector - Project Tracker
 
-**Last Updated**: 2025-10-19
+**Last Updated**: 2025-10-21
 
-## Current Sprint: Sprint 6 - Data Import & Export
+## Current Sprint: Sprint 7 - Backup & Recovery
 
 **Status**: 🟡 In Progress
-**Start Date**: 2025-10-19
+**Start Date**: 2025-10-21
 **End Date**: TBD
 
 ---
@@ -21,7 +21,7 @@
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
 | Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 3                 | 6             |
-| Sprint 7 | ⚪ Planned     | -          | -          | 0                 | 6             |
+| Sprint 7 | 🟡 In Progress | 2025-10-21 | TBD        | 2                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
@@ -581,13 +581,51 @@
 
 ---
 
+## Sprint 7: Backup & Recovery
+
+### User Stories
+
+#### US-7.1: Create Backup Settings Page
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: [#38](https://github.com/otro34/the-collector/pull/38)
+- **Acceptance Criteria**:
+  - [x] Backup settings page at `/settings/backup`
+  - [x] Form with automatic backup toggle
+  - [x] Backup frequency selector (daily, weekly, monthly)
+  - [x] Backup retention setting
+  - [x] Cloud storage enable toggle
+  - [x] Cloud provider selector (S3, R2, Dropbox)
+  - [x] Provider-specific credential fields
+  - [x] Test connection button
+  - [x] Save settings functionality
+
+#### US-7.2: Implement Local Backup
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [x] "Create Backup" button on dashboard
+  - [x] Copies database to `/backups` directory
+  - [x] Filename includes timestamp
+  - [x] Success message with backup path
+  - [x] Backup record saved to Backup table
+
+**Sprint 7 Total**: 10 story points (10 completed so far)
+
+---
+
 ## Overall Project Progress
 
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 170 (Sprints 0-5 complete, Sprint 6: 3/6 stories)
-- **Overall Progress**: 65.9%
+- **Completed Story Points**: 180 (Sprints 0-5 complete, Sprint 6: 4/6 stories, Sprint 7: 2/6 stories)
+- **Overall Progress**: 69.8%
 
 ### Milestone Tracker
 
@@ -631,7 +669,50 @@
 
 ## Notes & Decisions
 
-### 2025-10-19 (Latest - Sprint 6 Progress: US-6.4 Complete! ⚡)
+### 2025-10-21 (Latest - Sprint 7 Progress: US-7.2 Complete! 💾)
+
+- **US-7.2 COMPLETED**: Implement Local Backup (5 story points)
+- Manual database backup functionality fully implemented
+- Features completed:
+  - ✅ Created backup API route at `/api/backup/create`
+    - POST endpoint that creates PostgreSQL database backups using `pg_dump`
+    - Generates timestamped backup files (format: `backup-YYYY-MM-DD_HH-MM-SS.sql`)
+    - Stores backups in `/backups` directory (creates directory if needed)
+    - Records backup metadata in Backup table (filename, size, itemCount, location, type)
+    - Returns comprehensive backup info (id, filename, size, itemCount, location, createdAt)
+    - Proper error handling with detailed error messages
+  - ✅ Enhanced dashboard with "Create Backup" button
+    - Button replaces navigation-only "Backup" button
+    - Loading state with spinner during backup creation
+    - Disabled state while backup is in progress
+    - Click handler calls backup API and displays results
+  - ✅ Success toast notification with backup details
+    - Shows backup filename and size in MB
+    - Displays item count that was backed up
+    - User-friendly success message
+    - Error toast with descriptive message on failure
+- Technical implementation:
+  - PostgreSQL backup using `pg_dump` command via Node.js `child_process`
+  - Reads `POSTGRES_URL` from environment variables
+  - Async file system operations with proper error handling
+  - Calculates file size using `fs.promises.stat`
+  - Query database for item count before backup
+  - 10MB buffer for pg_dump output
+  - Toast notifications using Sonner library
+- Database migration note:
+  - Project has migrated from SQLite to PostgreSQL (using Vercel Postgres)
+  - Backup strategy adapted for PostgreSQL (SQL dump instead of file copy)
+  - Backup table schema supports both local and cloud backups
+- Files created/modified:
+  - `src/app/api/backup/create/route.ts` (86 lines) - Backup creation API endpoint
+  - `src/app/dashboard/page.tsx` - Updated with backup functionality
+- All code passes type-check and lint
+- Build successful
+- **Sprint 7 Progress**: 10/36 story points (27.8% complete)
+- **Overall Progress**: 180/258 story points (69.8%)
+- Ready to begin US-7.3: List All Backups
+
+### 2025-10-19 (Earlier - Sprint 6 Progress: US-6.4 Complete! ⚡)
 
 - **US-6.4 COMPLETED**: Implement Data Validation & Import (8 story points)
 - Complete CSV import functionality with validation and progress tracking
