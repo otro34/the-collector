@@ -35,14 +35,33 @@ export async function POST() {
       return NextResponse.json({ error: 'Database URL not configured' }, { status: 500 })
     }
 
+    // Parse database URL to extract connection parameters safely
+    let dbParams: { host: string; port: string; database: string; user: string; password: string }
+    try {
+      const url = new URL(databaseUrl)
+      dbParams = {
+        host: url.hostname,
+        port: url.port || '5432',
+        database: url.pathname.slice(1), // Remove leading '/'
+        user: url.username,
+        password: url.password,
+      }
+    } catch (error) {
+      console.error('Failed to parse database URL:', error)
+      return NextResponse.json({ error: 'Invalid database URL format' }, { status: 500 })
+    }
+
     // Get item count before backup
     const itemCount = await prisma.item.count()
 
-    // Create database backup using pg_dump
+    // Create database backup using pg_dump with separate parameters (prevents command injection)
     try {
       const { stderr } = await execAsync(
-        `pg_dump "${databaseUrl}" > "${backupPath}"`,
-        { maxBuffer: 1024 * 1024 * 10 } // 10MB buffer
+        `PGPASSWORD="${dbParams.password}" pg_dump -h "${dbParams.host}" -p "${dbParams.port}" -U "${dbParams.user}" -d "${dbParams.database}" -f "${backupPath}"`,
+        {
+          maxBuffer: 1024 * 1024 * 10, // 10MB buffer
+          env: { ...process.env, PGPASSWORD: dbParams.password },
+        }
       )
 
       if (stderr && !stderr.includes('Notice:')) {
