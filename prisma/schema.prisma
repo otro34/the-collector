@@ -114,3 +114,26 @@ model Settings {
   value               Json            // JSON value
   updatedAt           DateTime        @updatedAt
 }
+
+// User roles
+enum UserRole {
+  ADMIN
+  USER
+}
+
+// Authorized Users (allowlist)
+model User {
+  id                  String          @id @default(cuid())
+  email               String          @unique
+  githubUsername      String?         @unique
+  name                String?
+  image               String?
+  role                UserRole        @default(USER)
+  isActive            Boolean         @default(true)
+  lastLoginAt         DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([email])
+  @@index([githubUsername])
+}
