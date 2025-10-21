@@ -28,13 +28,23 @@ export async function GET(request: Request) {
 
     // Extract relevant image information
     const images =
-      data.items?.map((item: any) => ({
-        url: item.link,
-        thumbnail: item.image?.thumbnailLink,
-        title: item.title,
-        width: item.image?.width,
-        height: item.image?.height,
-      })) || []
+      data.items?.map(
+        (item: {
+          link: string
+          title: string
+          image?: {
+            thumbnailLink?: string
+            width?: number
+            height?: number
+          }
+        }) => ({
+          url: item.link,
+          thumbnail: item.image?.thumbnailLink,
+          title: item.title,
+          width: item.image?.width,
+          height: item.image?.height,
+        })
+      ) || []
 
     return NextResponse.json({ images })
   } catch (error) {

@@ -1,8 +1,13 @@
 import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
 
-export default function AuthErrorPage({ searchParams }: { searchParams: { error?: string } }) {
-  const error = searchParams.error
+interface PageProps {
+  searchParams: Promise<{ error?: string }>
+}
+
+export default async function AuthErrorPage({ searchParams }: PageProps) {
+  const params = await searchParams
+  const error = params.error
 
   const getErrorMessage = () => {
     switch (error) {
