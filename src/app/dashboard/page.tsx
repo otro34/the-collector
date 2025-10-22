@@ -1,10 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
-import { Gamepad2, Music, BookOpen, Plus, Upload, Database } from 'lucide-react'
+import { Gamepad2, Music, BookOpen, Plus, Upload, Database, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import type { Item, CollectionType } from '@prisma/client'
 
 interface DashboardStats {
@@ -20,6 +22,8 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
+  const [isCreatingBackup, setIsCreatingBackup] = useState(false)
+
   const { data, isLoading, error } = useQuery<DashboardData>({
     queryKey: ['dashboard'],
     queryFn: async () => {
@@ -28,6 +32,38 @@ export default function DashboardPage() {
       return res.json()
     },
   })
+
+  async function handleCreateBackup() {
+    setIsCreatingBackup(true)
+    try {
+      const response = await fetch('/api/backup/create', {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create backup')
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        const { backup } = result
+        const sizeInMB = (backup.size / (1024 * 1024)).toFixed(2)
+        toast.success('Backup created successfully!', {
+          description: `${backup.filename} (${sizeInMB} MB) - ${backup.itemCount} items backed up`,
+        })
+      } else {
+        throw new Error(result.error || 'Failed to create backup')
+      }
+    } catch (error) {
+      console.error('Backup creation failed:', error)
+      toast.error('Failed to create backup', {
+        description: error instanceof Error ? error.message : 'Please try again later',
+      })
+    } finally {
+      setIsCreatingBackup(false)
+    }
+  }
 
   if (error) {
     return (
@@ -61,11 +97,18 @@ export default function DashboardPage() {
             Import
           </Link>
         </Button>
-        <Button variant="outline" asChild>
-          <Link href="/settings">
-            <Database className="mr-2 h-4 w-4" />
-            Backup
-          </Link>
+        <Button variant="outline" onClick={handleCreateBackup} disabled={isCreatingBackup}>
+          {isCreatingBackup ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating Backup...
+            </>
+          ) : (
+            <>
+              <Database className="mr-2 h-4 w-4" />
+              Create Backup
+            </>
+          )}
         </Button>
       </div>
 
