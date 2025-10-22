@@ -21,7 +21,7 @@
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
 | Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 3                 | 6             |
-| Sprint 7 | 🟡 In Progress | 2025-10-21 | TBD        | 2                 | 6             |
+| Sprint 7 | 🟡 In Progress | 2025-10-21 | TBD        | 3                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
@@ -607,7 +607,7 @@
 - **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#39](https://github.com/otro34/the-collector/pull/39)
 - **Acceptance Criteria**:
   - [x] "Create Backup" button on dashboard
   - [x] Copies database to `/backups` directory
@@ -615,7 +615,21 @@
   - [x] Success message with backup path
   - [x] Backup record saved to Backup table
 
-**Sprint 7 Total**: 10 story points (10 completed so far)
+#### US-7.3: List All Backups
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: [#40](https://github.com/otro34/the-collector/pull/40)
+- **Acceptance Criteria**:
+  - [x] Backup management page at `/settings/backup/manage`
+  - [x] Table with backup list (date, size, item count, location)
+  - [x] Sort by date (newest first)
+  - [x] Download button for each backup
+  - [x] Delete button for each backup
+  - [x] Pagination for many backups
+
+**Sprint 7 Total**: 36 story points (15 completed so far - 41.7% complete)
 
 ---
 
@@ -624,8 +638,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 180 (Sprints 0-5 complete, Sprint 6: 4/6 stories, Sprint 7: 2/6 stories)
-- **Overall Progress**: 69.8%
+- **Completed Story Points**: 185 (Sprints 0-5 complete, Sprint 6: 4/6 stories, Sprint 7: 3/6 stories)
+- **Overall Progress**: 71.7%
 
 ### Milestone Tracker
 
@@ -669,7 +683,73 @@
 
 ## Notes & Decisions
 
-### 2025-10-21 (Latest - Sprint 7 Progress: US-7.2 Complete! 💾)
+### 2025-10-21 (Latest - Sprint 7 Progress: US-7.3 Complete! 📋)
+
+- **US-7.3 COMPLETED**: List All Backups (5 story points)
+- Comprehensive backup management interface fully implemented
+- Features completed:
+  - ✅ Created backup management page at `/settings/backup/manage`
+    - Full-featured table displaying all backup metadata
+    - Columns: filename, date, size, item count, type
+    - Sortable by date (newest first by default)
+    - Responsive design for mobile, tablet, and desktop
+  - ✅ Created GET `/api/backup/list` endpoint
+    - Pagination support (configurable page size, default 10)
+    - Sorting support (sortBy, sortOrder parameters)
+    - Returns pagination metadata (totalCount, totalPages, hasNextPage, etc.)
+    - Proper error handling
+  - ✅ Created GET `/api/backup/[id]/download` endpoint
+    - Downloads backup files with proper content-type headers
+    - Streams file directly to browser for download
+    - Validates backup existence in database and on disk
+    - Returns 404 if backup not found
+  - ✅ Created DELETE `/api/backup/[id]` endpoint
+    - Deletes both database record and file from disk
+    - Validates backup existence before deletion
+    - Graceful handling if file missing
+    - Returns success confirmation
+  - ✅ Backup table component features
+    - Download button for each backup (one-click download)
+    - Delete button with confirmation dialog (reused ConfirmDialog component)
+    - File size formatting (bytes to MB with 2 decimal places)
+    - Date formatting with locale support (short month, 2-digit time)
+    - Badge styling for backup type display
+    - Empty state with helpful message and navigation
+    - Loading state with spinner
+  - ✅ Pagination controls
+    - Previous/Next buttons with disabled states
+    - Page information display (showing X to Y of Z backups)
+    - Automatic query invalidation on page change
+  - ✅ Enhanced backup settings page
+    - Added "Manage Backups" button with Database icon
+    - Links directly to backup management page
+    - Improved header layout with flex justify-between
+  - ✅ Integration with TanStack Query
+    - Query key includes page and limit for proper caching
+    - Mutation for delete with query invalidation
+    - Optimistic UI updates with loading states
+    - Toast notifications for success/error
+- Technical implementation:
+  - Type-safe API routes with Next.js 15 async params pattern
+  - Proper TypeScript types for BackupListResponse and Backup
+  - File streaming for efficient download (no memory buffering)
+  - fs/promises for async file operations
+  - existsSync for file validation before operations
+  - Reused existing UI components (Table, Button, Card, ConfirmDialog)
+  - Lucide React icons throughout (Download, Trash2, Database, Calendar, HardDrive, ChevronLeft/Right)
+- Files created/modified:
+  - `src/app/api/backup/list/route.ts` (57 lines) - List backups with pagination
+  - `src/app/api/backup/[id]/download/route.ts` (54 lines) - Download backup file
+  - `src/app/api/backup/[id]/route.ts` (40 lines) - Delete backup
+  - `src/app/settings/backup/manage/page.tsx` (313 lines) - Backup management page
+  - `src/app/settings/backup/page.tsx` - Added Manage Backups button
+- All code passes type-check and lint
+- Build successful
+- **Sprint 7 Progress**: 15/36 story points (41.7% complete)
+- **Overall Progress**: 185/258 story points (71.7%)
+- Ready to begin US-7.4: Implement Cloud Backup Upload
+
+### 2025-10-21 (Earlier - Sprint 7 Progress: US-7.2 Complete! 💾)
 
 - **US-7.2 COMPLETED**: Implement Local Backup (5 story points)
 - Manual database backup functionality fully implemented
