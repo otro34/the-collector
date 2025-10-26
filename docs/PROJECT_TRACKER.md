@@ -20,7 +20,7 @@
 | Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
-| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 4                 | 6             |
+| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 6                 | 7             |
 | Sprint 7 | 🟢 Completed   | 2025-10-21 | 2025-10-26 | 6                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
@@ -554,30 +554,48 @@
 
 #### US-6.5: Implement CSV Export
 
-- **Status**: ⚪ Not Started
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: N/A (implemented without dedicated PR)
 - **Acceptance Criteria**:
-  - [ ] Export button on each collection page
-  - [ ] Export all items or filtered subset
-  - [ ] Choose fields to include
-  - [ ] Download CSV file
-  - [ ] Maintain original CSV format compatibility
+  - [x] Export button on each collection page
+  - [x] Export all items or filtered subset
+  - [x] Choose fields to include
+  - [x] Download CSV file
+  - [x] Maintain original CSV format compatibility
 
 #### US-6.6: Implement JSON Export
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: N/A (implemented without dedicated PR)
+- **Acceptance Criteria**:
+  - [x] Export button for JSON
+  - [x] Export entire database or specific collection
+  - [x] Well-formatted JSON output
+  - [x] Download JSON file
+
+#### US-6.7: Create Settings Hub Page
 
 - **Status**: ⚪ Not Started
 - **Assigned**: Claude
 - **Story Points**: 3
 - **PR**: TBD
 - **Acceptance Criteria**:
-  - [ ] Export button for JSON
-  - [ ] Export entire database or specific collection
-  - [ ] Well-formatted JSON output
-  - [ ] Download JSON file
+  - [ ] Main settings page at `/settings` with navigation
+  - [ ] Navigation cards/sections for:
+    - [ ] Backup Settings (link to `/settings/backup`)
+    - [ ] General Settings (placeholder for future)
+    - [ ] Export/Import (placeholder or link to `/import`)
+    - [ ] About/Info (placeholder for future)
+  - [ ] Each card shows description and icon
+  - [ ] Responsive design (mobile, tablet, desktop)
+  - [ ] Consistent with app design system
+  - [ ] Dark mode support
 
-**Sprint 6 Total**: 34 story points (26 completed - 76.5% complete)
+**Sprint 6 Total**: 37 story points (34 completed - 91.9% complete)
 
 ---
 
@@ -676,16 +694,16 @@
 
 ### Completion Summary
 
-- **Total Story Points**: 258
-- **Completed Story Points**: 211 (Sprints 0-7 complete, Sprint 6: 4/6 stories)
-- **Overall Progress**: 81.8%
+- **Total Story Points**: 261
+- **Completed Story Points**: 219 (Sprints 0-7 complete, Sprint 6: 6/7 stories)
+- **Overall Progress**: 83.9%
 
 ### Milestone Tracker
 
 - [x] **Milestone 1**: Foundation Complete (Sprint 0-1)
 - [x] **Milestone 2**: Core UI & Collections (Sprint 2-3)
 - [x] **Milestone 3**: CRUD Operations (Sprint 4)
-- [ ] **Milestone 4**: Search & Data Management (Sprint 5-6) - 80% complete (Sprint 5 done, Sprint 6: 67% complete)
+- [ ] **Milestone 4**: Search & Data Management (Sprint 5-6) - 97% complete (Sprint 6: US-6.7 pending)
 - [x] **Milestone 5**: Backup Complete (Sprint 7) ✅
 - [ ] **Milestone 6**: Polish & Optimization (Sprint 8)
 - [ ] **Milestone 7**: MVP Launch
@@ -723,7 +741,64 @@
 
 ## Notes & Decisions
 
-### 2025-10-26 (Latest - Sprint 7 COMPLETE! 🎉)
+### 2025-10-26 (Latest - Sprint 6 COMPLETE! Export Functionality Discovered! 📦)
+
+- **SPRINT 6 COMPLETED**: Discovered that US-6.5 and US-6.6 were fully implemented but not tracked!
+- **US-6.5 & US-6.6 COMPLETED**: CSV Export and JSON Export (8 story points total)
+- Export functionality has been fully implemented across the application
+- Features discovered:
+  - ✅ Created comprehensive ExportButton component (`src/components/shared/export-button.tsx`)
+    - Export format selection (CSV or JSON)
+    - Export scope control (all items or filtered subset)
+    - Field selection for CSV exports with required field protection
+    - Support for all three collection types (VIDEOGAME, MUSIC, BOOK)
+    - Customizable fields per collection type
+    - Toast notifications for success/error
+  - ✅ Created CSV export API endpoint (`/api/export`)
+    - Accepts collection type as required parameter
+    - Supports field selection (comma-separated list)
+    - Supports all collection-type-specific filters (search, platforms, genres, etc.)
+    - CSV escaping for special characters
+    - Returns timestamped filename
+    - Proper error handling
+  - ✅ Created JSON export API endpoint (`/api/export/json`)
+    - Export entire database or specific collection type
+    - Supports all collection-type-specific filters
+    - Metadata included (exportDate, collectionType, totalItems, version)
+    - Well-formatted JSON output with 2-space indentation
+    - Timestamped filename
+  - ✅ Integrated export button into all collection pages
+    - Books collection page (`/books`)
+    - Music collection page (`/music`)
+    - Video games collection page (`/videogames`)
+- All acceptance criteria met for both user stories
+- Implementation quality:
+  - Full TypeScript type safety
+  - Comprehensive error handling
+  - Filter support for search, genres, platforms, formats, etc.
+  - Performance optimized with parallel queries
+  - User-friendly field labels and descriptions
+- **Sprint 6 Progress**: 34/34 story points (100% complete) ✅
+- **Sprint 7 Progress**: 36/36 story points (100% complete) ✅
+- **Overall Progress**: 219/261 story points (83.9%)
+- **US-6.7 ADDED**: Create Settings Hub Page (3 story points)
+  - New user story created to address missing settings navigation
+  - Main `/settings` page currently just a placeholder
+  - Settings hub will provide navigation to:
+    - Backup Settings (already implemented at `/settings/backup`)
+    - General Settings (placeholder for future)
+    - Export/Import (link to `/import` page)
+    - About/Info (placeholder for future)
+  - Design document specifies settings should have General, Backup, Export, and About sections
+  - Sprint 6 reopened to complete this user story
+- **Milestones Update**:
+  - Milestone 4: Search & Data Management (Sprint 5-6) - 97% complete (US-6.7 pending)
+  - Milestone 5: Backup Complete (Sprint 7) ✅
+- **Sprint 6 Status**: 6/7 stories complete (91.9%)
+- **Sprint 7 Status**: 6/6 stories complete (100%) ✅
+- Next task: Implement US-6.7 (Settings Hub Page)
+
+### 2025-10-26 (Earlier - Sprint 7 COMPLETE! 🎉)
 
 - **US-7.6 COMPLETED**: Implement Restore from Backup (10 story points)
 - **SPRINT 7 COMPLETED**: All 6 user stories finished! Backup & Recovery fully implemented
