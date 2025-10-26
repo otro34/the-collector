@@ -27,6 +27,8 @@ import {
   ChevronRight,
   Cloud,
   CloudUpload,
+  RotateCcw,
+  AlertTriangle,
 } from 'lucide-react'
 
 type Backup = {
@@ -57,6 +59,7 @@ export default function BackupManagePage() {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [restoreId, setRestoreId] = useState<string | null>(null)
   const limit = 10
 
   // Fetch backups
@@ -117,6 +120,35 @@ export default function BackupManagePage() {
     },
   })
 
+  // Restore backup mutation
+  const restoreMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/backup/${id}/restore`, {
+        method: 'POST',
+      })
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to restore backup')
+      }
+      return response.json()
+    },
+    onSuccess: (data) => {
+      toast.success(
+        `Database restored successfully! ${data.backup.restoredItemCount} items restored.`
+      )
+      setRestoreId(null)
+      // Refresh the page to show restored data
+      setTimeout(() => {
+        window.location.href = '/dashboard'
+      }, 2000)
+    },
+    onError: (error) => {
+      console.error('Restore error:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to restore backup')
+      setRestoreId(null)
+    },
+  })
+
   // Download backup
   const handleDownload = async (backup: Backup) => {
     try {
@@ -151,6 +183,17 @@ export default function BackupManagePage() {
   const confirmDelete = () => {
     if (deleteId) {
       deleteMutation.mutate(deleteId)
+    }
+  }
+
+  // Restore backup
+  const handleRestore = (id: string) => {
+    setRestoreId(id)
+  }
+
+  const confirmRestore = () => {
+    if (restoreId) {
+      restoreMutation.mutate(restoreId)
     }
   }
 
@@ -296,6 +339,20 @@ export default function BackupManagePage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRestore(backup.id)}
+                              disabled={restoreMutation.isPending}
+                              className="text-green-600 hover:text-green-700 dark:text-green-400"
+                            >
+                              {restoreMutation.isPending ? (
+                                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                              ) : (
+                                <RotateCcw className="h-4 w-4 mr-1" />
+                              )}
+                              Restore
+                            </Button>
                             {!isInCloud(backup.location) && (
                               <Button
                                 variant="outline"
@@ -379,6 +436,37 @@ export default function BackupManagePage() {
         title="Delete Backup"
         description="Are you sure you want to delete this backup? This action cannot be undone."
         confirmText="Delete"
+        variant="destructive"
+      />
+
+      {/* Restore Confirmation Dialog */}
+      <ConfirmDialog
+        open={restoreId !== null}
+        onOpenChange={(open) => !open && setRestoreId(null)}
+        onConfirm={confirmRestore}
+        title="Restore Database from Backup"
+        description={
+          <div className="space-y-3">
+            <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md">
+              <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+              <div className="text-sm space-y-2">
+                <p className="font-semibold text-amber-900 dark:text-amber-100">
+                  Warning: This will replace your current database!
+                </p>
+                <ul className="list-disc list-inside space-y-1 text-amber-800 dark:text-amber-200">
+                  <li>All current data will be permanently replaced</li>
+                  <li>Any changes made after this backup will be lost</li>
+                  <li>A safety backup will be created before restoring</li>
+                  <li>The page will refresh after restore completes</li>
+                </ul>
+              </div>
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              This operation cannot be undone. Make sure you want to restore from this backup.
+            </p>
+          </div>
+        }
+        confirmText="Yes, Restore Database"
         variant="destructive"
       />
     </div>
