@@ -232,8 +232,9 @@ export default function BackupLogsPage() {
             uploaded to your configured cloud provider after creation.
           </p>
           <p>
-            <strong>Vercel Cron:</strong> When deployed on Vercel, the scheduler runs via Vercel
-            Cron Jobs. Locally, you can start/stop the scheduler manually using the button above.
+            <strong>Vercel Cron:</strong> When deployed on Vercel Pro/Enterprise, you can configure
+            automatic hourly triggers via Vercel Cron Jobs (see VERCEL_CRON_SETUP.md). For Hobby
+            plans or manual control, use the scheduler button above or external cron services.
           </p>
         </CardContent>
       </Card>
