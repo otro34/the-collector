@@ -1,6 +1,6 @@
 # The Collector - Project Tracker
 
-**Last Updated**: 2025-10-21
+**Last Updated**: 2025-10-25
 
 ## Current Sprint: Sprint 7 - Backup & Recovery
 
@@ -20,8 +20,8 @@
 | Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
 | Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
-| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 3                 | 6             |
-| Sprint 7 | 🟡 In Progress | 2025-10-21 | TBD        | 3                 | 6             |
+| Sprint 6 | 🟡 In Progress | 2025-10-19 | TBD        | 4                 | 6             |
+| Sprint 7 | 🟡 In Progress | 2025-10-21 | TBD        | 4                 | 6             |
 | Sprint 8 | ⚪ Planned     | -          | -          | 0                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
@@ -629,7 +629,46 @@
   - [x] Delete button for each backup
   - [x] Pagination for many backups
 
-**Sprint 7 Total**: 36 story points (15 completed so far - 41.7% complete)
+#### US-7.4: Implement Cloud Backup Upload
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: [#41](https://github.com/otro34/the-collector/pull/41)
+- **Acceptance Criteria**:
+  - [x] Manual "Upload to Cloud" button
+  - [x] Uploads latest backup to configured cloud storage
+  - [x] Progress indicator during upload
+  - [x] Success/error message
+  - [x] Backup record updated with cloud URL
+
+#### US-7.5: Implement Scheduled Automatic Backups
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Scheduled job runs based on settings
+  - [ ] Respects backup frequency (daily, weekly, monthly)
+  - [ ] Automatic cleanup of old backups
+  - [ ] Email notification on backup completion
+  - [ ] Logs backup success/failure
+
+#### US-7.6: Implement Restore from Backup
+
+- **Status**: ⚪ Not Started
+- **Assigned**: Claude
+- **Story Points**: 10
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Restore button for each backup
+  - [ ] Confirmation dialog with warnings
+  - [ ] Download backup from cloud if needed
+  - [ ] Database restore functionality
+  - [ ] Success message with item count
+
+**Sprint 7 Total**: 36 story points (23 completed so far - 63.9% complete)
 
 ---
 
@@ -638,8 +677,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 258
-- **Completed Story Points**: 185 (Sprints 0-5 complete, Sprint 6: 4/6 stories, Sprint 7: 3/6 stories)
-- **Overall Progress**: 71.7%
+- **Completed Story Points**: 193 (Sprints 0-5 complete, Sprint 6: 4/6 stories, Sprint 7: 4/6 stories)
+- **Overall Progress**: 74.8%
 
 ### Milestone Tracker
 
@@ -683,7 +722,66 @@
 
 ## Notes & Decisions
 
-### 2025-10-21 (Latest - Sprint 7 Progress: US-7.3 Complete! 📋)
+### 2025-10-25 (Latest - Sprint 7 Progress: US-7.4 Complete! ☁️)
+
+- **US-7.4 COMPLETED**: Implement Cloud Backup Upload (8 story points)
+- Cloud backup upload functionality fully implemented for S3, R2, and Dropbox
+- Features completed:
+  - ✅ Created cloud storage utility library (`src/lib/cloud-storage.ts`)
+    - S3 upload and connection testing functions
+    - Cloudflare R2 upload and connection testing (S3-compatible API)
+    - Dropbox upload and connection testing
+    - Type-safe implementations with proper error handling
+    - Test connection functions validate credentials by attempting bucket/account access
+  - ✅ Implemented real cloud connection testing
+    - Updated `/api/settings/backup/test` endpoint
+    - Tests actual connection to S3/R2/Dropbox
+    - Returns success/error messages with details
+    - Validates credentials before allowing upload
+  - ✅ Created cloud upload API endpoint
+    - New POST `/api/backup/[id]/upload` endpoint
+    - Uploads existing local backup to configured cloud storage
+    - Loads cloud settings from database
+    - Updates backup record with cloud URL on success
+    - Proper error handling and status codes
+  - ✅ Enhanced backup creation API
+    - Automatic cloud upload after local backup creation
+    - Only uploads if cloud storage is enabled in settings
+    - Non-blocking: local backup succeeds even if cloud upload fails
+    - Returns cloud upload status in API response
+  - ✅ Updated backup management page
+    - Added "Location" column with Local/Cloud badges
+    - Added "Upload to Cloud" button for local backups
+    - Upload mutation with loading state and spinner
+    - Toast notifications for success/error
+    - Button only visible for local backups (hidden for cloud backups)
+    - Cloud badge shows green with cloud icon
+    - Local badge shows gray with hard drive icon
+- Technical implementation:
+  - Installed `@aws-sdk/client-s3` for S3 and R2
+  - Installed `dropbox` for Dropbox API
+  - Type guards ensure valid provider selection (s3, r2, dropbox)
+  - All cloud credentials loaded from database settings (secure)
+  - Proper error handling throughout all layers
+  - Non-blocking cloud uploads don't fail local backup creation
+  - File reading using fs/promises for async operations
+  - S3 and R2 use PutObjectCommand with proper content type
+  - Dropbox uses filesUpload with autorename
+- Files created/modified:
+  - `src/lib/cloud-storage.ts` (300+ lines) - Cloud storage utility
+  - `src/app/api/backup/[id]/upload/route.ts` (120+ lines) - Upload endpoint
+  - `src/app/api/settings/backup/test/route.ts` - Updated with real testing
+  - `src/app/api/backup/create/route.ts` - Added automatic cloud upload
+  - `src/app/settings/backup/manage/page.tsx` - Added upload button and location column
+- All code passes type-check and lint
+- Build successful
+- PR created: [#41](https://github.com/otro34/the-collector/pull/41)
+- Copilot review requested
+- **Sprint 7 Progress**: 23/36 story points (63.9% complete)
+- **Overall Progress**: 193/258 story points (74.8%)
+- Ready to begin US-7.5: Implement Scheduled Automatic Backups
+
+### 2025-10-21 (Earlier - Sprint 7 Progress: US-7.3 Complete! 📋)
 
 - **US-7.3 COMPLETED**: List All Backups (5 story points)
 - Comprehensive backup management interface fully implemented
