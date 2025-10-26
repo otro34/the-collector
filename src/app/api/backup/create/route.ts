@@ -5,6 +5,13 @@ import { promisify } from 'util'
 import { mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
+import {
+  uploadToCloud,
+  type CloudProvider,
+  type S3Config,
+  type R2Config,
+  type DropboxConfig,
+} from '@/lib/cloud-storage'
 
 const execAsync = promisify(exec)
 
@@ -86,6 +93,82 @@ export async function POST() {
       },
     })
 
+    // Check if cloud storage is enabled and upload
+    let cloudUploadResult: { success: boolean; url?: string; error?: string } | null = null
+
+    try {
+      const settingsRecord = await prisma.settings.findUnique({
+        where: { key: 'backup' },
+      })
+
+      if (settingsRecord) {
+        const settings = settingsRecord.value as Record<string, unknown>
+
+        if (settings.cloudStorageEnabled && settings.cloudProvider !== 'none') {
+          const provider = settings.cloudProvider as string
+
+          // Type guard to ensure valid provider
+          if (provider !== 's3' && provider !== 'r2' && provider !== 'dropbox') {
+            throw new Error('Invalid cloud provider')
+          }
+
+          // Build cloud config based on provider
+          let config: S3Config | R2Config | DropboxConfig
+
+          switch (provider) {
+            case 's3':
+              config = {
+                bucket: settings.s3Bucket as string,
+                region: settings.s3Region as string,
+                accessKeyId: settings.s3AccessKeyId as string,
+                secretAccessKey: settings.s3SecretAccessKey as string,
+              }
+              break
+
+            case 'r2':
+              config = {
+                accountId: settings.r2AccountId as string,
+                accessKeyId: settings.r2AccessKeyId as string,
+                secretAccessKey: settings.r2SecretAccessKey as string,
+              }
+              break
+
+            case 'dropbox':
+              config = {
+                accessToken: settings.dropboxAccessToken as string,
+              }
+              break
+
+            default:
+              throw new Error('Invalid cloud provider')
+          }
+
+          // Upload to cloud
+          cloudUploadResult = await uploadToCloud(
+            provider as CloudProvider,
+            backupPath,
+            filename,
+            config
+          )
+
+          // Update backup record with cloud URL if upload was successful
+          if (cloudUploadResult.success && cloudUploadResult.url) {
+            await prisma.backup.update({
+              where: { id: backupRecord.id },
+              data: { location: cloudUploadResult.url },
+            })
+          }
+        }
+      }
+    } catch (cloudError) {
+      console.error('Cloud upload failed:', cloudError)
+      // Don't fail the entire backup if cloud upload fails
+      cloudUploadResult = {
+        success: false,
+        error: cloudError instanceof Error ? cloudError.message : 'Cloud upload failed',
+      }
+    }
+
     return NextResponse.json({
       success: true,
       backup: {
@@ -93,9 +176,15 @@ export async function POST() {
         filename: backupRecord.filename,
         size: backupRecord.size,
         itemCount: backupRecord.itemCount,
-        location: backupRecord.location,
+        location: cloudUploadResult?.url || backupRecord.location,
         createdAt: backupRecord.createdAt,
       },
+      cloudUpload: cloudUploadResult
+        ? {
+            success: cloudUploadResult.success,
+            error: cloudUploadResult.error,
+          }
+        : null,
     })
   } catch (error) {
     console.error('Backup creation error:', error)
