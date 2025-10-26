@@ -50,6 +50,10 @@ model Item {
 
   @@index([collectionType])
   @@index([title])
+  @@index([year])
+  @@index([createdAt])
+  @@index([collectionType, year])
+  @@index([collectionType, createdAt])
 }
 
 // Video Game specific fields
@@ -65,6 +69,10 @@ model Videogame {
   edition             String?
   genres              String          @default("[]") // JSON string array
   metacriticScore     Int?
+
+  @@index([platform])
+  @@index([publisher])
+  @@index([developer])
 }
 
 // Music specific fields (vinyl/CD)
@@ -79,6 +87,10 @@ model Music {
   discCount           String?
   genres              String          @default("[]") // JSON string array
   tracklist           String?         @db.Text
+
+  @@index([artist])
+  @@index([format])
+  @@index([publisher])
 }
 
 // Book specific fields (manga, comics, etc.)
@@ -94,6 +106,11 @@ model Book {
   publisher           String?
   coverType           String?
   genres              String          @default("[]") // JSON string array
+
+  @@index([type])
+  @@index([author])
+  @@index([series])
+  @@index([publisher])
 }
 
 // Backup tracking
