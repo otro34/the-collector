@@ -1,5 +1,12 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
+import {
+  testCloudConnection,
+  type CloudProvider,
+  type S3Config,
+  type R2Config,
+  type DropboxConfig,
+} from '@/lib/cloud-storage'
 
 // POST /api/settings/backup/test - Test cloud storage connection
 export async function POST(request: NextRequest) {
@@ -11,37 +18,57 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No provider selected' }, { status: 400 })
     }
 
-    // For now, we'll just validate that credentials are provided
-    // In US-7.4, we'll implement actual cloud storage connection testing
-    let isValid = false
+    // Validate required fields
+    let config: S3Config | R2Config | DropboxConfig | null = null
     const missingFields: string[] = []
 
     switch (provider) {
       case 's3':
-        isValid = !!body.bucket && !!body.region && !!body.accessKeyId && !!body.secretAccessKey
         if (!body.bucket) missingFields.push('bucket')
         if (!body.region) missingFields.push('region')
         if (!body.accessKeyId) missingFields.push('accessKeyId')
         if (!body.secretAccessKey) missingFields.push('secretAccessKey')
+
+        if (missingFields.length === 0) {
+          config = {
+            bucket: body.bucket,
+            region: body.region,
+            accessKeyId: body.accessKeyId,
+            secretAccessKey: body.secretAccessKey,
+          }
+        }
         break
 
       case 'r2':
-        isValid = !!body.accountId && !!body.accessKeyId && !!body.secretAccessKey
         if (!body.accountId) missingFields.push('accountId')
         if (!body.accessKeyId) missingFields.push('accessKeyId')
         if (!body.secretAccessKey) missingFields.push('secretAccessKey')
+
+        if (missingFields.length === 0) {
+          config = {
+            accountId: body.accountId,
+            accessKeyId: body.accessKeyId,
+            secretAccessKey: body.secretAccessKey,
+            bucketName: body.bucketName,
+          }
+        }
         break
 
       case 'dropbox':
-        isValid = !!body.accessToken
         if (!body.accessToken) missingFields.push('accessToken')
+
+        if (missingFields.length === 0) {
+          config = {
+            accessToken: body.accessToken,
+          }
+        }
         break
 
       default:
         return NextResponse.json({ error: 'Invalid provider' }, { status: 400 })
     }
 
-    if (!isValid) {
+    if (missingFields.length > 0) {
       return NextResponse.json(
         {
           success: false,
@@ -51,13 +78,41 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Placeholder response - actual cloud connection testing will be implemented in US-7.4
-    return NextResponse.json({
-      success: true,
-      message: `${provider.toUpperCase()} credentials validated (actual connection testing will be implemented in Sprint 7)`,
-    })
+    if (!config) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to configure cloud storage',
+        },
+        { status: 400 }
+      )
+    }
+
+    // Test the actual connection
+    const result = await testCloudConnection(provider as CloudProvider, config)
+
+    if (result.success) {
+      return NextResponse.json({
+        success: true,
+        message: result.message,
+      })
+    } else {
+      return NextResponse.json(
+        {
+          success: false,
+          error: result.error || 'Connection test failed',
+        },
+        { status: 400 }
+      )
+    }
   } catch (error) {
     console.error('Connection test failed:', error)
-    return NextResponse.json({ success: false, error: 'Connection test failed' }, { status: 500 })
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Connection test failed',
+      },
+      { status: 500 }
+    )
   }
 }

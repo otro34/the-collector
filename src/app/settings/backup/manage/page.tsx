@@ -25,6 +25,8 @@ import {
   HardDrive,
   ChevronLeft,
   ChevronRight,
+  Cloud,
+  CloudUpload,
 } from 'lucide-react'
 
 type Backup = {
@@ -93,6 +95,28 @@ export default function BackupManagePage() {
     },
   })
 
+  // Upload to cloud mutation
+  const uploadMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/backup/${id}/upload`, {
+        method: 'POST',
+      })
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to upload backup')
+      }
+      return response.json()
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || 'Backup uploaded to cloud successfully')
+      queryClient.invalidateQueries({ queryKey: ['backups'] })
+    },
+    onError: (error) => {
+      console.error('Upload error:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to upload backup')
+    },
+  })
+
   // Download backup
   const handleDownload = async (backup: Backup) => {
     try {
@@ -146,6 +170,16 @@ export default function BackupManagePage() {
       hour: '2-digit',
       minute: '2-digit',
     }).format(date)
+  }
+
+  // Check if backup is in cloud
+  const isInCloud = (location: string) => {
+    return location.startsWith('https://') || location.startsWith('dropbox:')
+  }
+
+  // Handle cloud upload
+  const handleUploadToCloud = (id: string) => {
+    uploadMutation.mutate(id)
   }
 
   if (isLoading) {
@@ -211,27 +245,28 @@ export default function BackupManagePage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[30%]">Filename</TableHead>
-                      <TableHead className="w-[15%]">
+                      <TableHead className="w-[25%]">Filename</TableHead>
+                      <TableHead className="w-[13%]">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-2" />
                           Date
                         </div>
                       </TableHead>
-                      <TableHead className="w-[12%]">
+                      <TableHead className="w-[10%]">
                         <div className="flex items-center">
                           <HardDrive className="h-4 w-4 mr-2" />
                           Size
                         </div>
                       </TableHead>
-                      <TableHead className="w-[12%]">
+                      <TableHead className="w-[8%]">
                         <div className="flex items-center">
                           <Database className="h-4 w-4 mr-2" />
                           Items
                         </div>
                       </TableHead>
-                      <TableHead className="w-[12%]">Type</TableHead>
-                      <TableHead className="w-[19%] text-right">Actions</TableHead>
+                      <TableHead className="w-[10%]">Type</TableHead>
+                      <TableHead className="w-[10%]">Location</TableHead>
+                      <TableHead className="w-[24%] text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -246,8 +281,36 @@ export default function BackupManagePage() {
                             {backup.type}
                           </span>
                         </TableCell>
+                        <TableCell>
+                          {isInCloud(backup.location) ? (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                              <Cloud className="h-3 w-3 mr-1" />
+                              Cloud
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                              <HardDrive className="h-3 w-3 mr-1" />
+                              Local
+                            </span>
+                          )}
+                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
+                            {!isInCloud(backup.location) && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleUploadToCloud(backup.id)}
+                                disabled={uploadMutation.isPending}
+                              >
+                                {uploadMutation.isPending ? (
+                                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                                ) : (
+                                  <CloudUpload className="h-4 w-4 mr-1" />
+                                )}
+                                Upload
+                              </Button>
+                            )}
                             <Button
                               variant="outline"
                               size="sm"
