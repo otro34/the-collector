@@ -10,6 +10,8 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 import { CollectionGrid } from '@/components/collections/collection-grid'
 import { CollectionList } from '@/components/collections/collection-list'
+import { CollectionGridSkeleton } from '@/components/collections/collection-grid-skeleton'
+import { CollectionListSkeleton } from '@/components/collections/collection-list-skeleton'
 import { ItemDetailModal } from '@/components/items/item-detail-modal'
 import { ConfirmDialog } from '@/components/shared/confirm-dialog'
 import { FilterSidebar, type FilterOptions } from '@/components/collections/filter-sidebar'
@@ -400,19 +402,7 @@ function VideogamesPageContent() {
           {/* Loading State */}
           {isLoading && (
             <div className="space-y-4">
-              {view === 'grid' ? (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                  {Array.from({ length: 12 }).map((_, i) => (
-                    <div key={i} className="aspect-[2/3] animate-pulse bg-muted rounded-lg" />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <div key={i} className="h-32 animate-pulse bg-muted rounded-lg" />
-                  ))}
-                </div>
-              )}
+              {view === 'grid' ? <CollectionGridSkeleton /> : <CollectionListSkeleton />}
             </div>
           )}
 
