@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Loader2, Save, TestTube, ArrowLeft, Database } from 'lucide-react'
+import { Loader2, Save, TestTube, ArrowLeft, Database, Activity } from 'lucide-react'
 import Link from 'next/link'
 
 const backupSettingsSchema = z.object({
@@ -182,12 +182,20 @@ export default function BackupSettingsPage() {
               Configure automatic backups and cloud storage options
             </p>
           </div>
-          <Link href="/settings/backup/manage">
-            <Button variant="outline">
-              <Database className="h-4 w-4 mr-2" />
-              Manage Backups
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/settings/backup/logs">
+              <Button variant="outline">
+                <Activity className="h-4 w-4 mr-2" />
+                View Logs
+              </Button>
+            </Link>
+            <Link href="/settings/backup/manage">
+              <Button variant="outline">
+                <Database className="h-4 w-4 mr-2" />
+                Manage Backups
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
