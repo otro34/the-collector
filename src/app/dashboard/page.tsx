@@ -7,6 +7,7 @@ import { Gamepad2, Music, BookOpen, Plus, Upload, Database, Loader2 } from 'luci
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton'
 import type { Item, CollectionType } from '@prisma/client'
 
 interface DashboardStats {
@@ -75,6 +76,14 @@ export default function DashboardPage() {
     )
   }
 
+  if (isLoading) {
+    return (
+      <div className="container py-8">
+        <DashboardSkeleton />
+      </div>
+    )
+  }
+
   return (
     <div className="container py-8 space-y-8">
       {/* Header */}
@@ -121,13 +130,7 @@ export default function DashboardPage() {
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoading ? (
-                <div className="h-8 w-16 animate-pulse bg-muted rounded" />
-              ) : (
-                data?.stats.total || 0
-              )}
-            </div>
+            <div className="text-2xl font-bold">{data?.stats.total || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">Across all collections</p>
           </CardContent>
         </Card>
@@ -139,13 +142,7 @@ export default function DashboardPage() {
             <Gamepad2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoading ? (
-                <div className="h-8 w-16 animate-pulse bg-muted rounded" />
-              ) : (
-                data?.stats.videogames || 0
-              )}
-            </div>
+            <div className="text-2xl font-bold">{data?.stats.videogames || 0}</div>
             <Link
               href="/videogames"
               className="text-xs text-primary hover:underline mt-1 inline-block"
@@ -162,13 +159,7 @@ export default function DashboardPage() {
             <Music className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoading ? (
-                <div className="h-8 w-16 animate-pulse bg-muted rounded" />
-              ) : (
-                data?.stats.music || 0
-              )}
-            </div>
+            <div className="text-2xl font-bold">{data?.stats.music || 0}</div>
             <Link href="/music" className="text-xs text-primary hover:underline mt-1 inline-block">
               View collection →
             </Link>
@@ -182,13 +173,7 @@ export default function DashboardPage() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoading ? (
-                <div className="h-8 w-16 animate-pulse bg-muted rounded" />
-              ) : (
-                data?.stats.books || 0
-              )}
-            </div>
+            <div className="text-2xl font-bold">{data?.stats.books || 0}</div>
             <Link href="/books" className="text-xs text-primary hover:underline mt-1 inline-block">
               View collection →
             </Link>
@@ -260,13 +245,7 @@ export default function DashboardPage() {
           <CardDescription>Your last 20 added items</CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="space-y-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-16 animate-pulse bg-muted rounded" />
-              ))}
-            </div>
-          ) : data?.recentItems && data.recentItems.length > 0 ? (
+          {data?.recentItems && data.recentItems.length > 0 ? (
             <div className="space-y-2">
               {data.recentItems.map((item) => (
                 <Link
