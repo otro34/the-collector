@@ -4,25 +4,25 @@
 
 ## Current Sprint: Sprint 8 - Polish & Optimization
 
-**Status**: ⚪ Not Started
-**Start Date**: TBD
+**Status**: 🟡 In Progress
+**Start Date**: 2025-10-26
 **End Date**: TBD
 
 ---
 
 ## Sprint Progress Overview
 
-| Sprint   | Status       | Start Date | End Date   | Completed Stories | Total Stories |
-| -------- | ------------ | ---------- | ---------- | ----------------- | ------------- |
-| Sprint 0 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 3                 | 3             |
-| Sprint 1 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 2 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 5                 | 5             |
-| Sprint 3 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 4 | 🟢 Completed | 2025-10-14 | 2025-10-14 | 6                 | 6             |
-| Sprint 5 | 🟢 Completed | 2025-10-19 | 2025-10-19 | 6                 | 6             |
-| Sprint 6 | 🟢 Completed | 2025-10-19 | 2025-10-26 | 7                 | 7             |
-| Sprint 7 | 🟢 Completed | 2025-10-21 | 2025-10-26 | 6                 | 6             |
-| Sprint 8 | ⚪ Planned   | -          | -          | 0                 | 10            |
+| Sprint   | Status         | Start Date | End Date   | Completed Stories | Total Stories |
+| -------- | -------------- | ---------- | ---------- | ----------------- | ------------- |
+| Sprint 0 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 3                 | 3             |
+| Sprint 1 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 2 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 5                 | 5             |
+| Sprint 3 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 4 | 🟢 Completed   | 2025-10-14 | 2025-10-14 | 6                 | 6             |
+| Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
+| Sprint 6 | 🟢 Completed   | 2025-10-19 | 2025-10-26 | 7                 | 7             |
+| Sprint 7 | 🟢 Completed   | 2025-10-21 | 2025-10-26 | 6                 | 6             |
+| Sprint 8 | 🟡 In Progress | 2025-10-26 | -          | 1                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -690,13 +690,148 @@
 
 ---
 
+## Sprint 8: Polish & Optimization
+
+### User Stories
+
+#### US-8.1: Optimize Database Queries
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Analyze slow queries with Prisma query logging
+  - [ ] Add indexes where needed
+  - [ ] Optimize N+1 queries
+  - [ ] Add pagination to all list views
+  - [ ] Test with 1000+ items
+
+#### US-8.2: Implement Virtual Scrolling
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Virtual scrolling for grid view (optional)
+  - [ ] Smooth scrolling with 1000+ items
+  - [ ] No performance degradation
+
+#### US-8.3: Add Loading Skeletons
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Skeleton loaders for all data-fetching components
+  - [ ] Skeleton matches the layout of actual content
+  - [ ] Smooth transition from skeleton to content
+
+#### US-8.4: Implement Error Boundaries
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Error boundary component created
+  - [ ] Wraps main app content
+  - [ ] Shows friendly error message
+  - [ ] Logs error for debugging
+  - [ ] Reset button to try again
+
+#### US-8.5: Add Toast Notifications
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 3
+- **PR**: N/A (implemented in Sprint 4)
+- **Acceptance Criteria**:
+  - [x] Toast notification system installed (Sonner)
+  - [x] Success toasts for create/update/delete
+  - [x] Error toasts for failures
+  - [x] Consistent styling
+  - [x] Auto-dismiss after 3-5 seconds
+
+#### US-8.6: Add Keyboard Shortcuts
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] `/` to focus search
+  - [ ] `Esc` to close modals
+  - [ ] Arrow keys in search results
+  - [ ] `Ctrl/Cmd + K` for command palette (optional)
+  - [ ] Shortcuts documented in help page
+
+#### US-8.7: Improve Mobile Experience
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] All pages responsive and usable on mobile
+  - [ ] Touch-friendly buttons and links
+  - [ ] Mobile menu works smoothly
+  - [ ] Forms work on mobile keyboards
+  - [ ] Images load optimally
+
+#### US-8.8: Create Help/Documentation Page
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Help page at `/help`
+  - [ ] Sections for each feature
+  - [ ] Screenshots or demos
+  - [ ] FAQ section
+  - [ ] Keyboard shortcuts reference
+
+#### US-8.9: Accessibility Improvements
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] All images have alt text
+  - [ ] Proper heading hierarchy
+  - [ ] Focus indicators visible
+  - [ ] ARIA labels where needed
+  - [ ] Keyboard navigation works throughout
+  - [ ] Color contrast meets WCAG AA
+
+#### US-8.10: Performance Optimization
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Lighthouse score > 90
+  - [ ] First Contentful Paint < 1.5s
+  - [ ] Time to Interactive < 3.5s
+  - [ ] Bundle size optimized
+  - [ ] Images optimized
+
+**Sprint 8 Total**: 39 story points (1 completed - 2.6% complete)
+
+---
+
 ## Overall Project Progress
 
 ### Completion Summary
 
 - **Total Story Points**: 261
-- **Completed Story Points**: 222 (Sprints 0-7 complete)
-- **Overall Progress**: 85.1%
+- **Completed Story Points**: 225 (Sprints 0-7 complete + US-8.5)
+- **Overall Progress**: 86.2%
 
 ### Milestone Tracker
 
@@ -1704,12 +1839,12 @@
 | Sprint 2 | 22             | 22               | 22.0 points/day |
 | Sprint 3 | 31             | 31               | 31.0 points/day |
 | Sprint 4 | 31             | 31               | 31.0 points/day |
-| Sprint 5 | 36             | 8 (in progress)  | TBD             |
-| Sprint 6 | 34             | -                | -               |
-| Sprint 7 | 36             | -                | -               |
-| Sprint 8 | 39             | -                | -               |
+| Sprint 5 | 36             | 36               | 36.0 points/day |
+| Sprint 6 | 37             | 37               | 37.0 points/day |
+| Sprint 7 | 36             | 36               | 36.0 points/day |
+| Sprint 8 | 39             | 3 (in progress)  | TBD             |
 
-**Average Velocity**: 24.0 points/day (average of Sprint 0-4)
+**Average Velocity**: 27.9 points/day (average of Sprint 0-7)
 
 ---
 
