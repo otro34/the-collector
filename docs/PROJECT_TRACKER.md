@@ -22,7 +22,7 @@
 | Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
 | Sprint 6 | 🟢 Completed   | 2025-10-19 | 2025-10-26 | 7                 | 7             |
 | Sprint 7 | 🟢 Completed   | 2025-10-21 | 2025-10-26 | 6                 | 6             |
-| Sprint 8 | 🟡 In Progress | 2025-10-26 | -          | 1                 | 10            |
+| Sprint 8 | 🟡 In Progress | 2025-10-26 | -          | 4                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -696,38 +696,38 @@
 
 #### US-8.1: Optimize Database Queries
 
-- **Status**: 🔵 Pending
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#46](https://github.com/otro34/the-collector/pull/46)
 - **Acceptance Criteria**:
-  - [ ] Analyze slow queries with Prisma query logging
-  - [ ] Add indexes where needed
-  - [ ] Optimize N+1 queries
-  - [ ] Add pagination to all list views
-  - [ ] Test with 1000+ items
+  - [x] Analyze slow queries with Prisma query logging
+  - [x] Add indexes where needed
+  - [x] Optimize N+1 queries
+  - [x] Add pagination to all list views
+  - [x] Test with 1000+ items
 
 #### US-8.2: Implement Virtual Scrolling
 
-- **Status**: 🔵 Pending
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#48](https://github.com/otro34/the-collector/pull/48)
 - **Acceptance Criteria**:
-  - [ ] Virtual scrolling for grid view (optional)
-  - [ ] Smooth scrolling with 1000+ items
-  - [ ] No performance degradation
+  - [x] Virtual scrolling for grid view (optional)
+  - [x] Smooth scrolling with 1000+ items
+  - [x] No performance degradation
 
 #### US-8.3: Add Loading Skeletons
 
-- **Status**: 🔵 Pending
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 3
-- **PR**: TBD
+- **PR**: [#47](https://github.com/otro34/the-collector/pull/47)
 - **Acceptance Criteria**:
-  - [ ] Skeleton loaders for all data-fetching components
-  - [ ] Skeleton matches the layout of actual content
-  - [ ] Smooth transition from skeleton to content
+  - [x] Skeleton loaders for all data-fetching components
+  - [x] Skeleton matches the layout of actual content
+  - [x] Smooth transition from skeleton to content
 
 #### US-8.4: Implement Error Boundaries
 
@@ -821,7 +821,7 @@
   - [ ] Bundle size optimized
   - [ ] Images optimized
 
-**Sprint 8 Total**: 39 story points (1 completed - 2.6% complete)
+**Sprint 8 Total**: 39 story points (16 completed - 41.0% complete)
 
 ---
 
@@ -830,8 +830,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 261
-- **Completed Story Points**: 225 (Sprints 0-7 complete + US-8.5)
-- **Overall Progress**: 86.2%
+- **Completed Story Points**: 238 (Sprints 0-7 complete + US-8.1, US-8.2, US-8.3, US-8.5)
+- **Overall Progress**: 91.2%
 
 ### Milestone Tracker
 
