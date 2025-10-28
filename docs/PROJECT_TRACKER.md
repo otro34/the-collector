@@ -22,7 +22,7 @@
 | Sprint 5 | 🟢 Completed   | 2025-10-19 | 2025-10-19 | 6                 | 6             |
 | Sprint 6 | 🟢 Completed   | 2025-10-19 | 2025-10-26 | 7                 | 7             |
 | Sprint 7 | 🟢 Completed   | 2025-10-21 | 2025-10-26 | 6                 | 6             |
-| Sprint 8 | 🟡 In Progress | 2025-10-26 | -          | 4                 | 10            |
+| Sprint 8 | 🟡 In Progress | 2025-10-26 | -          | 5                 | 10            |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -770,16 +770,16 @@
 
 #### US-8.7: Improve Mobile Experience
 
-- **Status**: 🔵 Pending
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#49](https://github.com/otro34/the-collector/pull/49)
 - **Acceptance Criteria**:
-  - [ ] All pages responsive and usable on mobile
-  - [ ] Touch-friendly buttons and links
-  - [ ] Mobile menu works smoothly
-  - [ ] Forms work on mobile keyboards
-  - [ ] Images load optimally
+  - [x] All pages responsive and usable on mobile
+  - [x] Touch-friendly buttons and links
+  - [x] Mobile menu works smoothly
+  - [x] Forms work on mobile keyboards
+  - [x] Images load optimally
 
 #### US-8.8: Create Help/Documentation Page
 
@@ -821,7 +821,7 @@
   - [ ] Bundle size optimized
   - [ ] Images optimized
 
-**Sprint 8 Total**: 39 story points (16 completed - 41.0% complete)
+**Sprint 8 Total**: 39 story points (21 completed - 53.8% complete)
 
 ---
 
@@ -830,8 +830,8 @@
 ### Completion Summary
 
 - **Total Story Points**: 261
-- **Completed Story Points**: 238 (Sprints 0-7 complete + US-8.1, US-8.2, US-8.3, US-8.5)
-- **Overall Progress**: 91.2%
+- **Completed Story Points**: 243 (Sprints 0-7 complete + US-8.1, US-8.2, US-8.3, US-8.5, US-8.7)
+- **Overall Progress**: 93.1%
 
 ### Milestone Tracker
 

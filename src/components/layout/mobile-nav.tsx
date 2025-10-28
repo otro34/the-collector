@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Gamepad2, Music, BookOpen, LayoutDashboard, Upload, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { GlobalSearch } from '@/components/shared/global-search'
 
 export function MobileNav() {
   const pathname = usePathname()
@@ -11,67 +13,75 @@ export function MobileNav() {
     {
       href: '/dashboard',
       label: 'Dashboard',
+      icon: LayoutDashboard,
       active: pathname === '/dashboard',
     },
     {
       href: '/videogames',
       label: 'Video Games',
+      icon: Gamepad2,
       active: pathname?.startsWith('/videogames'),
     },
     {
       href: '/music',
       label: 'Music',
+      icon: Music,
       active: pathname?.startsWith('/music'),
     },
     {
       href: '/books',
       label: 'Books',
+      icon: BookOpen,
       active: pathname?.startsWith('/books'),
     },
     {
       href: '/import',
       label: 'Import',
+      icon: Upload,
       active: pathname?.startsWith('/import'),
     },
     {
       href: '/settings',
       label: 'Settings',
+      icon: Settings,
       active: pathname?.startsWith('/settings'),
     },
   ]
 
   return (
-    <nav className="flex flex-col space-y-4 mt-6">
-      <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-lg font-semibold">Navigation</h2>
-        <div className="space-y-1">
-          {routes.map((route) => (
-            <Link
-              key={route.href}
-              href={route.href}
-              className={cn(
-                'block px-4 py-2 text-sm font-medium rounded-md transition-colors hover:bg-accent',
-                route.active
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              {route.label}
-            </Link>
-          ))}
+    <nav className="flex flex-col space-y-6 mt-6">
+      {/* Mobile Search */}
+      <div className="px-3">
+        <h2 className="mb-3 px-4 text-lg font-semibold">Search</h2>
+        <div className="px-4">
+          <GlobalSearch />
         </div>
       </div>
 
-      {/* Mobile Search */}
-      <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-lg font-semibold">Search</h2>
-        <div className="px-4">
-          <input
-            type="search"
-            placeholder="Search collections..."
-            className="w-full px-4 py-2 rounded-md border bg-background text-sm outline-none focus:border-primary"
-            disabled
-          />
+      {/* Navigation Links */}
+      <div className="px-3">
+        <h2 className="mb-3 px-4 text-lg font-semibold">Navigation</h2>
+        <div className="space-y-1">
+          {routes.map((route) => {
+            const Icon = route.icon
+            return (
+              <Link
+                key={route.href}
+                href={route.href}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-colors',
+                  'hover:bg-accent active:scale-[0.98]',
+                  'min-h-[44px]', // Minimum touch target size
+                  route.active
+                    ? 'bg-accent text-accent-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span>{route.label}</span>
+              </Link>
+            )
+          })}
         </div>
       </div>
     </nav>
