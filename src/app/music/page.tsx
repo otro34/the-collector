@@ -8,8 +8,11 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import { CollectionGrid } from '@/components/collections/collection-grid'
 import { CollectionList } from '@/components/collections/collection-list'
+import { VirtualizedCollectionGrid } from '@/components/collections/virtualized-collection-grid'
 import { CollectionGridSkeleton } from '@/components/collections/collection-grid-skeleton'
 import { CollectionListSkeleton } from '@/components/collections/collection-list-skeleton'
 import { ItemDetailModal } from '@/components/items/item-detail-modal'
@@ -47,6 +50,7 @@ function MusicPageContent() {
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const [view, setView] = useState<'grid' | 'list'>('grid')
+  const [useVirtualScroll, setUseVirtualScroll] = useState(false)
 
   // Always read page from URL - single source of truth
   const page = parseInt(searchParams.get('page') || '1', 10)
@@ -99,8 +103,8 @@ function MusicPageContent() {
   // Build query string from search, filters, and sort
   const buildQueryString = () => {
     const params = new URLSearchParams()
-    params.set('page', page.toString())
-    params.set('limit', '50')
+    params.set('page', useVirtualScroll ? '1' : page.toString())
+    params.set('limit', useVirtualScroll ? '1000' : '50') // Load more items for virtual scrolling
     params.set('sortField', sortField)
     params.set('sortDirection', sortDirection)
 
@@ -127,7 +131,7 @@ function MusicPageContent() {
   }
 
   const { data, isLoading, error } = useQuery<MusicResponse>({
-    queryKey: ['music', page, sortField, sortDirection, searchQuery, filters],
+    queryKey: ['music', page, sortField, sortDirection, searchQuery, filters, useVirtualScroll],
     queryFn: async () => {
       const queryString = buildQueryString()
       const res = await fetch(`/api/items/music?${queryString}`)
@@ -300,7 +304,19 @@ function MusicPageContent() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Virtual Scroll Toggle */}
+                <div className="flex items-center gap-2 border rounded-lg px-3 py-2">
+                  <Checkbox
+                    id="virtual-scroll"
+                    checked={useVirtualScroll}
+                    onCheckedChange={(checked) => setUseVirtualScroll(checked as boolean)}
+                  />
+                  <Label htmlFor="virtual-scroll" className="text-sm font-medium cursor-pointer">
+                    Virtual Scroll
+                  </Label>
+                </div>
+
                 {/* Export Button */}
                 {data && (
                   <ExportButton
@@ -407,11 +423,19 @@ function MusicPageContent() {
           {!isLoading && data && (
             <>
               {view === 'grid' ? (
-                <CollectionGrid
-                  items={data.items}
-                  collectionType="MUSIC"
-                  onItemClick={handleItemClick}
-                />
+                useVirtualScroll ? (
+                  <VirtualizedCollectionGrid
+                    items={data.items}
+                    collectionType="MUSIC"
+                    onItemClick={handleItemClick}
+                  />
+                ) : (
+                  <CollectionGrid
+                    items={data.items}
+                    collectionType="MUSIC"
+                    onItemClick={handleItemClick}
+                  />
+                )
               ) : (
                 <CollectionList
                   items={data.items}
@@ -420,8 +444,8 @@ function MusicPageContent() {
                 />
               )}
 
-              {/* Pagination */}
-              {data.pagination.totalPages > 1 && (
+              {/* Pagination - hide when virtual scrolling is enabled */}
+              {!useVirtualScroll && data.pagination.totalPages > 1 && (
                 <div className="flex items-center justify-center gap-2 mt-8">
                   <Button
                     variant="outline"

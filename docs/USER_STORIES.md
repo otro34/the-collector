@@ -1536,22 +1536,74 @@ Performance optimization, error handling, and UX improvements.
 
 ---
 
+### Sprint 9: Enhanced Data Entry & ISBN Integration
+
+**Goal**: Implement advanced book addition features using ISBN
+**Duration**: 2 weeks
+
+#### User Stories
+
+**US-9.1: Add Book by ISBN Code**
+
+- **As a** user
+- **I want** to add books to my collection using ISBN codes
+- **So that** I can quickly add books without manually entering all details
+
+**Acceptance Criteria**:
+
+- [ ] Option to add book via ISBN on the add book page
+- [ ] Manual ISBN input field with validation (ISBN-10 or ISBN-13)
+- [ ] Camera/barcode scanner option to scan ISBN barcode
+- [ ] Camera permission request handling
+- [ ] Barcode detection and ISBN extraction
+- [ ] Fetch book metadata from ISBN lookup API (e.g., Google Books API, Open Library API)
+- [ ] Pre-fill book form with fetched data (title, author, publisher, year, cover image, etc.)
+- [ ] Allow user to review and edit fetched data before saving
+- [ ] Fallback to manual entry if ISBN lookup fails
+- [ ] Success/error messages for ISBN lookup
+- [ ] Works on both mobile and desktop (camera on mobile, webcam on desktop)
+- [ ] Loading state during API fetch
+- [ ] Handle missing or incomplete data from API
+
+**Tasks**:
+
+- Research and select ISBN lookup API (Google Books API, Open Library API)
+- Create ISBN validation utility (support both ISBN-10 and ISBN-13)
+- Build manual ISBN input component
+- Implement barcode scanner component (using library like `html5-qrcode` or `quagga2`)
+- Request and handle camera permissions
+- Create API route to fetch book data by ISBN
+- Integrate with chosen ISBN lookup service
+- Map API response to book form fields
+- Update AddBookForm to support ISBN entry mode
+- Add toggle between manual entry and ISBN entry
+- Handle API errors and rate limits
+- Add loading indicators
+- Test on multiple devices (mobile, tablet, desktop)
+- Test with various ISBN formats
+- Document ISBN feature usage
+
+**Effort**: 13 story points
+
+---
+
 ## Sprint Summary
 
-| Sprint   | Duration | Story Points | Focus                     |
-| -------- | -------- | ------------ | ------------------------- |
-| Sprint 0 | 3-5 days | 5            | Project Setup             |
-| Sprint 1 | 2 weeks  | 24           | Database & Data Migration |
-| Sprint 2 | 2 weeks  | 22           | Core UI & Layout          |
-| Sprint 3 | 2 weeks  | 31           | Collection Views          |
-| Sprint 4 | 2 weeks  | 31           | CRUD Operations           |
-| Sprint 5 | 2 weeks  | 36           | Search & Filtering        |
-| Sprint 6 | 2 weeks  | 37           | Import & Export           |
-| Sprint 7 | 2 weeks  | 36           | Backup & Restore          |
-| Sprint 8 | 2 weeks  | 39           | Polish & Optimization     |
+| Sprint   | Duration | Story Points | Focus                      |
+| -------- | -------- | ------------ | -------------------------- |
+| Sprint 0 | 3-5 days | 5            | Project Setup              |
+| Sprint 1 | 2 weeks  | 24           | Database & Data Migration  |
+| Sprint 2 | 2 weeks  | 22           | Core UI & Layout           |
+| Sprint 3 | 2 weeks  | 31           | Collection Views           |
+| Sprint 4 | 2 weeks  | 31           | CRUD Operations            |
+| Sprint 5 | 2 weeks  | 36           | Search & Filtering         |
+| Sprint 6 | 2 weeks  | 37           | Import & Export            |
+| Sprint 7 | 2 weeks  | 36           | Backup & Restore           |
+| Sprint 8 | 2 weeks  | 39           | Polish & Optimization      |
+| Sprint 9 | 2 weeks  | 13           | Enhanced Data Entry & ISBN |
 
-**Total**: ~9 sprints, ~18 weeks (4-5 months)
-**Total Story Points**: 261
+**Total**: ~10 sprints, ~19 weeks (4.5-5 months)
+**Total Story Points**: 274
 
 ---
 
