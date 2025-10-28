@@ -28,6 +28,7 @@ import { CollectionSearch } from '@/components/shared/collection-search'
 import { ExportButton } from '@/components/shared/export-button'
 import { toast } from 'sonner'
 import type { Item, Book as BookType } from '@prisma/client'
+import { VIRTUAL_SCROLL_LIMIT } from '@/lib/constants'
 
 type ItemWithRelations = Item & {
   book?: BookType | null
@@ -108,7 +109,7 @@ function BooksPageContent() {
   const buildQueryString = () => {
     const params = new URLSearchParams()
     params.set('page', useVirtualScroll ? '1' : page.toString())
-    params.set('limit', useVirtualScroll ? '1000' : '50') // Load more items for virtual scrolling
+    params.set('limit', useVirtualScroll ? VIRTUAL_SCROLL_LIMIT.toString() : '50')
     params.set('sortField', sortField)
     params.set('sortDirection', sortDirection)
 

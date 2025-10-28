@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -65,9 +65,10 @@ export function VirtualizedCollectionGrid({
     return 6 // 2xl+
   }
 
-  const columnCount = getColumnCount()
+  // Use state to track column count for responsive updates
+  const [columnCount, setColumnCount] = useState(getColumnCount)
 
-  // Group items into rows
+  // Group items into rows based on current column count
   const rows: ItemWithRelations[][] = []
   for (let i = 0; i < items.length; i += columnCount) {
     rows.push(items.slice(i, i + columnCount))
@@ -80,15 +81,19 @@ export function VirtualizedCollectionGrid({
     overscan: 2, // Render 2 extra rows above and below viewport
   })
 
-  // Handle window resize to recalculate columns
+  // Handle window resize to recalculate columns and re-group items
   useEffect(() => {
     const handleResize = () => {
+      const newColumnCount = getColumnCount()
+      if (newColumnCount !== columnCount) {
+        setColumnCount(newColumnCount)
+      }
       rowVirtualizer.measure()
     }
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [rowVirtualizer])
+  }, [columnCount, rowVirtualizer])
 
   if (items.length === 0) {
     return (
