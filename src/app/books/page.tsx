@@ -26,6 +26,7 @@ import {
 } from '@/components/shared/sort-control'
 import { CollectionSearch } from '@/components/shared/collection-search'
 import { ExportButton } from '@/components/shared/export-button'
+import { FloatingActionButton } from '@/components/shared/floating-action-button'
 import { toast } from 'sonner'
 import type { Item, Book as BookType } from '@prisma/client'
 
@@ -516,6 +517,9 @@ function BooksPageContent() {
             cancelText="Cancel"
             variant="destructive"
           />
+
+          {/* Floating Action Button - Mobile Only */}
+          <FloatingActionButton href="/books/new" label="Add new book" />
         </div>
       </div>
     </div>

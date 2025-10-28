@@ -26,8 +26,8 @@ export function HeaderClient() {
         {/* Mobile Menu */}
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" className="md:hidden" size="icon">
-              <Menu className="h-5 w-5" />
+            <Button variant="ghost" className="md:hidden min-h-[44px] min-w-[44px]" size="icon">
+              <Menu className="h-6 w-6" />
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>

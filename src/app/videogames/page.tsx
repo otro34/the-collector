@@ -26,6 +26,7 @@ import {
 } from '@/components/shared/sort-control'
 import { CollectionSearch } from '@/components/shared/collection-search'
 import { ExportButton } from '@/components/shared/export-button'
+import { FloatingActionButton } from '@/components/shared/floating-action-button'
 import { toast } from 'sonner'
 import type { Item, Videogame } from '@prisma/client'
 
@@ -511,6 +512,9 @@ function VideogamesPageContent() {
             cancelText="Cancel"
             variant="destructive"
           />
+
+          {/* Floating Action Button - Mobile Only */}
+          <FloatingActionButton href="/videogames/new" label="Add new video game" />
         </div>
       </div>
     </div>

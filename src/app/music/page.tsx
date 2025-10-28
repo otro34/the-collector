@@ -26,6 +26,7 @@ import {
 } from '@/components/shared/sort-control'
 import { CollectionSearch } from '@/components/shared/collection-search'
 import { ExportButton } from '@/components/shared/export-button'
+import { FloatingActionButton } from '@/components/shared/floating-action-button'
 import { toast } from 'sonner'
 import type { Item, Music as MusicType } from '@prisma/client'
 
@@ -500,6 +501,9 @@ function MusicPageContent() {
             cancelText="Cancel"
             variant="destructive"
           />
+
+          {/* Floating Action Button - Mobile Only */}
+          <FloatingActionButton href="/music/new" label="Add new music album" />
         </div>
       </div>
     </div>
