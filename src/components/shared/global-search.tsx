@@ -7,6 +7,7 @@ import { Search, X, Loader2 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
+import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut'
 
 type SearchResult = {
   id: string
@@ -52,6 +53,11 @@ export function GlobalSearch() {
   })
 
   const results = data?.results || []
+
+  // Keyboard shortcut: "/" to focus search
+  useKeyboardShortcut('/', () => {
+    inputRef.current?.focus()
+  })
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -146,7 +152,7 @@ export function GlobalSearch() {
         <input
           ref={inputRef}
           type="search"
-          placeholder="Search collections..."
+          placeholder="Search collections... (Press / to focus)"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}

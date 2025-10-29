@@ -38,6 +38,11 @@ export function MainNav({ className, ...props }: React.HTMLAttributes<HTMLElemen
       label: 'Settings',
       active: pathname?.startsWith('/settings'),
     },
+    {
+      href: '/help',
+      label: 'Help',
+      active: pathname?.startsWith('/help'),
+    },
   ]
 
   return (
