@@ -106,17 +106,17 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
         html5QrcodeRef.current = new Html5Qrcode(scannerDivId)
       }
 
-      const qrCodeSuccessCallback = (decodedText: string) => {
+      const qrCodeSuccessCallback = async (decodedText: string) => {
         // Barcode detected and decoded
 
         // Extract ISBN from barcode (it might have prefix like "ISBN ")
         const possibleISBN = decodedText.replace(/^ISBN[\s:-]*/i, '').trim()
 
         if (isValidISBN(possibleISBN)) {
-          stopScanning()
+          await stopScanning()
           setIsbn(formatISBN(possibleISBN))
           toast.success('ISBN scanned successfully!')
-          lookupISBN(possibleISBN)
+          await lookupISBN(possibleISBN)
         } else {
           toast.error('Scanned barcode is not a valid ISBN')
         }
