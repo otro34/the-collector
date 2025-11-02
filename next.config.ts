@@ -44,8 +44,6 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   // Enable React strict mode for better performance checks
   reactStrictMode: true,
-  // Optimize fonts
-  optimizeFonts: true,
 }
 
 export default nextConfig
