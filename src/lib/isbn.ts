@@ -164,8 +164,8 @@ export function detectISBNType(isbn: string): 10 | 13 | null {
 export function extractISBNs(text: string): string[] {
   const isbns: string[] = []
 
-  // Pattern for ISBN-13 (with or without hyphens)
-  const isbn13Pattern = /\b(?:978|979)[-\s]?\d{1}[-\s]?\d{3}[-\s]?\d{5}[-\s]?\d{1}\b/g
+  // Pattern for ISBN-13 (flexible grouping, relies on validation function)
+  const isbn13Pattern = /\b(?:978|979)[\d\s-]{10,16}\b/g
   const matches13 = text.match(isbn13Pattern)
   if (matches13) {
     matches13.forEach((match) => {
@@ -176,8 +176,8 @@ export function extractISBNs(text: string): string[] {
     })
   }
 
-  // Pattern for ISBN-10 (with or without hyphens)
-  const isbn10Pattern = /\b\d{1}[-\s]?\d{3}[-\s]?\d{5}[-\s]?[\dX]\b/g
+  // Pattern for ISBN-10 (flexible grouping, relies on validation function)
+  const isbn10Pattern = /\b[\d\s-]{9,13}[\dX]\b/g
   const matches10 = text.match(isbn10Pattern)
   if (matches10) {
     matches10.forEach((match) => {
