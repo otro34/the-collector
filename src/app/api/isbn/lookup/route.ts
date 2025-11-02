@@ -2,6 +2,9 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { isValidISBN, cleanISBN, isbn10ToISBN13 } from '@/lib/isbn'
 import type { ISBNLookupResult, ISBNLookupError } from '@/types/isbn'
 
+// Timeout for external API calls (in milliseconds)
+const API_TIMEOUT_MS = 10000
+
 /**
  * Fetches book data from Open Library API
  */
@@ -12,6 +15,7 @@ async function fetchFromOpenLibrary(isbn: string): Promise<ISBNLookupResult | nu
       headers: {
         'User-Agent': 'The-Collector/1.0 (Collection Management App)',
       },
+      signal: AbortSignal.timeout(API_TIMEOUT_MS),
     })
 
     if (!response.ok) {
@@ -77,7 +81,9 @@ async function fetchFromOpenLibrary(isbn: string): Promise<ISBNLookupResult | nu
 async function fetchFromGoogleBooks(isbn: string): Promise<ISBNLookupResult | null> {
   try {
     const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
-    const response = await fetch(url)
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(API_TIMEOUT_MS),
+    })
 
     if (!response.ok) {
       return null
