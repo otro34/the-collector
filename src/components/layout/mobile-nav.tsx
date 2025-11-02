@@ -2,7 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Gamepad2, Music, BookOpen, LayoutDashboard, Upload, Settings } from 'lucide-react'
+import {
+  Gamepad2,
+  Music,
+  BookOpen,
+  LayoutDashboard,
+  Upload,
+  Settings,
+  HelpCircle,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { GlobalSearch } from '@/components/shared/global-search'
 
@@ -45,6 +53,12 @@ export function MobileNav() {
       label: 'Settings',
       icon: Settings,
       active: pathname?.startsWith('/settings'),
+    },
+    {
+      href: '/help',
+      label: 'Help',
+      icon: HelpCircle,
+      active: pathname?.startsWith('/help'),
     },
   ]
 
