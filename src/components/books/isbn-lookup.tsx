@@ -95,9 +95,13 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
   const startScanning = async () => {
     setCameraError(null)
     setError(null)
+    setIsScanning(true) // Set this first to render the scanner div
+
+    // Wait for next tick to ensure the DOM is updated
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     try {
-      // Initialize scanner
+      // Initialize scanner after div is rendered
       if (!html5QrcodeRef.current) {
         html5QrcodeRef.current = new Html5Qrcode(scannerDivId)
       }
@@ -124,6 +128,7 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
         aspectRatio: 1.0,
       }
 
+      // Start the scanner - it will request permission internally
       await html5QrcodeRef.current.start(
         { facingMode: 'environment' }, // Use back camera on mobile
         config,
@@ -133,28 +138,39 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
         }
       )
 
-      setIsScanning(true)
       toast.info('Point camera at ISBN barcode')
     } catch (err: unknown) {
       // Handle camera access errors
-      const errorMessage = err instanceof Error ? err.message : String(err)
+      setIsScanning(false) // Reset scanning state on error
+      console.error('Scanner error details:', err)
 
-      // Check if it's a permission error
-      if (
-        errorMessage.includes('Permission') ||
-        errorMessage.includes('NotAllowedError') ||
-        errorMessage.includes('permission denied')
-      ) {
+      // Get error details
+      const errorMessage =
+        err instanceof Error ? err.message.toLowerCase() : String(err).toLowerCase()
+      const errorName = err instanceof Error && 'name' in err ? String(err.name) : ''
+
+      // Log detailed error info for debugging
+      console.error('Error name:', errorName)
+      console.error('Error message:', errorMessage)
+
+      // Check if it's a permission error - look for various indicators
+      const isPermissionError =
+        errorName === 'NotAllowedError' ||
+        errorMessage.includes('permission') ||
+        errorMessage.includes('notallowederror') ||
+        errorMessage.includes('denied') ||
+        errorMessage.includes('not allowed')
+
+      if (isPermissionError) {
         setCameraError('Camera permission denied. Please allow camera access and try again.')
         toast.error('Camera permission denied')
       } else {
         // Other errors (camera in use, not found, etc.)
         setCameraError(
-          'Unable to access camera. It may be in use by another app or unavailable. Try entering ISBN manually.'
+          `Unable to access camera. ${errorMessage ? `Error: ${errorMessage}` : 'It may be in use by another app or unavailable.'} Try entering ISBN manually.`
         )
         toast.error('Camera unavailable')
       }
-      console.error('Scanner error:', err)
     }
   }
 
