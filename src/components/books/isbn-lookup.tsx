@@ -109,24 +109,38 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
       }
 
       const qrCodeSuccessCallback = async (decodedText: string) => {
-        // Prevent multiple scans while processing
+        // Prevent multiple scans while processing - check and set atomically
         if (isProcessingRef.current) {
           return
         }
+        isProcessingRef.current = true // Set immediately to block other callbacks
 
-        isProcessingRef.current = true
+        try {
+          // Extract ISBN from barcode (it might have prefix like "ISBN ")
+          const possibleISBN = decodedText.replace(/^ISBN[\s:-]*/i, '').trim()
 
-        // Extract ISBN from barcode (it might have prefix like "ISBN ")
-        const possibleISBN = decodedText.replace(/^ISBN[\s:-]*/i, '').trim()
+          if (!isValidISBN(possibleISBN)) {
+            toast.error('Scanned barcode is not a valid ISBN')
+            isProcessingRef.current = false // Reset on invalid ISBN
+            return
+          }
 
-        if (isValidISBN(possibleISBN)) {
-          await stopScanning()
+          // Stop the scanner immediately
+          if (html5QrcodeRef.current && isScanning) {
+            await html5QrcodeRef.current.stop()
+            setIsScanning(false)
+          }
+
+          // Now process the ISBN
           setIsbn(formatISBN(possibleISBN))
           toast.success('ISBN scanned successfully!')
           await lookupISBN(possibleISBN)
-        } else {
-          toast.error('Scanned barcode is not a valid ISBN')
-          isProcessingRef.current = false // Reset flag on error
+        } catch (err) {
+          console.error('Error processing scan:', err)
+          toast.error('Error processing barcode')
+        } finally {
+          // Reset flag after processing completes
+          isProcessingRef.current = false
         }
       }
 
