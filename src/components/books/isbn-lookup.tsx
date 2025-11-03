@@ -26,6 +26,7 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
 
   const html5QrcodeRef = useRef<Html5Qrcode | null>(null)
   const isProcessingRef = useRef(false) // Flag to prevent multiple scans
+  const lastScannedISBNRef = useRef<string | null>(null) // Track last scanned ISBN
   const scannerDivId = 'isbn-barcode-scanner'
 
   // Cleanup scanner on unmount
@@ -97,6 +98,7 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
     setCameraError(null)
     setError(null)
     isProcessingRef.current = false // Reset processing flag
+    lastScannedISBNRef.current = null // Clear last scanned ISBN
     setIsScanning(true) // Set this first to render the scanner div
 
     // Wait for next tick to ensure the DOM is updated
@@ -109,21 +111,29 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
       }
 
       const qrCodeSuccessCallback = async (decodedText: string) => {
-        // Prevent multiple scans while processing - check and set atomically
+        // Extract ISBN from barcode (it might have prefix like "ISBN ")
+        const possibleISBN = decodedText.replace(/^ISBN[\s:-]*/i, '').trim()
+
+        // Ignore if we've already processed this ISBN
+        if (lastScannedISBNRef.current === possibleISBN) {
+          return
+        }
+
+        // Prevent multiple scans while processing
         if (isProcessingRef.current) {
           return
         }
         isProcessingRef.current = true // Set immediately to block other callbacks
 
         try {
-          // Extract ISBN from barcode (it might have prefix like "ISBN ")
-          const possibleISBN = decodedText.replace(/^ISBN[\s:-]*/i, '').trim()
-
           if (!isValidISBN(possibleISBN)) {
             toast.error('Scanned barcode is not a valid ISBN')
             isProcessingRef.current = false // Reset on invalid ISBN
             return
           }
+
+          // Mark this ISBN as scanned
+          lastScannedISBNRef.current = possibleISBN
 
           // Stop the scanner immediately
           if (html5QrcodeRef.current && isScanning) {
@@ -138,6 +148,8 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
         } catch (err) {
           console.error('Error processing scan:', err)
           toast.error('Error processing barcode')
+          // Reset last scanned on error so user can try again
+          lastScannedISBNRef.current = null
         } finally {
           // Reset flag after processing completes
           isProcessingRef.current = false
@@ -206,6 +218,7 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
     }
     setIsScanning(false)
     isProcessingRef.current = false // Reset processing flag
+    lastScannedISBNRef.current = null // Clear last scanned ISBN
   }
 
   return (
