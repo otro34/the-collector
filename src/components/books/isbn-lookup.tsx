@@ -97,10 +97,6 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
     setError(null)
 
     try {
-      // Request camera permission
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-      stream.getTracks().forEach((track) => track.stop()) // Stop the test stream
-
       // Initialize scanner
       if (!html5QrcodeRef.current) {
         html5QrcodeRef.current = new Html5Qrcode(scannerDivId)
@@ -139,10 +135,26 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
 
       setIsScanning(true)
       toast.info('Point camera at ISBN barcode')
-    } catch (_err: unknown) {
-      // Camera access error
-      setCameraError('Unable to access camera. Please check permissions or enter ISBN manually.')
-      toast.error('Camera access denied')
+    } catch (err: unknown) {
+      // Handle camera access errors
+      const errorMessage = err instanceof Error ? err.message : String(err)
+
+      // Check if it's a permission error
+      if (
+        errorMessage.includes('Permission') ||
+        errorMessage.includes('NotAllowedError') ||
+        errorMessage.includes('permission denied')
+      ) {
+        setCameraError('Camera permission denied. Please allow camera access and try again.')
+        toast.error('Camera permission denied')
+      } else {
+        // Other errors (camera in use, not found, etc.)
+        setCameraError(
+          'Unable to access camera. It may be in use by another app or unavailable. Try entering ISBN manually.'
+        )
+        toast.error('Camera unavailable')
+      }
+      console.error('Scanner error:', err)
     }
   }
 
