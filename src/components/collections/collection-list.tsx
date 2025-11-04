@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Gamepad2, Music, BookOpen } from 'lucide-react'
+import { Gamepad2, Music, BookOpen, CheckCircle2 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
+import type { ReadingProgress } from '@/hooks/use-reading-progress'
 
 type ItemWithRelations = Item & {
   videogame?: Videogame | null
@@ -15,9 +17,15 @@ interface CollectionListProps {
   items: ItemWithRelations[]
   collectionType: CollectionType
   onItemClick?: (item: ItemWithRelations) => void
+  readingProgress?: ReadingProgress[]
 }
 
-export function CollectionList({ items, collectionType, onItemClick }: CollectionListProps) {
+export function CollectionList({
+  items,
+  collectionType,
+  onItemClick,
+  readingProgress = [],
+}: CollectionListProps) {
   const getCollectionPath = (type: CollectionType): string => {
     switch (type) {
       case 'VIDEOGAME':
@@ -42,6 +50,11 @@ export function CollectionList({ items, collectionType, onItemClick }: Collectio
       default:
         return null
     }
+  }
+
+  const isItemRead = (itemId: string): boolean => {
+    const progress = readingProgress.find((p) => p.itemId === itemId)
+    return progress?.isRead ?? false
   }
 
   if (items.length === 0) {
@@ -103,6 +116,17 @@ export function CollectionList({ items, collectionType, onItemClick }: Collectio
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
                     {getPlaceholderIcon(collectionType)}
+                  </div>
+                )}
+                {/* Read Status Badge - Only show for BOOK items that are read */}
+                {collectionType === 'BOOK' && isItemRead(item.id) && (
+                  <div className="absolute top-1 right-1">
+                    <Badge
+                      variant="default"
+                      className="bg-green-600 hover:bg-green-700 text-white shadow-lg px-1 py-0"
+                    >
+                      <CheckCircle2 className="h-3 w-3" />
+                    </Badge>
                   </div>
                 )}
               </div>

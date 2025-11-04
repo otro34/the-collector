@@ -27,6 +27,7 @@ import {
 import { CollectionSearch } from '@/components/shared/collection-search'
 import { ExportButton } from '@/components/shared/export-button'
 import { FloatingActionButton } from '@/components/shared/floating-action-button'
+import { useAllReadingProgress } from '@/hooks/use-reading-progress'
 import { toast } from 'sonner'
 import type { Item, Book as BookType } from '@prisma/client'
 import { VIRTUAL_SCROLL_LIMIT } from '@/lib/constants'
@@ -77,6 +78,12 @@ function BooksPageContent() {
   const [filters, setFilters] = useState<FilterOptions>({})
   const [activeFiltersCount, setActiveFiltersCount] = useState(0)
 
+  // Fetch reading progress
+  const { data: readingProgressData } = useAllReadingProgress()
+
+  // Calculate read count
+  const readCount = readingProgressData ? readingProgressData.filter((p) => p.isRead).length : 0
+
   // Calculate active filters count
   useEffect(() => {
     let count = 0
@@ -86,6 +93,7 @@ function BooksPageContent() {
     if (filters.series && filters.series.length > 0) count++
     if (filters.publishers && filters.publishers.length > 0) count++
     if (filters.yearRange) count++
+    if (filters.readingStatus && filters.readingStatus !== 'all') count++
     setActiveFiltersCount(count)
   }, [filters])
 
@@ -137,6 +145,9 @@ function BooksPageContent() {
     if (filters.yearRange) {
       params.set('minYear', filters.yearRange[0].toString())
       params.set('maxYear', filters.yearRange[1].toString())
+    }
+    if (filters.readingStatus && filters.readingStatus !== 'all') {
+      params.set('readingStatus', filters.readingStatus)
     }
 
     return params.toString()
@@ -311,10 +322,25 @@ function BooksPageContent() {
               <div>
                 <h1 className="text-3xl font-bold tracking-tight">Books</h1>
                 {data && (
-                  <p className="text-muted-foreground mt-1">
-                    {data.pagination.total} book{data.pagination.total !== 1 ? 's' : ''} in your
-                    collection
-                  </p>
+                  <div className="flex flex-col gap-0.5 mt-1">
+                    <p className="text-muted-foreground">
+                      {data.pagination.total} book{data.pagination.total !== 1 ? 's' : ''} in your
+                      collection
+                    </p>
+                    {readingProgressData && readingProgressData.length > 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        <span className="font-medium text-green-600 dark:text-green-500">
+                          {readCount}
+                        </span>{' '}
+                        of {data.pagination.total} read
+                        {readCount > 0 && (
+                          <span className="ml-1">
+                            ({Math.round((readCount / data.pagination.total) * 100)}%)
+                          </span>
+                        )}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -446,12 +472,14 @@ function BooksPageContent() {
                     items={data.items}
                     collectionType="BOOK"
                     onItemClick={handleItemClick}
+                    readingProgress={readingProgressData}
                   />
                 ) : (
                   <CollectionGrid
                     items={data.items}
                     collectionType="BOOK"
                     onItemClick={handleItemClick}
+                    readingProgress={readingProgressData}
                   />
                 )
               ) : (
@@ -459,6 +487,7 @@ function BooksPageContent() {
                   items={data.items}
                   collectionType="BOOK"
                   onItemClick={handleItemClick}
+                  readingProgress={readingProgressData}
                 />
               )}
 

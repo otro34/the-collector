@@ -4,9 +4,11 @@ import { useRef, useEffect, useState } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Gamepad2, Music, BookOpen } from 'lucide-react'
+import { Gamepad2, Music, BookOpen, CheckCircle2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
+import type { ReadingProgress } from '@/hooks/use-reading-progress'
 
 type ItemWithRelations = Item & {
   videogame?: Videogame | null
@@ -18,12 +20,14 @@ interface VirtualizedCollectionGridProps {
   items: ItemWithRelations[]
   collectionType: CollectionType
   onItemClick?: (item: ItemWithRelations) => void
+  readingProgress?: ReadingProgress[]
 }
 
 export function VirtualizedCollectionGrid({
   items,
   collectionType,
   onItemClick,
+  readingProgress = [],
 }: VirtualizedCollectionGridProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
@@ -51,6 +55,11 @@ export function VirtualizedCollectionGrid({
       default:
         return null
     }
+  }
+
+  const isItemRead = (itemId: string): boolean => {
+    const progress = readingProgress.find((p) => p.itemId === itemId)
+    return progress?.isRead ?? false
   }
 
   // Calculate columns based on window width (matches CollectionGrid responsive grid)
@@ -157,6 +166,18 @@ export function VirtualizedCollectionGrid({
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center">
                               {getPlaceholderIcon(collectionType)}
+                            </div>
+                          )}
+                          {/* Read Status Badge - Only show for BOOK items that are read */}
+                          {collectionType === 'BOOK' && isItemRead(item.id) && (
+                            <div className="absolute top-2 right-2">
+                              <Badge
+                                variant="default"
+                                className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+                              >
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Read
+                              </Badge>
                             </div>
                           )}
                           {/* Hover Overlay */}

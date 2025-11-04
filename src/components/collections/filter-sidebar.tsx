@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   Accordion,
   AccordionContent,
@@ -27,6 +28,8 @@ export interface FilterOptions {
   bookTypes?: string[]
   authors?: string[]
   series?: string[]
+  // Reading status
+  readingStatus?: 'all' | 'read' | 'unread'
 }
 
 interface FilterSidebarProps {
@@ -71,6 +74,7 @@ export function FilterSidebar({
     if (localFilters.bookTypes && localFilters.bookTypes.length > 0) count++
     if (localFilters.authors && localFilters.authors.length > 0) count++
     if (localFilters.series && localFilters.series.length > 0) count++
+    if (localFilters.readingStatus && localFilters.readingStatus !== 'all') count++
     setActiveFiltersCount(count)
   }, [localFilters])
 
@@ -88,6 +92,13 @@ export function FilterSidebar({
     setLocalFilters((prev) => ({
       ...prev,
       yearRange: [range[0], range[1]] as [number, number],
+    }))
+  }
+
+  const handleReadingStatusChange = (status: 'all' | 'read' | 'unread') => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      readingStatus: status,
     }))
   }
 
@@ -235,6 +246,49 @@ export function FilterSidebar({
 
           {collectionType === 'BOOK' && (
             <>
+              {/* Reading Status Filter */}
+              <AccordionItem value="readingStatus">
+                <AccordionTrigger className="text-sm font-medium">
+                  <div className="flex items-center justify-between w-full pr-4">
+                    <span>Reading Status</span>
+                    {localFilters.readingStatus && localFilters.readingStatus !== 'all' && (
+                      <Badge variant="secondary" className="ml-2">
+                        {localFilters.readingStatus}
+                      </Badge>
+                    )}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-3 pt-2">
+                    <RadioGroup
+                      value={localFilters.readingStatus ?? 'all'}
+                      onValueChange={(value) =>
+                        handleReadingStatusChange(value as 'all' | 'read' | 'unread')
+                      }
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="all" id="status-all" />
+                        <Label htmlFor="status-all" className="text-sm cursor-pointer flex-1">
+                          All
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="read" id="status-read" />
+                        <Label htmlFor="status-read" className="text-sm cursor-pointer flex-1">
+                          Read
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="unread" id="status-unread" />
+                        <Label htmlFor="status-unread" className="text-sm cursor-pointer flex-1">
+                          Not Yet Read
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
               {renderCheckboxGroup('Book Type', 'bookTypes', availableFilters.bookTypes)}
               {renderCheckboxGroup('Genre', 'genres', availableFilters.genres)}
               {renderCheckboxGroup('Author', 'authors', availableFilters.authors)}

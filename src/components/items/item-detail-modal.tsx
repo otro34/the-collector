@@ -13,6 +13,7 @@ import {
   Disc,
   DollarSign,
   ImageIcon,
+  BookCheck,
 } from 'lucide-react'
 import {
   Dialog,
@@ -23,7 +24,10 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { ImageSearchDialog } from './image-search-dialog'
+import { useReadingProgress, useToggleReadStatus } from '@/hooks/use-reading-progress'
 import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
 
 type ItemWithRelations = Item & {
@@ -51,6 +55,23 @@ export function ItemDetailModal({
 }: ItemDetailModalProps) {
   const [imageSearchOpen, setImageSearchOpen] = useState(false)
   const [updatingImage, setUpdatingImage] = useState(false)
+
+  // Reading progress hooks
+  const { data: readingProgress, isLoading: isLoadingProgress } = useReadingProgress(
+    item?.id ?? null
+  )
+  const toggleReadStatus = useToggleReadStatus()
+
+  const handleToggleReadStatus = () => {
+    if (!item) return
+
+    const newIsRead = !readingProgress?.isRead
+    toggleReadStatus.mutate({
+      itemId: item.id,
+      isRead: newIsRead,
+      itemTitle: item.title,
+    })
+  }
 
   if (!item) return null
 
@@ -268,6 +289,39 @@ export function ItemDetailModal({
 
           {/* Metadata */}
           <div className="space-y-6">
+            {/* Reading Status - Only show for BOOK collection type */}
+            {item.collectionType === 'BOOK' && (
+              <div className="p-4 rounded-lg bg-muted/50 border">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <BookCheck className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <Label
+                        htmlFor="reading-status"
+                        className="text-sm font-medium cursor-pointer"
+                      >
+                        Reading Status
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        {readingProgress?.isRead ? 'Marked as read' : 'Not yet read'}
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="reading-status"
+                    checked={readingProgress?.isRead ?? false}
+                    onCheckedChange={handleToggleReadStatus}
+                    disabled={isLoadingProgress || toggleReadStatus.isPending}
+                  />
+                </div>
+                {readingProgress?.completedAt && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Completed: {new Date(readingProgress.completedAt).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* General Info */}
             <div className="space-y-3">
               {item.year && (
