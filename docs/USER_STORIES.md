@@ -1536,9 +1536,9 @@ Performance optimization, error handling, and UX improvements.
 
 ---
 
-### Sprint 9: Enhanced Data Entry & ISBN Integration
+### Sprint 9: Reading Recommendations & Enhanced Data Entry
 
-**Goal**: Implement advanced book addition features using ISBN
+**Goal**: Implement reading order recommendations, progress tracking, and ISBN integration
 **Duration**: 2 weeks
 
 #### User Stories
@@ -1587,23 +1587,213 @@ Performance optimization, error handling, and UX improvements.
 
 ---
 
+**US-9.2: Parse and Store Reading Order Recommendations**
+
+- **As a** user
+- **I want** the app to understand the reading order recommendations from my markdown files
+- **So that** I can get personalized recommendations based on what's in my collection
+
+**Acceptance Criteria**:
+
+- [ ] Parser utility created to read and parse `COMIC_READING_ORDER.md` and `MANGA_READING_ORDER.md`
+- [ ] Extract structured data from markdown (phases, story arcs, series, reading paths)
+- [ ] Parse volume numbers, issue numbers, and series names
+- [ ] Create database models to store parsed recommendations
+- [ ] API endpoint to fetch recommendations by collection type (COMIC, MANGA, GRAPHIC_NOVEL)
+- [ ] Handle markdown parsing errors gracefully
+- [ ] Cache parsed data for performance
+- [ ] Update recommendations when markdown files change
+
+**Tasks**:
+
+- Create markdown parser utility using regex or markdown parsing library
+- Define recommendation data structure (phases, arcs, paths)
+- Create Prisma models: `ReadingRecommendation`, `ReadingPath`, `ReadingPhase`
+- Write parser logic to extract phases, series, and reading order
+- Create API route `/api/recommendations/parse` to trigger parsing
+- Store parsed recommendations in database
+- Create API route `/api/recommendations` to fetch recommendations
+- Add caching layer (in-memory or Redis if needed)
+- Write unit tests for parser
+- Document recommendation data structure
+
+**Effort**: 8 story points
+
+---
+
+**US-9.3: Create Reading Progress Tracking Model**
+
+- **As a** user
+- **I want** to track which books/comics I've read
+- **So that** I can see my progress through my collection
+
+**Acceptance Criteria**:
+
+- [ ] Database model created for reading progress
+- [ ] Track read/unread status per item
+- [ ] Track reading start date and completion date
+- [ ] Track chosen reading path (e.g., "Character-Focused", "Publisher-Focused")
+- [ ] Track current phase/milestone in chosen path
+- [ ] API endpoints for marking items as read/unread
+- [ ] API endpoint to fetch user's reading progress
+- [ ] Support updating reading dates
+- [ ] Cascade delete when item is deleted
+
+**Tasks**:
+
+- Create `ReadingProgress` Prisma model
+- Add fields: itemId, isRead, startedAt, completedAt, readingPath, currentPhase
+- Add indexes for performance (itemId, isRead)
+- Create API route POST `/api/reading-progress` to create/update progress
+- Create API route GET `/api/reading-progress` to fetch all progress
+- Create API route GET `/api/reading-progress/:itemId` to fetch item progress
+- Create API route DELETE `/api/reading-progress/:itemId` to delete progress
+- Run Prisma migration
+- Write API tests
+- Document reading progress API
+
+**Effort**: 5 story points
+
+---
+
+**US-9.4: Build Recommendations Page**
+
+- **As a** user
+- **I want** to see personalized reading recommendations
+- **So that** I know what to read next from my collection
+
+**Acceptance Criteria**:
+
+- [ ] Recommendations page at `/recommendations`
+- [ ] Filter by collection type (Comics, Manga, Graphic Novels)
+- [ ] Display available reading paths (Character-Focused, Publisher-Focused, etc.)
+- [ ] Show current phase/milestone for chosen path
+- [ ] Display "What to Read Next" section based on progress
+- [ ] Show reading path progress (e.g., "Phase 2: 5/10 books read")
+- [ ] List all phases with completion status
+- [ ] Click on phase to see books in that phase from user's collection
+- [ ] Highlight books user owns vs. books mentioned in guide
+- [ ] Responsive design (mobile, tablet, desktop)
+- [ ] Loading states while fetching recommendations
+- [ ] Empty state when no recommendations available
+
+**Tasks**:
+
+- Create recommendations page `/app/recommendations/page.tsx`
+- Fetch recommendations from API
+- Match recommendations against user's collection
+- Build collection type filter component
+- Create reading path selector component
+- Build phase progress display component
+- Create "What to Read Next" recommendation component
+- Implement phase detail view
+- Add visual indicators for owned vs. missing items
+- Style with Tailwind and shadcn/ui components
+- Test on mobile, tablet, desktop
+- Add loading skeletons
+- Create empty state component
+
+**Effort**: 13 story points
+
+---
+
+**US-9.5: Add Read/Unread Toggle to Book Items**
+
+- **As a** user
+- **I want** to mark books as read or unread
+- **So that** I can track what I've finished reading
+
+**Acceptance Criteria**:
+
+- [ ] "Mark as Read/Unread" toggle in item detail modal
+- [ ] Visual indicator on item cards showing read status (checkmark badge)
+- [ ] Filter option "Not Yet Read" on collection pages
+- [ ] Reading status updates immediately (optimistic UI)
+- [ ] Success toast notification when status changes
+- [ ] Automatically set completion date when marked as read
+- [ ] Clear completion date when marked as unread
+- [ ] Works for books, comics, manga, and graphic novels
+- [ ] Read status persists across sessions
+- [ ] Show read count in collection header (e.g., "45 of 250 read")
+
+**Tasks**:
+
+- Add read/unread toggle to ItemDetailModal component
+- Create checkbox or switch component for read status
+- Add visual indicator (badge) to CollectionGrid item cards
+- Add visual indicator to CollectionList items
+- Update FilterSidebar to include "Reading Status" filter
+- Integrate with reading progress API
+- Add optimistic update using TanStack Query
+- Show read count in collection page header
+- Add success toast notifications
+- Update queries to refetch after status change
+- Test toggle functionality
+- Test filter functionality
+- Style for dark mode
+
+**Effort**: 8 story points
+
+---
+
+**US-9.6: Display Collection Insights and Series Completion**
+
+- **As a** user
+- **I want** to see insights about my collection
+- **So that** I know which series are complete and what's missing
+
+**Acceptance Criteria**:
+
+- [ ] Collection insights section on recommendations page
+- [ ] Identify complete series (e.g., "Card Captor Sakura: 25/25 volumes")
+- [ ] Identify incomplete series with missing volumes
+- [ ] Show percentage completion for each series
+- [ ] List "Complete Series" achievements
+- [ ] Show gaps in story arcs from recommendation guides
+- [ ] Display reading statistics (total read, total unread, reading velocity)
+- [ ] Show recently completed items
+- [ ] Recommend next items to complete series
+- [ ] Responsive cards/grid layout
+- [ ] Beautiful data visualization (progress bars, charts)
+
+**Tasks**:
+
+- Create collection insights API endpoint
+- Implement series detection logic (group by series field)
+- Calculate completion percentage per series
+- Identify missing volumes in sequences
+- Create insights component for recommendations page
+- Build complete series list component
+- Build incomplete series component with missing volumes
+- Create reading statistics cards
+- Add recently completed items widget
+- Implement progress bars for series completion
+- Consider using chart library (recharts or similar) for visualizations
+- Style with shadcn/ui Card and Progress components
+- Test with various collection sizes
+- Add loading states
+
+**Effort**: 13 story points
+
+---
+
 ## Sprint Summary
 
-| Sprint   | Duration | Story Points | Focus                      |
-| -------- | -------- | ------------ | -------------------------- |
-| Sprint 0 | 3-5 days | 5            | Project Setup              |
-| Sprint 1 | 2 weeks  | 24           | Database & Data Migration  |
-| Sprint 2 | 2 weeks  | 22           | Core UI & Layout           |
-| Sprint 3 | 2 weeks  | 31           | Collection Views           |
-| Sprint 4 | 2 weeks  | 31           | CRUD Operations            |
-| Sprint 5 | 2 weeks  | 36           | Search & Filtering         |
-| Sprint 6 | 2 weeks  | 37           | Import & Export            |
-| Sprint 7 | 2 weeks  | 36           | Backup & Restore           |
-| Sprint 8 | 2 weeks  | 39           | Polish & Optimization      |
-| Sprint 9 | 2 weeks  | 13           | Enhanced Data Entry & ISBN |
+| Sprint   | Duration | Story Points | Focus                          |
+| -------- | -------- | ------------ | ------------------------------ |
+| Sprint 0 | 3-5 days | 5            | Project Setup                  |
+| Sprint 1 | 2 weeks  | 24           | Database & Data Migration      |
+| Sprint 2 | 2 weeks  | 22           | Core UI & Layout               |
+| Sprint 3 | 2 weeks  | 31           | Collection Views               |
+| Sprint 4 | 2 weeks  | 31           | CRUD Operations                |
+| Sprint 5 | 2 weeks  | 36           | Search & Filtering             |
+| Sprint 6 | 2 weeks  | 37           | Import & Export                |
+| Sprint 7 | 2 weeks  | 36           | Backup & Restore               |
+| Sprint 8 | 2 weeks  | 39           | Polish & Optimization          |
+| Sprint 9 | 2 weeks  | 60           | Reading Recommendations & ISBN |
 
 **Total**: ~10 sprints, ~19 weeks (4.5-5 months)
-**Total Story Points**: 274
+**Total Story Points**: 321
 
 ---
 
