@@ -29,6 +29,11 @@ export function MainNav({ className, ...props }: React.HTMLAttributes<HTMLElemen
       active: pathname?.startsWith('/books'),
     },
     {
+      href: '/recommendations',
+      label: 'Recommendations',
+      active: pathname?.startsWith('/recommendations'),
+    },
+    {
       href: '/import',
       label: 'Import',
       active: pathname?.startsWith('/import'),
