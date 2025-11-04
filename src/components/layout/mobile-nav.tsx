@@ -6,6 +6,7 @@ import {
   Gamepad2,
   Music,
   BookOpen,
+  BookMarked,
   LayoutDashboard,
   Upload,
   Settings,
@@ -41,6 +42,12 @@ export function MobileNav() {
       label: 'Books',
       icon: BookOpen,
       active: pathname?.startsWith('/books'),
+    },
+    {
+      href: '/recommendations',
+      label: 'Recommendations',
+      icon: BookMarked,
+      active: pathname?.startsWith('/recommendations'),
     },
     {
       href: '/import',
