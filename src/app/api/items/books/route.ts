@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
     const publishersParam = searchParams.get('publishers')
     const minYear = searchParams.get('minYear')
     const maxYear = searchParams.get('maxYear')
+    const readingStatus = searchParams.get('readingStatus') as 'all' | 'read' | 'unread' | null
 
     // Build where clause with filters and search
     const where: {
@@ -201,7 +202,28 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Apply pagination AFTER genre filtering
+    // Reading status filtering (fetch reading progress and filter items)
+    if (readingStatus && readingStatus !== 'all') {
+      // Fetch all reading progress records
+      const readingProgress = await prisma.readingProgress.findMany({
+        select: {
+          itemId: true,
+          isRead: true,
+        },
+      })
+
+      // Create a Set of item IDs that are read
+      const readItemIds = new Set(readingProgress.filter((rp) => rp.isRead).map((rp) => rp.itemId))
+
+      // Filter items based on reading status
+      if (readingStatus === 'read') {
+        allItems = allItems.filter((item) => readItemIds.has(item.id))
+      } else if (readingStatus === 'unread') {
+        allItems = allItems.filter((item) => !readItemIds.has(item.id))
+      }
+    }
+
+    // Apply pagination AFTER all filtering
     const total = allItems.length
     const totalPages = Math.ceil(total / limit)
     const items = allItems.slice(skip, skip + limit)
