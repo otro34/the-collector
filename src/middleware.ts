@@ -25,5 +25,7 @@ export default auth((req) => {
 
 // Protect all routes except public ones
 export const config = {
-  matcher: ['/((?!api/auth|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!api/auth|api/recommendations|api/reading-progress|_next/static|_next/image|favicon.ico).*)',
+  ],
 }
