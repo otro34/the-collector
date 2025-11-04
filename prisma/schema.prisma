@@ -154,3 +154,65 @@ model User {
   @@index([email])
   @@index([githubUsername])
 }
+
+// Reading Recommendations System
+
+// Reading Path - Different approaches to reading a collection
+model ReadingPath {
+  id                  String            @id @default(cuid())
+  bookType            BookType          // MANGA, COMIC, GRAPHIC_NOVEL
+  name                String            // "Character-Focused", "Publisher-Focused", etc.
+  description         String?           @db.Text
+  order               Int               @default(0) // Display order
+
+  phases              ReadingPhase[]
+
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  @@unique([bookType, name])
+  @@index([bookType])
+}
+
+// Reading Phase - Sections within a reading path
+model ReadingPhase {
+  id                  String                  @id @default(cuid())
+  pathId              String
+  path                ReadingPath             @relation(fields: [pathId], references: [id], onDelete: Cascade)
+
+  name                String                  // "Phase 1: Gateway Masterpieces"
+  description         String?                 @db.Text
+  order               Int                     @default(0) // Display order within path
+
+  recommendations     ReadingRecommendation[]
+
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  @@index([pathId])
+  @@index([pathId, order])
+}
+
+// Reading Recommendation - Individual book/series recommendations
+model ReadingRecommendation {
+  id                  String          @id @default(cuid())
+  phaseId             String
+  phase               ReadingPhase    @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+
+  title               String          // "All-Star Superman", "Fullmetal Alchemist"
+  series              String?         // Series name if part of a series
+  author              String?         // Creator/writer name
+  volumes             String?         // "1-12", "1-25", specific volumes
+  issues              String?         // For comics: "#1-12", "#404-407"
+  priority            Int             @default(0) // Reading priority/order
+  tier                String?         // "Tier 1", "Must Read", etc.
+  reasoning           String?         @db.Text // Why this is recommended
+  notes               String?         @db.Text // Additional notes
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([phaseId])
+  @@index([series])
+  @@index([phaseId, priority])
+}
