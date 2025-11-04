@@ -38,7 +38,8 @@ export function useReadingProgress(itemId: string | null) {
         }
         throw new Error('Failed to fetch reading progress')
       }
-      return response.json() as Promise<ReadingProgress>
+      const data = await response.json()
+      return data.progress as ReadingProgress
     },
     enabled: !!itemId,
   })
@@ -55,7 +56,8 @@ export function useAllReadingProgress() {
       if (!response.ok) {
         throw new Error('Failed to fetch reading progress')
       }
-      return response.json() as Promise<ReadingProgress[]>
+      const data = await response.json()
+      return data.progress as ReadingProgress[]
     },
   })
 }
@@ -98,7 +100,8 @@ export function useToggleReadStatus() {
         throw new Error('Failed to update reading status')
       }
 
-      return response.json() as Promise<ReadingProgress>
+      const result = await response.json()
+      return result.progress as ReadingProgress
     },
     onMutate: async ({ itemId, isRead }) => {
       // Cancel any outgoing refetches
