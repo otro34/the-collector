@@ -42,6 +42,7 @@ export function parseRecommendationMarkdown(filePath: string, bookType: BookType
   const lines = content.split('\n')
 
   const paths: ParsedReadingPath[] = []
+  const orphanedPhases: ParsedPhase[] = [] // Phases parsed without a reading path
   let currentPath: ParsedReadingPath | null = null
   let currentPhase: ParsedPhase | null = null
   let phaseCounter = 0
@@ -53,8 +54,13 @@ export function parseRecommendationMarkdown(filePath: string, bookType: BookType
     const phaseMatch = line.match(/^##\s+Phase\s+(\d+):\s+(.+)$/i)
     if (phaseMatch) {
       // Save previous phase if exists
-      if (currentPhase && currentPath) {
-        currentPath.phases.push(currentPhase)
+      if (currentPhase) {
+        if (currentPath) {
+          currentPath.phases.push(currentPhase)
+        } else {
+          // No path exists, save as orphaned phase
+          orphanedPhases.push(currentPhase)
+        }
       }
 
       phaseCounter++
@@ -148,21 +154,26 @@ export function parseRecommendationMarkdown(filePath: string, bookType: BookType
   }
 
   // Save last phase and path
-  if (currentPhase && currentPath) {
-    currentPath.phases.push(currentPhase)
+  if (currentPhase) {
+    if (currentPath) {
+      currentPath.phases.push(currentPhase)
+    } else {
+      // No path exists, save as orphaned phase
+      orphanedPhases.push(currentPhase)
+    }
   }
   if (currentPath) {
     paths.push(currentPath)
   }
 
-  // If no paths were found, create a default path with all phases
-  if (paths.length === 0 && phaseCounter > 0) {
+  // If no paths were found, create a default path with all orphaned phases
+  if (paths.length === 0 && orphanedPhases.length > 0) {
     const defaultPath: ParsedReadingPath = {
       bookType,
       name: bookType === 'MANGA' ? 'Recommended Reading Order' : 'Classic Reading Order',
       description: `Recommended reading order for ${bookType.toLowerCase()} collection`,
       order: 1,
-      phases: [],
+      phases: orphanedPhases,
     }
     paths.push(defaultPath)
   }
