@@ -16,82 +16,116 @@ export async function POST() {
     let totalPhases = 0
     let totalRecommendations = 0
 
-    // Process each document
-    for (const doc of documents) {
-      for (const parsedPath of doc.paths) {
-        // Check if path already exists
-        let path = await prisma.readingPath.findUnique({
-          where: {
-            bookType_name: {
-              bookType: parsedPath.bookType,
-              name: parsedPath.name,
-            },
-          },
-        })
-
-        if (path) {
-          // Update existing path
-          path = await prisma.readingPath.update({
-            where: { id: path.id },
-            data: {
-              description: parsedPath.description,
-              order: parsedPath.order,
+    // Use transaction for all database operations
+    await prisma.$transaction(async (tx) => {
+      // Process each document
+      for (const doc of documents) {
+        for (const parsedPath of doc.paths) {
+          // Check if path already exists
+          const existingPath = await tx.readingPath.findUnique({
+            where: {
+              bookType_name: {
+                bookType: parsedPath.bookType,
+                name: parsedPath.name,
+              },
             },
           })
 
-          // Delete existing phases and recommendations for this path
-          await prisma.readingPhase.deleteMany({
-            where: { pathId: path.id },
-          })
-        } else {
-          // Create new path
-          path = await prisma.readingPath.create({
-            data: {
-              bookType: parsedPath.bookType,
-              name: parsedPath.name,
-              description: parsedPath.description,
-              order: parsedPath.order,
-            },
-          })
-        }
+          let path
 
-        totalPaths++
+          if (existingPath) {
+            // Delete existing phases and recommendations for this path (cascade will handle recommendations)
+            await tx.readingPhase.deleteMany({
+              where: { pathId: existingPath.id },
+            })
 
-        // Create phases for this path
-        for (const parsedPhase of parsedPath.phases) {
-          const phase = await prisma.readingPhase.create({
-            data: {
-              pathId: path.id,
-              name: parsedPhase.name,
-              description: parsedPhase.description,
-              order: parsedPhase.order,
-            },
-          })
-
-          totalPhases++
-
-          // Create recommendations for this phase
-          for (const recommendation of parsedPhase.recommendations) {
-            await prisma.readingRecommendation.create({
+            // Update existing path
+            path = await tx.readingPath.update({
+              where: { id: existingPath.id },
               data: {
-                phaseId: phase.id,
-                title: recommendation.title,
-                series: recommendation.series,
-                author: recommendation.author,
-                volumes: recommendation.volumes,
-                issues: recommendation.issues,
-                priority: recommendation.priority,
-                tier: recommendation.tier,
-                reasoning: recommendation.reasoning,
-                notes: recommendation.notes,
+                description: parsedPath.description,
+                order: parsedPath.order,
+              },
+            })
+          } else {
+            // Create new path with nested phases and recommendations in a single operation
+            path = await tx.readingPath.create({
+              data: {
+                bookType: parsedPath.bookType,
+                name: parsedPath.name,
+                description: parsedPath.description,
+                order: parsedPath.order,
+                phases: {
+                  create: parsedPath.phases.map((phase) => ({
+                    name: phase.name,
+                    description: phase.description,
+                    order: phase.order,
+                    recommendations: {
+                      create: phase.recommendations.map((rec) => ({
+                        title: rec.title,
+                        series: rec.series,
+                        author: rec.author,
+                        volumes: rec.volumes,
+                        issues: rec.issues,
+                        priority: rec.priority,
+                        tier: rec.tier,
+                        reasoning: rec.reasoning,
+                        notes: rec.notes,
+                      })),
+                    },
+                  })),
+                },
               },
             })
 
-            totalRecommendations++
+            totalPaths++
+            totalPhases += parsedPath.phases.length
+            totalRecommendations += parsedPath.phases.reduce(
+              (sum, phase) => sum + phase.recommendations.length,
+              0
+            )
+            continue
+          }
+
+          // For existing paths, batch create phases with their recommendations
+          if (parsedPath.phases.length > 0) {
+            const phaseCreates = parsedPath.phases.map((phase) =>
+              tx.readingPhase.create({
+                data: {
+                  pathId: path.id,
+                  name: phase.name,
+                  description: phase.description,
+                  order: phase.order,
+                  recommendations: {
+                    create: phase.recommendations.map((rec) => ({
+                      title: rec.title,
+                      series: rec.series,
+                      author: rec.author,
+                      volumes: rec.volumes,
+                      issues: rec.issues,
+                      priority: rec.priority,
+                      tier: rec.tier,
+                      reasoning: rec.reasoning,
+                      notes: rec.notes,
+                    })),
+                  },
+                },
+              })
+            )
+
+            // Execute all phase creates in parallel
+            await Promise.all(phaseCreates)
+
+            totalPaths++
+            totalPhases += parsedPath.phases.length
+            totalRecommendations += parsedPath.phases.reduce(
+              (sum, phase) => sum + phase.recommendations.length,
+              0
+            )
           }
         }
       }
-    }
+    })
 
     // Clear cache after updating recommendations
     recommendationCache.clearRecommendations()
