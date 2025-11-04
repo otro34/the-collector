@@ -47,6 +47,7 @@ model Item {
   videogame           Videogame?
   music               Music?
   book                Book?
+  readingProgress     ReadingProgress?
 
   @@index([collectionType])
   @@index([title])
@@ -215,4 +216,24 @@ model ReadingRecommendation {
   @@index([phaseId])
   @@index([series])
   @@index([phaseId, priority])
+}
+
+// Reading Progress - Track user's reading progress
+model ReadingProgress {
+  id                  String          @id @default(cuid())
+  itemId              String          @unique
+  item                Item            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  isRead              Boolean         @default(false)
+  startedAt           DateTime?
+  completedAt         DateTime?
+  readingPath         String?         // e.g., "Character-Focused", "Publisher-Focused"
+  currentPhase        String?         // e.g., "Phase 1: Gateway Masterpieces"
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([itemId])
+  @@index([isRead])
+  @@index([itemId, isRead])
 }

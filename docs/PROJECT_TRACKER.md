@@ -1,12 +1,12 @@
 # The Collector - Project Tracker
 
-**Last Updated**: 2025-11-02
+**Last Updated**: 2025-11-03
 
-## Current Sprint: Sprint 9 - Enhanced Data Entry & ISBN Integration
+## Current Sprint: Sprint 9 - Reading Recommendations & Enhanced Data Entry
 
-**Status**: 🟢 Completed
+**Status**: 🟡 In Progress
 **Start Date**: 2025-11-02
-**End Date**: 2025-11-02
+**End Date**: TBD
 
 ---
 
@@ -23,7 +23,7 @@
 | Sprint 6 | 🟢 Completed   | 2025-10-19 | 2025-10-26 | 7                 | 7             |
 | Sprint 7 | 🟢 Completed   | 2025-10-21 | 2025-10-26 | 6                 | 6             |
 | Sprint 8 | 🟡 In Progress | 2025-10-26 | -          | 9                 | 10            |
-| Sprint 9 | 🟢 Completed   | 2025-11-02 | 2025-11-02 | 1                 | 1             |
+| Sprint 9 | 🟡 In Progress | 2025-11-02 | -          | 2                 | 5             |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -826,9 +826,9 @@
 
 ---
 
-## Sprint 9: Enhanced Data Entry & ISBN Integration
+## Sprint 9: Reading Recommendations & Enhanced Data Entry
 
-**Goal**: Implement advanced book addition features using ISBN
+**Goal**: Implement reading order recommendations, progress tracking, and ISBN integration
 **Duration**: 2 weeks
 **Status**: 🟡 In Progress
 
@@ -839,7 +839,7 @@
 - **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 13
-- **PR**: [#TBD](https://github.com/otro34/the-collector/pull/TBD)
+- **PR**: [#52](https://github.com/otro34/the-collector/pull/52)
 - **Acceptance Criteria**:
   - [x] Option to add book via ISBN on the add book page
   - [x] Manual ISBN input field with validation (ISBN-10 or ISBN-13)
@@ -863,7 +863,44 @@
 - ISBN lookup pre-fills form, switches to manual mode for editing before save
 - All acceptance criteria met
 
-**Sprint 9 Total**: 13 story points (13 completed)
+#### US-9.2: Parse and Store Reading Order Recommendations
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 8
+- **PR**: [#55](https://github.com/otro34/the-collector/pull/55)
+- **Acceptance Criteria**:
+  - [x] Parser utility created to read and parse reading order markdown files
+  - [x] Extract structured data from markdown (phases, story arcs, series, reading paths)
+  - [x] Parse volume numbers, issue numbers, and series names
+  - [x] Database models created to store parsed recommendations
+  - [x] API endpoint to fetch recommendations by collection type
+  - [x] Handle markdown parsing errors gracefully
+  - [x] Cache parsed data for performance
+  - [x] Update recommendations when markdown files change
+
+**Progress Note**: Implemented comprehensive reading order parser system with database models for ReadingPath, ReadingPhase, and ReadingRecommendation. API endpoint `/api/recommendations/parse` processes markdown files and stores structured recommendations.
+
+#### US-9.3: Create Reading Progress Tracking Model
+
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: [#56](https://github.com/otro34/the-collector/pull/56)
+- **Acceptance Criteria**:
+  - [x] Database model created for reading progress
+  - [x] Track read/unread status per item
+  - [x] Track reading start date and completion date
+  - [x] Track chosen reading path (e.g., "Character-Focused", "Publisher-Focused")
+  - [x] Track current phase/milestone in chosen path
+  - [x] API endpoints for marking items as read/unread
+  - [x] API endpoint to fetch user's reading progress
+  - [x] Support updating reading dates
+  - [x] Cascade delete when item is deleted
+
+**Progress Note**: Complete reading progress tracking API implemented with comprehensive documentation. Includes POST, GET (all), GET (by item), and DELETE endpoints. Database model with performance indexes created and migration applied successfully.
+
+**Sprint 9 Total**: 44 story points (26 completed, 18 remaining)
 
 ---
 
@@ -871,10 +908,10 @@
 
 ### Completion Summary
 
-- **Total Story Points**: 274 (including Sprint 9)
-- **Completed Story Points**: 269 (Sprints 0-7 complete + US-8.1, US-8.2, US-8.3, US-8.4, US-8.5, US-8.6, US-8.7, US-8.8, US-8.10, US-9.1)
-- **Overall Progress**: 98.2%
-- **Sprint 9 Completed**: US-9.1 (13 points) - Full ISBN lookup integration complete! ✅
+- **Total Story Points**: 305 (including Sprint 9 expanded scope)
+- **Completed Story Points**: 295 (Sprints 0-7 complete + Sprint 8: 9 stories + Sprint 9: US-9.1, US-9.2, US-9.3)
+- **Overall Progress**: 96.7%
+- **Sprint 9 Progress**: US-9.1, US-9.2, US-9.3 completed (26/44 points - 59.1%) ✅
 
 ### Milestone Tracker
 
@@ -919,7 +956,27 @@
 
 ## Notes & Decisions
 
-### 2025-11-02 (Latest - Sprint 9 COMPLETE! ISBN Lookup Fully Integrated! 📖✅)
+### 2025-11-03 (Latest - US-9.3 COMPLETE! Reading Progress Tracking Implemented! 📚✅)
+
+- **US-9.3 COMPLETED**: Create Reading Progress Tracking Model (5 story points) ✅
+- **PR #56**: [feat: Implement Reading Progress Tracking Model and API](https://github.com/otro34/the-collector/pull/56)
+- Implemented complete reading progress tracking system:
+  - ✅ Created `ReadingProgress` Prisma model with all required fields
+  - ✅ Added performance indexes (itemId, isRead, composite)
+  - ✅ Database migration created and applied successfully
+  - ✅ Fixed PostgreSQL migration compatibility issue
+  - ✅ Implemented POST /api/reading-progress (create/update)
+  - ✅ Implemented GET /api/reading-progress (fetch all)
+  - ✅ Implemented GET /api/reading-progress/[itemId] (fetch by item)
+  - ✅ Implemented DELETE /api/reading-progress/[itemId]
+  - ✅ Added Zod validation for all API endpoints
+  - ✅ Created comprehensive API documentation (`docs/API_READING_PROGRESS.md`)
+  - ✅ Type checking passed
+  - ✅ Linting passed
+- Sprint 9 Progress: 26/44 points completed (59.1%)
+- Next up: US-9.4 (Build Recommendations Page) or US-9.5 (Add Read/Unread Toggle)
+
+### 2025-11-02 (Sprint 9 IN PROGRESS - ISBN & Recommendations! 📖📚)
 
 - **SPRINT 9 COMPLETED**: Enhanced Data Entry & ISBN Integration
 - **US-9.1 COMPLETED**: Add Book by ISBN Code (13 story points) ✅
