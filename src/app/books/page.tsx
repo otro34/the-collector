@@ -82,7 +82,10 @@ function BooksPageContent() {
   const { data: readingProgressData } = useAllReadingProgress()
 
   // Calculate read count
-  const readCount = readingProgressData ? readingProgressData.filter((p) => p.isRead).length : 0
+  const readCount =
+    readingProgressData && Array.isArray(readingProgressData)
+      ? readingProgressData.filter((p) => p.isRead).length
+      : 0
 
   // Calculate active filters count
   useEffect(() => {
