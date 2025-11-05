@@ -170,7 +170,13 @@ export async function GET(request: Request) {
         totalVolumes > 0 ? Math.round((readVolumes / totalVolumes) * 100) : 0
 
       const missingVolumes = findMissingVolumes(volumeNumbers)
-      const isComplete = missingVolumes.length === 0 && volumeNumbers.length > 0
+      // A series is complete if:
+      // 1. It has volume numbers and no gaps in the sequence, OR
+      // 2. It has no volume numbers but all items are read
+      const isComplete =
+        volumeNumbers.length > 0
+          ? missingVolumes.length === 0
+          : readVolumes === totalVolumes && totalVolumes > 0
 
       const insight: SeriesInsight = {
         series: seriesName,
