@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { CollectionInsights } from '@/components/recommendations/collection-insights'
 import type { BookType } from '@prisma/client'
 
 // Types
@@ -235,6 +236,23 @@ export default function RecommendationsPage() {
             <TabsTrigger value="GRAPHIC_NOVEL">Graphic Novels</TabsTrigger>
           </TabsList>
         </Tabs>
+      </div>
+
+      {/* Collection Insights Section */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Collection Insights</h2>
+        <CollectionInsights bookType={selectedBookType} />
+      </div>
+
+      {/* Divider */}
+      <div className="mb-8 border-t" />
+
+      {/* Reading Recommendations Section Header */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold mb-2">Reading Paths</h2>
+        <p className="text-muted-foreground">
+          Follow curated reading guides to enhance your collection experience
+        </p>
       </div>
 
       {isLoading ? (
