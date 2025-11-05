@@ -240,7 +240,7 @@ function RecentlyCompleted({ items }: { items: ReadingStats['recentlyCompleted']
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {items.slice(0, 5).map((item) => (
+          {items.map((item) => (
             <div
               key={item.id}
               className="flex items-center gap-3 rounded-lg border p-3 hover:bg-accent/50 transition-colors"

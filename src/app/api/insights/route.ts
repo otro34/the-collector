@@ -135,7 +135,7 @@ export async function GET(request: Request) {
           const dateB = b.readingProgress!.completedAt!
           return dateB.getTime() - dateA.getTime()
         })
-        .slice(0, 10)
+        .slice(0, 5)
         .map((b) => ({
           id: b.id,
           title: b.title,
