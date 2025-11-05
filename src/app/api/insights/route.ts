@@ -83,9 +83,9 @@ export async function GET(request: Request) {
     // Validate bookType if provided
     let bookTypeFilter: BookType | undefined
     if (bookTypeParam) {
-      if (!['MANGA', 'COMIC', 'GRAPHIC_NOVEL', 'OTHER'].includes(bookTypeParam)) {
+      if (!['MANGA', 'COMIC', 'GRAPHIC_NOVEL'].includes(bookTypeParam)) {
         return NextResponse.json(
-          { error: 'Invalid bookType. Must be one of: MANGA, COMIC, GRAPHIC_NOVEL, OTHER' },
+          { error: 'Invalid bookType. Must be one of: MANGA, COMIC, GRAPHIC_NOVEL' },
           { status: 400 }
         )
       }
