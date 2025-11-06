@@ -32,10 +32,12 @@ import {
 const musicSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   artist: z.string().min(1, 'Artist is required'),
+  format: z.string().min(1, 'Format is required'),
   year: z.number().int().min(1900).max(2100).optional().nullable(),
-  label: z.string().optional(),
-  format: z.string().optional(),
+  publisher: z.string().optional(),
+  discCount: z.string().optional(),
   genres: z.string().optional(),
+  tracklist: z.string().optional(),
   description: z.string().optional(),
   coverUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   language: z.string().optional(),
@@ -43,8 +45,6 @@ const musicSchema = z.object({
   copies: z.number().int().min(1).optional(),
   price: z.number().min(0).optional().nullable(),
   tags: z.string().optional(),
-  tracklist: z.string().optional(),
-  discCount: z.number().int().min(1).optional().nullable(),
 })
 
 type MusicFormData = z.infer<typeof musicSchema>
@@ -62,10 +62,12 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
     defaultValues: {
       title: '',
       artist: '',
-      year: null,
-      label: '',
       format: '',
+      year: null,
+      publisher: '',
+      discCount: '',
       genres: '',
+      tracklist: '',
       description: '',
       coverUrl: '',
       language: '',
@@ -73,8 +75,6 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
       copies: 1,
       price: null,
       tags: '',
-      tracklist: '',
-      discCount: null,
     },
   })
 
@@ -114,10 +114,12 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
       form.reset({
         title: item.title || '',
         artist: item.music?.artist || '',
-        year: item.year,
-        label: item.music?.label || '',
         format: item.music?.format || '',
+        year: item.year,
+        publisher: item.music?.publisher || '',
+        discCount: item.music?.discCount || '',
         genres,
+        tracklist: item.music?.tracklist || '',
         description: item.description || '',
         coverUrl: item.coverUrl || '',
         language: item.language || '',
@@ -125,8 +127,6 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
         copies: item.copies || 1,
         price: item.price,
         tags,
-        tracklist: item.music?.tracklist || '',
-        discCount: item.music?.discCount,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load item')
@@ -259,7 +259,7 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
                 name="format"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Format</FormLabel>
+                    <FormLabel>Format *</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       value={field.value}
@@ -310,10 +310,10 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
 
             <FormField
               control={form.control}
-              name="label"
+              name="publisher"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Record Label</FormLabel>
+                  <FormLabel>Publisher / Record Label</FormLabel>
                   <FormControl>
                     <Input placeholder="Apple Records" {...field} />
                   </FormControl>
@@ -369,16 +369,7 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
                 <FormItem>
                   <FormLabel>Disc Count</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      min="1"
-                      placeholder="1"
-                      {...field}
-                      value={field.value ?? ''}
-                      onChange={(e) =>
-                        field.onChange(e.target.value ? parseInt(e.target.value) : null)
-                      }
-                    />
+                    <Input type="text" placeholder="1" {...field} />
                   </FormControl>
                   <FormDescription>Number of discs</FormDescription>
                   <FormMessage />
