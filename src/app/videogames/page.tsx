@@ -193,7 +193,7 @@ function VideogamesPageContent() {
   // Handle opening item from URL query parameter (e.g., from search results)
   useEffect(() => {
     const itemId = searchParams.get('itemId')
-    if (itemId && data?.items) {
+    if (itemId && data?.items && Array.isArray(data.items)) {
       const item = data.items.find((i) => i.id === itemId)
       if (item) {
         setSelectedItem(item as ItemWithRelations)
