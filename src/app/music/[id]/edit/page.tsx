@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -50,6 +51,7 @@ type MusicFormData = z.infer<typeof musicSchema>
 
 export default function EditMusicPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const [id, setId] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -150,6 +152,10 @@ export default function EditMusicPage({ params }: { params: Promise<{ id: string
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to update music')
       }
+
+      // Invalidate relevant queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['music'] })
+      queryClient.invalidateQueries({ queryKey: ['reading-progress'] })
 
       // Redirect back to collection page with itemId to reopen the modal
       router.push(`/music?itemId=${id}`)
