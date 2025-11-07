@@ -22,11 +22,18 @@ const DISCOGS_SECRET = process.env.DISCOGS_SECRET || ''
 function transformDiscogsResult(result: DiscogsAPISearchResult): DiscogsSearchResult {
   const { artist, title } = parseDiscogsTitle(result.title)
 
+  // Parse year with validation
+  let year: number | undefined
+  if (result.year) {
+    const parsedYear = parseInt(result.year, 10)
+    year = !isNaN(parsedYear) ? parsedYear : undefined
+  }
+
   return {
     id: result.id,
     title: title || result.title,
     artist: artist,
-    year: result.year ? parseInt(result.year, 10) : undefined,
+    year,
     label: result.label?.[0],
     format: result.format?.join(', '),
     coverUrl: result.cover_image || result.thumb,

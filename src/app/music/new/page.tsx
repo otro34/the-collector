@@ -116,7 +116,7 @@ export default function NewMusicPage() {
       year: albumData.year || null,
       publisher: albumData.label || '',
       discCount: '',
-      genres: [...(albumData.genres || []), ...(albumData.styles || [])].join(', '),
+      genres: [...new Set([...(albumData.genres || []), ...(albumData.styles || [])])].join(', '),
       tracklist: '',
       description: '',
       coverUrl: albumData.coverUrl || '',

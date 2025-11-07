@@ -221,16 +221,17 @@ export function DiscogsSearch({ onAlbumSelected, onCancel }: DiscogsSearchProps)
   }
 
   const stopScanning = async () => {
-    if (html5QrcodeRef.current && isScanning) {
-      try {
+    try {
+      if (html5QrcodeRef.current && isScanning) {
         await html5QrcodeRef.current.stop()
-      } catch (err) {
-        console.error('Error stopping scanner:', err)
       }
+    } catch (err) {
+      console.error('Error stopping scanner:', err)
+    } finally {
+      setIsScanning(false)
+      isProcessingRef.current = false
+      lastScannedBarcodeRef.current = null
     }
-    setIsScanning(false)
-    isProcessingRef.current = false
-    lastScannedBarcodeRef.current = null
   }
 
   return (
