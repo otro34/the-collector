@@ -971,35 +971,35 @@
 
 **Goal**: Implement automated data lookup for music and videogame collections
 **Duration**: 2 weeks
-**Status**: 🔵 Pending
+**Status**: 🟡 In Progress
 
 ### User Stories
 
 #### US-10.1: Add Music by Title or Barcode using Discogs API
 
-- **Status**: 🔵 Pending
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 13
-- **PR**: TBD
+- **PR**: [#60](https://github.com/otro34/the-collector/pull/60)
 - **Acceptance Criteria**:
-  - [ ] Option to add music via search on the add music page
-  - [ ] Title search input field with live search results
-  - [ ] Barcode scanner option to scan album barcode
-  - [ ] Camera permission request handling
-  - [ ] Barcode detection and extraction
-  - [ ] Fetch album metadata from Discogs API (title, artist, year, label, format, cover image, etc.)
-  - [ ] Display search results with cover images and basic info
-  - [ ] Pre-fill music form with selected album data
-  - [ ] Allow user to review and edit fetched data before saving
-  - [ ] Fallback to manual entry if lookup fails
-  - [ ] Success/error messages for search/lookup
-  - [ ] Works on both mobile and desktop (camera on mobile, webcam on desktop)
-  - [ ] Loading state during API fetch
-  - [ ] Handle missing or incomplete data from API
-  - [ ] Handle Discogs API rate limits
-  - [ ] Support both vinyl and CD formats
+  - [x] Option to add music via search on the add music page
+  - [x] Title search input field with live search results
+  - [x] Barcode scanner option to scan album barcode
+  - [x] Camera permission request handling
+  - [x] Barcode detection and extraction
+  - [x] Fetch album metadata from Discogs API (title, artist, year, label, format, cover image, etc.)
+  - [x] Display search results with cover images and basic info
+  - [x] Pre-fill music form with selected album data
+  - [x] Allow user to review and edit fetched data before saving
+  - [x] Fallback to manual entry if lookup fails
+  - [x] Success/error messages for search/lookup
+  - [x] Works on both mobile and desktop (camera on mobile, webcam on desktop)
+  - [x] Loading state during API fetch
+  - [x] Handle missing or incomplete data from API
+  - [x] Handle Discogs API rate limits
+  - [x] Support both vinyl and CD formats
 
-**Progress Note**: Not started
+**Progress Note**: Feature complete! Implemented comprehensive Discogs API integration with search by title/artist and barcode scanning. Includes UPC/EAN barcode validation, live search results, album preview screen, and automatic form pre-filling. Tab-based interface allows switching between Discogs search and manual entry. Supports rate limiting, error handling, and responsive design. All acceptance criteria met.
 
 #### US-10.2: Add Videogame by Title using RAWG API
 
@@ -1034,10 +1034,10 @@
 ### Completion Summary
 
 - **Total Story Points**: 353 (including Sprint 9 and Sprint 10)
-- **Completed Story Points**: 317 (Sprints 0-7 complete + Sprint 8: 9 stories + Sprint 9: ALL 6 stories)
-- **Overall Progress**: 89.8%
+- **Completed Story Points**: 330 (Sprints 0-7 complete + Sprint 8: 9 stories + Sprint 9: ALL 6 stories + Sprint 10: 1 story)
+- **Overall Progress**: 93.5%
 - **Sprint 9 Progress**: COMPLETE! All 6 stories (57 story points) ✅
-- **Sprint 10 Progress**: Not started (0/26 story points)
+- **Sprint 10 Progress**: 1/2 stories complete (13/26 story points - 50%)
 
 ### Milestone Tracker
 
