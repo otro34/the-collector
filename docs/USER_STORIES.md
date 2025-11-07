@@ -1777,23 +1777,124 @@ Performance optimization, error handling, and UX improvements.
 
 ---
 
+### Sprint 10: Enhanced Data Entry for Music & Videogames
+
+**Goal**: Implement automated data lookup for music and videogame collections
+**Duration**: 2 weeks
+
+#### User Stories
+
+**US-10.1: Add Music by Title or Barcode using Discogs API**
+
+- **As a** user
+- **I want** to add music albums to my collection by searching title or scanning barcode
+- **So that** I can quickly add albums without manually entering all details
+
+**Acceptance Criteria**:
+
+- [ ] Option to add music via search on the add music page
+- [ ] Title search input field with live search results
+- [ ] Barcode scanner option to scan album barcode
+- [ ] Camera permission request handling
+- [ ] Barcode detection and extraction
+- [ ] Fetch album metadata from Discogs API (title, artist, year, label, format, cover image, etc.)
+- [ ] Display search results with cover images and basic info
+- [ ] Pre-fill music form with selected album data
+- [ ] Allow user to review and edit fetched data before saving
+- [ ] Fallback to manual entry if lookup fails
+- [ ] Success/error messages for search/lookup
+- [ ] Works on both mobile and desktop (camera on mobile, webcam on desktop)
+- [ ] Loading state during API fetch
+- [ ] Handle missing or incomplete data from API
+- [ ] Handle Discogs API rate limits
+- [ ] Support both vinyl and CD formats
+
+**Tasks**:
+
+- Research Discogs API authentication and endpoints
+- Create Discogs API integration utility
+- Create barcode validation utility (support UPC/EAN barcodes)
+- Build title search component with autocomplete
+- Implement barcode scanner component (reuse from ISBN implementation)
+- Request and handle camera permissions
+- Create API route to search Discogs by title
+- Create API route to fetch album data by barcode
+- Map Discogs API response to music form fields
+- Update AddMusicForm to support search/barcode entry mode
+- Add toggle between manual entry and search entry
+- Handle API errors and rate limits with retry logic
+- Add loading indicators and search result previews
+- Test with various albums and formats
+- Test on multiple devices (mobile, tablet, desktop)
+- Document Discogs API integration
+
+**Effort**: 13 story points
+
+---
+
+**US-10.2: Add Videogame by Title using RAWG API**
+
+- **As a** user
+- **I want** to add videogames to my collection by searching title
+- **So that** I can quickly add games without manually entering all details
+
+**Acceptance Criteria**:
+
+- [ ] Option to add game via search on the add videogame page
+- [ ] Title search input field with live search results
+- [ ] Fetch game metadata from RAWG API (title, release date, platforms, genres, publishers, cover image, etc.)
+- [ ] Display search results with cover images and basic info
+- [ ] Filter results by platform
+- [ ] Pre-fill videogame form with selected game data
+- [ ] Allow user to review and edit fetched data before saving
+- [ ] Map RAWG platforms to user's platform list
+- [ ] Fallback to manual entry if lookup fails
+- [ ] Success/error messages for search
+- [ ] Loading state during API fetch
+- [ ] Handle missing or incomplete data from API
+- [ ] Handle RAWG API rate limits
+- [ ] Support multiple platforms per game
+
+**Tasks**:
+
+- Research RAWG API authentication and endpoints
+- Create RAWG API integration utility
+- Build title search component with autocomplete
+- Create API route to search RAWG by title
+- Create API route to fetch game details by ID
+- Map RAWG API response to videogame form fields
+- Implement platform mapping logic (RAWG platforms → user platforms)
+- Update AddVideogameForm to support search entry mode
+- Add toggle between manual entry and search entry
+- Handle API errors and rate limits with retry logic
+- Add loading indicators and search result previews
+- Display game metadata (release date, genres, platforms, etc.)
+- Test with various games and platforms
+- Test on multiple devices (mobile, tablet, desktop)
+- Document RAWG API integration
+
+**Effort**: 13 story points
+
+---
+
 ## Sprint Summary
 
-| Sprint   | Duration | Story Points | Focus                          |
-| -------- | -------- | ------------ | ------------------------------ |
-| Sprint 0 | 3-5 days | 5            | Project Setup                  |
-| Sprint 1 | 2 weeks  | 24           | Database & Data Migration      |
-| Sprint 2 | 2 weeks  | 22           | Core UI & Layout               |
-| Sprint 3 | 2 weeks  | 31           | Collection Views               |
-| Sprint 4 | 2 weeks  | 31           | CRUD Operations                |
-| Sprint 5 | 2 weeks  | 36           | Search & Filtering             |
-| Sprint 6 | 2 weeks  | 37           | Import & Export                |
-| Sprint 7 | 2 weeks  | 36           | Backup & Restore               |
-| Sprint 8 | 2 weeks  | 39           | Polish & Optimization          |
-| Sprint 9 | 2 weeks  | 60           | Reading Recommendations & ISBN |
+| Sprint    | Duration | Story Points | Focus                          |
+| --------- | -------- | ------------ | ------------------------------ |
+| Sprint 0  | 3-5 days | 5            | Project Setup                  |
+| Sprint 1  | 2 weeks  | 24           | Database & Data Migration      |
+| Sprint 2  | 2 weeks  | 22           | Core UI & Layout               |
+| Sprint 3  | 2 weeks  | 31           | Collection Views               |
+| Sprint 4  | 2 weeks  | 31           | CRUD Operations                |
+| Sprint 5  | 2 weeks  | 36           | Search & Filtering             |
+| Sprint 6  | 2 weeks  | 37           | Import & Export                |
+| Sprint 7  | 2 weeks  | 36           | Backup & Restore               |
+| Sprint 8  | 2 weeks  | 39           | Polish & Optimization          |
+| Sprint 9  | 2 weeks  | 60           | Reading Recommendations & ISBN |
+| Sprint 10 | 2 weeks  | 26           | Music & Videogame Data Lookup  |
 
-**Total**: ~10 sprints, ~19 weeks (4.5-5 months)
-**Total Story Points**: 321
+**Total**: ~11 sprints, ~21 weeks (5 months)
+**Total Story Points**: 347
 
 ---
 

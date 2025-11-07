@@ -967,14 +967,77 @@
 
 ---
 
+## Sprint 10: Enhanced Data Entry for Music & Videogames
+
+**Goal**: Implement automated data lookup for music and videogame collections
+**Duration**: 2 weeks
+**Status**: 🔵 Pending
+
+### User Stories
+
+#### US-10.1: Add Music by Title or Barcode using Discogs API
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 13
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Option to add music via search on the add music page
+  - [ ] Title search input field with live search results
+  - [ ] Barcode scanner option to scan album barcode
+  - [ ] Camera permission request handling
+  - [ ] Barcode detection and extraction
+  - [ ] Fetch album metadata from Discogs API (title, artist, year, label, format, cover image, etc.)
+  - [ ] Display search results with cover images and basic info
+  - [ ] Pre-fill music form with selected album data
+  - [ ] Allow user to review and edit fetched data before saving
+  - [ ] Fallback to manual entry if lookup fails
+  - [ ] Success/error messages for search/lookup
+  - [ ] Works on both mobile and desktop (camera on mobile, webcam on desktop)
+  - [ ] Loading state during API fetch
+  - [ ] Handle missing or incomplete data from API
+  - [ ] Handle Discogs API rate limits
+  - [ ] Support both vinyl and CD formats
+
+**Progress Note**: Not started
+
+#### US-10.2: Add Videogame by Title using RAWG API
+
+- **Status**: 🔵 Pending
+- **Assigned**: Claude
+- **Story Points**: 13
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Option to add game via search on the add videogame page
+  - [ ] Title search input field with live search results
+  - [ ] Fetch game metadata from RAWG API (title, release date, platforms, genres, publishers, cover image, etc.)
+  - [ ] Display search results with cover images and basic info
+  - [ ] Filter results by platform
+  - [ ] Pre-fill videogame form with selected game data
+  - [ ] Allow user to review and edit fetched data before saving
+  - [ ] Map RAWG platforms to user's platform list
+  - [ ] Fallback to manual entry if lookup fails
+  - [ ] Success/error messages for search
+  - [ ] Loading state during API fetch
+  - [ ] Handle missing or incomplete data from API
+  - [ ] Handle RAWG API rate limits
+  - [ ] Support multiple platforms per game
+
+**Progress Note**: Not started
+
+**Sprint 10 Total**: 26 story points
+
+---
+
 ## Overall Project Progress
 
 ### Completion Summary
 
-- **Total Story Points**: 327 (including Sprint 9 expanded scope)
+- **Total Story Points**: 353 (including Sprint 9 and Sprint 10)
 - **Completed Story Points**: 317 (Sprints 0-7 complete + Sprint 8: 9 stories + Sprint 9: ALL 6 stories)
-- **Overall Progress**: 97.0%
+- **Overall Progress**: 89.8%
 - **Sprint 9 Progress**: COMPLETE! All 6 stories (57 story points) ✅
+- **Sprint 10 Progress**: Not started (0/26 story points)
 
 ### Milestone Tracker
 
