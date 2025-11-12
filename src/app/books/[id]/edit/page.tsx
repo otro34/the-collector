@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -53,6 +53,7 @@ type BookFormData = z.infer<typeof bookSchema>
 
 export default function EditBookPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const [id, setId] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
@@ -164,7 +165,10 @@ export default function EditBookPage({ params }: { params: Promise<{ id: string 
       queryClient.invalidateQueries({ queryKey: ['reading-progress'] })
 
       // Redirect back to collection page with itemId to reopen the modal
-      router.push(`/books?itemId=${id}`)
+      // Preserve all URL params (search, filters, sort, page) from when user navigated here
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('itemId', id)
+      router.push(`/books?${params.toString()}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {

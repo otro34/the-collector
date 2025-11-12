@@ -70,8 +70,8 @@ function MusicPageContent() {
     (searchParams.get('sortDirection') as SortDirection) || 'desc'
   )
 
-  // Search state
-  const [searchQuery, setSearchQuery] = useState('')
+  // Search state - use URL params for persistence
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
 
   // Filter state
   const [filters, setFilters] = useState<FilterOptions>({})
@@ -147,12 +147,16 @@ function MusicPageContent() {
     // Only reset page if the search query actually changed
     if (query !== searchQuery) {
       setSearchQuery(query)
-      // Reset to first page when search changes
-      if (page !== 1) {
-        const params = new URLSearchParams(searchParams.toString())
-        params.set('page', '1')
-        router.push(`/music?${params.toString()}`)
+
+      // Update URL params for persistence
+      const params = new URLSearchParams(searchParams.toString())
+      if (query.trim()) {
+        params.set('q', query.trim())
+      } else {
+        params.delete('q')
       }
+      params.set('page', '1') // Reset to first page when search changes
+      router.push(`/music?${params.toString()}`, { scroll: false })
     }
   }
 
@@ -214,7 +218,9 @@ function MusicPageContent() {
 
   const handleEdit = (item: ItemWithRelations) => {
     setModalOpen(false)
-    router.push(`/music/${item.id}/edit`)
+    // Preserve current URL params (search, filters, sort, page) for return navigation
+    const params = new URLSearchParams(searchParams.toString())
+    router.push(`/music/${item.id}/edit?${params.toString()}`)
   }
 
   const handleDelete = (item: ItemWithRelations) => {
