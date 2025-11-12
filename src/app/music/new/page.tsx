@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -52,7 +52,7 @@ const musicSchema = z.object({
 
 type MusicFormData = z.infer<typeof musicSchema>
 
-export default function NewMusicPage() {
+function NewMusicPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -535,5 +535,13 @@ export default function NewMusicPage() {
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+export default function NewMusicPage() {
+  return (
+    <Suspense fallback={<div className="container max-w-3xl py-8">Loading...</div>}>
+      <NewMusicPageContent />
+    </Suspense>
   )
 }

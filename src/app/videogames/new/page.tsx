@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -54,7 +54,7 @@ const videogameSchema = z.object({
 
 type VideogameFormData = z.infer<typeof videogameSchema>
 
-export default function NewVideogamePage() {
+function NewVideogamePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -592,5 +592,13 @@ export default function NewVideogamePage() {
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+export default function NewVideogamePage() {
+  return (
+    <Suspense fallback={<div className="container max-w-3xl py-8">Loading...</div>}>
+      <NewVideogamePageContent />
+    </Suspense>
   )
 }

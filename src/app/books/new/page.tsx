@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -55,7 +55,7 @@ const bookSchema = z.object({
 
 type BookFormData = z.infer<typeof bookSchema>
 
-export default function NewBookPage() {
+function NewBookPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -554,5 +554,13 @@ export default function NewBookPage() {
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+export default function NewBookPage() {
+  return (
+    <Suspense fallback={<div className="container max-w-3xl py-8">Loading...</div>}>
+      <NewBookPageContent />
+    </Suspense>
   )
 }
