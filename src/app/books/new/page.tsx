@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -57,6 +57,7 @@ type BookFormData = z.infer<typeof bookSchema>
 
 export default function NewBookPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [entryMode, setEntryMode] = useState<'manual' | 'isbn'>('isbn')
@@ -161,7 +162,10 @@ export default function NewBookPage() {
       form.reset()
 
       // Redirect to the books collection page
-      router.push(`/books?new=${result.item.id}`)
+      // Preserve all URL params (search, filters, sort, page) from when user navigated here
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('itemId', result.item.id)
+      router.push(`/books?${params.toString()}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -175,7 +179,7 @@ export default function NewBookPage() {
       <div className="container max-w-3xl py-8">
         <div className="mb-8">
           <Link
-            href="/books"
+            href={`/books?${searchParams.toString()}`}
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -197,7 +201,7 @@ export default function NewBookPage() {
       {/* Header */}
       <div className="mb-8">
         <Link
-          href="/books"
+          href={`/books?${searchParams.toString()}`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -234,7 +238,10 @@ export default function NewBookPage() {
         </TabsList>
 
         <TabsContent value="isbn" className="mt-6">
-          <ISBNLookup onBookFound={handleBookFound} onCancel={() => router.push('/books')} />
+          <ISBNLookup
+            onBookFound={handleBookFound}
+            onCancel={() => router.push(`/books?${searchParams.toString()}`)}
+          />
         </TabsContent>
 
         <TabsContent value="manual" className="mt-6">

@@ -403,7 +403,7 @@ function MusicPageContent() {
 
                 {/* Add Button */}
                 <Button asChild>
-                  <Link href="/music/new">
+                  <Link href={`/music/new?${searchParams.toString()}`}>
                     <Plus className="mr-2 h-4 w-4" />
                     Add Album
                   </Link>
@@ -510,7 +510,10 @@ function MusicPageContent() {
           />
 
           {/* Floating Action Button - Mobile Only */}
-          <FloatingActionButton href="/music/new" label="Add new music album" />
+          <FloatingActionButton
+            href={`/music/new?${searchParams.toString()}`}
+            label="Add new music album"
+          />
         </div>
       </div>
     </div>

@@ -448,7 +448,7 @@ function BooksPageContent() {
 
                 {/* Add Button */}
                 <Button asChild>
-                  <Link href="/books/new">
+                  <Link href={`/books/new?${searchParams.toString()}`}>
                     <Plus className="mr-2 h-4 w-4" />
                     Add Book
                   </Link>
@@ -558,7 +558,10 @@ function BooksPageContent() {
           />
 
           {/* Floating Action Button - Mobile Only */}
-          <FloatingActionButton href="/books/new" label="Add new book" />
+          <FloatingActionButton
+            href={`/books/new?${searchParams.toString()}`}
+            label="Add new book"
+          />
         </div>
       </div>
     </div>

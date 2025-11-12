@@ -414,7 +414,7 @@ function VideogamesPageContent() {
 
                 {/* Add Button */}
                 <Button asChild className="hidden sm:flex">
-                  <Link href="/videogames/new">
+                  <Link href={`/videogames/new?${searchParams.toString()}`}>
                     <Plus className="mr-2 h-4 w-4" />
                     Add Game
                   </Link>
@@ -521,7 +521,10 @@ function VideogamesPageContent() {
           />
 
           {/* Floating Action Button - Mobile Only */}
-          <FloatingActionButton href="/videogames/new" label="Add new video game" />
+          <FloatingActionButton
+            href={`/videogames/new?${searchParams.toString()}`}
+            label="Add new video game"
+          />
         </div>
       </div>
     </div>

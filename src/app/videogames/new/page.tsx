@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -56,6 +56,7 @@ type VideogameFormData = z.infer<typeof videogameSchema>
 
 export default function NewVideogamePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [entryMode, setEntryMode] = useState<'manual' | 'rawg'>('rawg')
@@ -159,7 +160,10 @@ export default function NewVideogamePage() {
       form.reset()
 
       // Redirect to the videogame detail page
-      router.push(`/videogames?new=${result.item.id}`)
+      // Preserve all URL params (search, filters, sort, page) from when user navigated here
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('itemId', result.item.id)
+      router.push(`/videogames?${params.toString()}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -173,7 +177,7 @@ export default function NewVideogamePage() {
       <div className="container max-w-3xl py-8">
         <div className="mb-8">
           <Link
-            href="/videogames"
+            href={`/videogames?${searchParams.toString()}`}
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -195,7 +199,7 @@ export default function NewVideogamePage() {
       {/* Header */}
       <div className="mb-8">
         <Link
-          href="/videogames"
+          href={`/videogames?${searchParams.toString()}`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -232,7 +236,7 @@ export default function NewVideogamePage() {
         <TabsContent value="rawg" className="mt-6">
           <RAWGSearch
             onGameSelected={handleGameSelected}
-            onCancel={() => router.push('/videogames')}
+            onCancel={() => router.push(`/videogames?${searchParams.toString()}`)}
           />
         </TabsContent>
 
@@ -577,7 +581,7 @@ export default function NewVideogamePage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.push('/videogames')}
+                  onClick={() => router.push(`/videogames?${searchParams.toString()}`)}
                   disabled={isSubmitting}
                 >
                   Cancel

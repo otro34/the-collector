@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -54,6 +54,7 @@ type MusicFormData = z.infer<typeof musicSchema>
 
 export default function NewMusicPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [entryMode, setEntryMode] = useState<'manual' | 'discogs'>('discogs')
@@ -162,7 +163,10 @@ export default function NewMusicPage() {
       form.reset()
 
       // Redirect to the music collection page
-      router.push(`/music?new=${result.item.id}`)
+      // Preserve all URL params (search, filters, sort, page) from when user navigated here
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('itemId', result.item.id)
+      router.push(`/music?${params.toString()}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -176,7 +180,7 @@ export default function NewMusicPage() {
       <div className="container max-w-3xl py-8">
         <div className="mb-8">
           <Link
-            href="/music"
+            href={`/music?${searchParams.toString()}`}
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -202,7 +206,7 @@ export default function NewMusicPage() {
       {/* Header */}
       <div className="mb-8">
         <Link
-          href="/music"
+          href={`/music?${searchParams.toString()}`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -239,7 +243,7 @@ export default function NewMusicPage() {
         <TabsContent value="discogs" className="mt-6">
           <DiscogsSearch
             onAlbumSelected={handleAlbumSelected}
-            onCancel={() => router.push('/music')}
+            onCancel={() => router.push(`/music?${searchParams.toString()}`)}
           />
         </TabsContent>
 
@@ -520,7 +524,7 @@ export default function NewMusicPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.push('/music')}
+                  onClick={() => router.push(`/music?${searchParams.toString()}`)}
                   disabled={isSubmitting}
                 >
                   Cancel
