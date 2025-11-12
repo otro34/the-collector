@@ -55,20 +55,21 @@ export async function GET(request: NextRequest) {
     }
 
     // Apply search query if provided (searches title, description, developer, publisher)
-    // Note: SQLite is case-insensitive by default for LIKE operations
     if (searchQuery) {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       where.OR = [
-        { title: { contains: searchQuery } },
-        { description: { contains: searchQuery } },
+        { title: { contains: searchQuery, mode: 'insensitive' } as any },
+        { description: { contains: searchQuery, mode: 'insensitive' } as any },
         {
           videogame: {
             OR: [
-              { developer: { contains: searchQuery } },
-              { publisher: { contains: searchQuery } },
+              { developer: { contains: searchQuery, mode: 'insensitive' } as any },
+              { publisher: { contains: searchQuery, mode: 'insensitive' } as any },
             ],
           },
         },
       ]
+      /* eslint-enable @typescript-eslint/no-explicit-any */
     }
 
     // Apply videogame-specific filters

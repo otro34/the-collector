@@ -75,15 +75,20 @@ export async function GET(request: NextRequest) {
 
     // Apply search query if provided (searches title, description, artist, publisher)
     if (searchQuery) {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       where.OR = [
-        { title: { contains: searchQuery } },
-        { description: { contains: searchQuery } },
+        { title: { contains: searchQuery, mode: 'insensitive' } as any },
+        { description: { contains: searchQuery, mode: 'insensitive' } as any },
         {
           music: {
-            OR: [{ artist: { contains: searchQuery } }, { publisher: { contains: searchQuery } }],
+            OR: [
+              { artist: { contains: searchQuery, mode: 'insensitive' } as any },
+              { publisher: { contains: searchQuery, mode: 'insensitive' } as any },
+            ],
           },
         },
       ]
+      /* eslint-enable @typescript-eslint/no-explicit-any */
     }
 
     // Apply music-specific filters

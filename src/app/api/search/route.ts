@@ -18,22 +18,23 @@ export async function GET(request: Request) {
     const searchTerm = query.trim()
 
     // Search across all collections
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const [videogames, music, books] = await Promise.all([
       // Search videogames
       prisma.item.findMany({
         where: {
           collectionType: 'VIDEOGAME',
           OR: [
-            { title: { contains: searchTerm } },
-            { description: { contains: searchTerm } },
+            { title: { contains: searchTerm, mode: 'insensitive' } as any },
+            { description: { contains: searchTerm, mode: 'insensitive' } as any },
             {
               videogame: {
-                developer: { contains: searchTerm },
+                developer: { contains: searchTerm, mode: 'insensitive' } as any,
               },
             },
             {
               videogame: {
-                publisher: { contains: searchTerm },
+                publisher: { contains: searchTerm, mode: 'insensitive' } as any,
               },
             },
           ],
@@ -52,16 +53,16 @@ export async function GET(request: Request) {
         where: {
           collectionType: 'MUSIC',
           OR: [
-            { title: { contains: searchTerm } },
-            { description: { contains: searchTerm } },
+            { title: { contains: searchTerm, mode: 'insensitive' } as any },
+            { description: { contains: searchTerm, mode: 'insensitive' } as any },
             {
               music: {
-                artist: { contains: searchTerm },
+                artist: { contains: searchTerm, mode: 'insensitive' } as any,
               },
             },
             {
               music: {
-                publisher: { contains: searchTerm },
+                publisher: { contains: searchTerm, mode: 'insensitive' } as any,
               },
             },
           ],
@@ -80,21 +81,21 @@ export async function GET(request: Request) {
         where: {
           collectionType: 'BOOK',
           OR: [
-            { title: { contains: searchTerm } },
-            { description: { contains: searchTerm } },
+            { title: { contains: searchTerm, mode: 'insensitive' } as any },
+            { description: { contains: searchTerm, mode: 'insensitive' } as any },
             {
               book: {
-                author: { contains: searchTerm },
+                author: { contains: searchTerm, mode: 'insensitive' } as any,
               },
             },
             {
               book: {
-                publisher: { contains: searchTerm },
+                publisher: { contains: searchTerm, mode: 'insensitive' } as any,
               },
             },
             {
               book: {
-                series: { contains: searchTerm },
+                series: { contains: searchTerm, mode: 'insensitive' } as any,
               },
             },
           ],
@@ -108,6 +109,7 @@ export async function GET(request: Request) {
         },
       }),
     ])
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 
     // Combine and format results
     const results = [
