@@ -68,7 +68,7 @@ export function SortControl({
       {/* Sort Field Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="h-9">
+          <Button variant="outline" size="sm" className="h-9" aria-label="Sort options">
             <ArrowUpDown className="mr-2 h-4 w-4" />
             Sort: {getSortLabel(sortField)}
           </Button>
@@ -93,12 +93,14 @@ export function SortControl({
         onClick={toggleDirection}
         className="h-9 px-2"
         title={sortDirection === 'asc' ? 'Ascending' : 'Descending'}
+        aria-label={`Sort direction: ${sortDirection === 'asc' ? 'Ascending' : 'Descending'}`}
       >
         {sortDirection === 'asc' ? (
           <ArrowUp className="h-4 w-4" />
         ) : (
           <ArrowDown className="h-4 w-4" />
         )}
+        <span className="sr-only">{sortDirection === 'asc' ? 'Ascending' : 'Descending'}</span>
       </Button>
     </div>
   )

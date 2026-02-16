@@ -110,13 +110,19 @@ export function ImageSearchDialog({
               onChange={(e) => setQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               className="flex-1"
+              aria-label="Image search query"
             />
-            <Button onClick={searchImages} disabled={loading || !query.trim()}>
+            <Button
+              onClick={searchImages}
+              disabled={loading || !query.trim()}
+              aria-label="Search for images"
+            >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Search className="h-4 w-4" />
               )}
+              <span className="sr-only">Search</span>
             </Button>
           </div>
 
@@ -143,6 +149,8 @@ export function ImageSearchDialog({
                     className={`relative aspect-[2/3] bg-muted rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all ${
                       selectedImage === image.url ? 'ring-2 ring-primary' : ''
                     }`}
+                    aria-label={`Select image: ${image.title}`}
+                    aria-pressed={selectedImage === image.url}
                   >
                     <Image
                       src={image.thumbnail || image.url}
