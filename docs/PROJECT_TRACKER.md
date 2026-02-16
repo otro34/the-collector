@@ -759,16 +759,16 @@
 
 #### US-8.6: Add Keyboard Shortcuts
 
-- **Status**: 🔵 Pending
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#51](https://github.com/otro34/the-collector/pull/51)
 - **Acceptance Criteria**:
-  - [ ] `/` to focus search
-  - [ ] `Esc` to close modals
-  - [ ] Arrow keys in search results
-  - [ ] `Ctrl/Cmd + K` for command palette (optional)
-  - [ ] Shortcuts documented in help page
+  - [x] `/` to focus search
+  - [x] `Esc` to close modals
+  - [x] Arrow keys in search results
+  - [x] `Ctrl/Cmd + K` for command palette (optional)
+  - [x] Shortcuts documented in help page
 
 #### US-8.7: Improve Mobile Experience
 
@@ -823,7 +823,7 @@
   - [x] Bundle size optimized
   - [x] Images optimized
 
-**Sprint 8 Total**: 39 story points (34 completed - 87.2% complete)
+**Sprint 8 Total**: 44 story points (39 completed - 88.6% complete, 1 remaining)
 
 ---
 
@@ -1035,10 +1035,10 @@
 ### Completion Summary
 
 - **Total Story Points**: 353 (all sprints including Sprint 10)
-- **Completed Story Points**: 343 (Sprints 0-7: 215 points + Sprint 8: 34 points + Sprint 9: 57 points + Sprint 10: 26 points)
-- **Remaining Story Points**: 10 (Sprint 8: 2 stories remaining)
-- **Overall Progress**: 97.2%
-- **Sprint 8 Progress**: 9/11 stories (34/44 story points = 77.3%)
+- **Completed Story Points**: 348 (Sprints 0-7: 215 points + Sprint 8: 39 points + Sprint 9: 57 points + Sprint 10: 26 points)
+- **Remaining Story Points**: 5 (Sprint 8: 1 story remaining - US-8.9)
+- **Overall Progress**: 98.6%
+- **Sprint 8 Progress**: 10/11 stories (39/44 story points = 88.6%)
 - **Sprint 9 Progress**: COMPLETE! All 6 stories (57 story points) ✅
 - **Sprint 10 Progress**: COMPLETE! All 2 stories (26 story points) ✅
 
