@@ -2,6 +2,10 @@
 
 A modern web application for managing personal collections of video games, music (vinyl/CDs), and books (manga, comics, and other books).
 
+## Important! 
+
+Want to run your own instance? See the complete [Self-Hosting Guide](docs/SELF_HOSTING.md) for step-by-step instructions.
+
 ## Features
 
 ### Core Features
