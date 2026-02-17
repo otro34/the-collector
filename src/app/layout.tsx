@@ -7,6 +7,7 @@ import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { Toaster } from '@/components/ui/sonner'
 import { ErrorBoundary } from '@/components/shared/error-boundary'
+import { SkipToContent } from '@/components/shared/skip-to-content'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -31,9 +32,12 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <ErrorBoundary>
+              <SkipToContent />
               <div className="relative flex min-h-screen flex-col">
                 <Header />
-                <main className="flex-1 mx-auto w-full">{children}</main>
+                <main id="main-content" className="flex-1 mx-auto w-full">
+                  {children}
+                </main>
                 <Footer />
               </div>
               <Toaster />

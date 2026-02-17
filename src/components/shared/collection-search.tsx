@@ -48,6 +48,7 @@ export function CollectionSearch({
         onChange={(e) => setLocalValue(e.target.value)}
         placeholder={placeholder}
         className="pl-9 pr-9 h-9"
+        aria-label="Search collection"
       />
       {localValue && (
         <Button

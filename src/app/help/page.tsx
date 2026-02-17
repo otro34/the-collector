@@ -10,6 +10,7 @@ import {
   Upload,
   Database,
   HelpCircle,
+  Eye,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -231,6 +232,104 @@ export default function HelpPage() {
             question="Can I use this on mobile devices?"
             answer="Yes! The app is fully responsive and works on mobile, tablet, and desktop. All features are touch-friendly and optimized for smaller screens."
           />
+        </CardContent>
+      </Card>
+
+      {/* Accessibility Section */}
+      <Card className="mt-8">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Eye className="h-5 w-5 text-primary" />
+            <CardTitle>Accessibility</CardTitle>
+          </div>
+          <CardDescription>
+            The Collector is designed to be accessible to all users, including those using assistive
+            technologies
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <FeatureSection
+            icon={<Keyboard className="h-5 w-5 text-primary" />}
+            title="Keyboard Navigation"
+            description="All features are fully accessible via keyboard:"
+            items={[
+              {
+                name: 'Tab Navigation',
+                description: 'Navigate through all interactive elements using Tab and Shift+Tab.',
+              },
+              {
+                name: 'Skip to Content',
+                description:
+                  'Press Tab on page load to reveal a "Skip to content" link that bypasses navigation.',
+              },
+              {
+                name: 'Focus Indicators',
+                description:
+                  'All interactive elements show a clear 2px outline when focused for easy visibility.',
+              },
+            ]}
+          />
+
+          <FeatureSection
+            icon={<Eye className="h-5 w-5 text-primary" />}
+            title="Screen Reader Support"
+            description="Full compatibility with screen readers:"
+            items={[
+              {
+                name: 'ARIA Labels',
+                description:
+                  'All buttons, links, and interactive elements have descriptive labels for screen readers.',
+              },
+              {
+                name: 'Alt Text',
+                description:
+                  'All images include descriptive alt text to convey their meaning and purpose.',
+              },
+              {
+                name: 'Semantic HTML',
+                description:
+                  'Proper heading hierarchy and semantic elements ensure logical document structure.',
+              },
+            ]}
+          />
+
+          <FeatureSection
+            icon={<Eye className="h-5 w-5 text-primary" />}
+            title="Visual Accessibility"
+            description="Designed for users with visual impairments:"
+            items={[
+              {
+                name: 'High Contrast',
+                description:
+                  'Text meets WCAG AA contrast requirements (4.5:1 minimum) in both light and dark modes.',
+              },
+              {
+                name: 'Responsive Text',
+                description: 'Text can be enlarged up to 200% without loss of functionality.',
+              },
+              {
+                name: 'Touch Targets',
+                description:
+                  'All interactive elements meet minimum touch target size of 44x44 pixels.',
+              },
+            ]}
+          />
+
+          <div className="border-t pt-6">
+            <p className="text-sm text-muted-foreground">
+              We are committed to accessibility and WCAG 2.1 AA compliance. For detailed
+              accessibility information, see{' '}
+              <a
+                href="https://github.com/otro34/the-collector/blob/main/docs/ACCESSIBILITY.md"
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                our accessibility documentation
+              </a>
+              . If you encounter accessibility issues, please report them on our GitHub repository.
+            </p>
+          </div>
         </CardContent>
       </Card>
 

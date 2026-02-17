@@ -157,6 +157,11 @@ export function GlobalSearch() {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           className="w-full pl-9 pr-9 py-2 rounded-md border bg-background text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          aria-label="Search collections"
+          role="combobox"
+          aria-expanded={isOpen}
+          aria-controls="search-results"
+          aria-autocomplete="list"
         />
         {query && (
           <button
@@ -165,15 +170,22 @@ export function GlobalSearch() {
               inputRef.current?.focus()
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            aria-label="Clear search"
           >
             <X className="h-4 w-4" />
+            <span className="sr-only">Clear search</span>
           </button>
         )}
       </div>
 
       {/* Search Results Dropdown */}
       {isOpen && (
-        <div className="absolute top-full mt-2 w-full bg-background border rounded-md shadow-lg max-h-96 overflow-y-auto z-50">
+        <div
+          id="search-results"
+          className="absolute top-full mt-2 w-full bg-background border rounded-md shadow-lg max-h-96 overflow-y-auto z-50"
+          role="listbox"
+          aria-label="Search results"
+        >
           {isLoading && (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -197,6 +209,9 @@ export function GlobalSearch() {
                     'w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-accent transition-colors',
                     selectedIndex === index && 'bg-accent'
                   )}
+                  role="option"
+                  aria-selected={selectedIndex === index}
+                  aria-label={`${result.title} - ${formatCollectionType(result.collectionType)}`}
                 >
                   {/* Cover Image */}
                   <div className="flex-shrink-0 w-12 h-12 bg-muted rounded overflow-hidden">
