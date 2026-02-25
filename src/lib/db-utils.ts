@@ -73,6 +73,27 @@ export async function createBookItem(
   })
 }
 
+/**
+ * Create a new item with action figure data
+ */
+export async function createActionFigureItem(
+  itemData: Omit<Prisma.ItemCreateInput, 'collectionType' | 'actionFigure'>,
+  actionFigureData: Omit<Prisma.ActionFigureCreateWithoutItemInput, 'id'>
+) {
+  return prisma.item.create({
+    data: {
+      ...itemData,
+      collectionType: CollectionType.ACTIONFIGURE,
+      actionFigure: {
+        create: actionFigureData,
+      },
+    },
+    include: {
+      actionFigure: true,
+    },
+  })
+}
+
 // ============================================================================
 // READ operations
 // ============================================================================

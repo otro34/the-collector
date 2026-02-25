@@ -116,6 +116,27 @@ export const DEFAULT_COLUMN_MAPPINGS: Record<CollectionType, ColumnMapping> = {
     source_row: 'sourceRow',
     price: 'priceEstimate',
   },
+  ACTIONFIGURE: {
+    ID: 'id',
+    Title: 'title',
+    Manufacturer: 'manufacturer',
+    Series: 'series',
+    'Character Name': 'characterName',
+    Scale: 'scale',
+    Material: 'material',
+    Height: 'height',
+    Articulation: 'articulation',
+    Accessories: 'accessories',
+    Edition: 'edition',
+    'Series Number': 'seriesNumber',
+    Year: 'year',
+    Language: 'language',
+    Country: 'country',
+    Copies: 'copies',
+    Description: 'description',
+    'Cover URL': 'coverUrl',
+    'Price Estimate': 'priceEstimate',
+  },
 }
 
 // ============================================================================

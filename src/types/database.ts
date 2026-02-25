@@ -13,6 +13,7 @@ export type Item = Prisma.ItemGetPayload<{
     videogame: true
     music: true
     book: true
+    actionFigure: true
   }
 }>
 
@@ -40,6 +41,14 @@ export type Book = Prisma.BookGetPayload<{
   include: { item: true }
 }>
 
+export type ActionFigure = Prisma.ActionFigureGetPayload<{
+  include: { item: true }
+}>
+
+export type ItemWithActionFigure = Prisma.ItemGetPayload<{
+  include: { actionFigure: true }
+}>
+
 export type Backup = Prisma.BackupGetPayload<true>
 
 export type Settings = Prisma.SettingsGetPayload<true>
@@ -59,6 +68,8 @@ export type CreateMusicInput = Omit<Prisma.MusicCreateWithoutItemInput, 'id'>
 
 export type CreateBookInput = Omit<Prisma.BookCreateWithoutItemInput, 'id'>
 
+export type CreateActionFigureInput = Omit<Prisma.ActionFigureCreateWithoutItemInput, 'id'>
+
 export type CreateBackupInput = Prisma.BackupCreateInput
 
 export type CreateSettingsInput = Prisma.SettingsCreateInput
@@ -74,6 +85,8 @@ export type UpdateVideogameInput = Prisma.VideogameUpdateInput
 export type UpdateMusicInput = Prisma.MusicUpdateInput
 
 export type UpdateBookInput = Prisma.BookUpdateInput
+
+export type UpdateActionFigureInput = Prisma.ActionFigureUpdateInput
 
 export type UpdateSettingsInput = Prisma.SettingsUpdateInput
 
@@ -91,6 +104,8 @@ export type MusicWhereInput = Prisma.MusicWhereInput
 
 export type BookWhereInput = Prisma.BookWhereInput
 
+export type ActionFigureWhereInput = Prisma.ActionFigureWhereInput
+
 export type BackupWhereInput = Prisma.BackupWhereInput
 
 export type SettingsWhereInput = Prisma.SettingsWhereInput
@@ -107,13 +122,15 @@ export type MusicOrderByInput = Prisma.MusicOrderByWithRelationInput
 
 export type BookOrderByInput = Prisma.BookOrderByWithRelationInput
 
+export type ActionFigureOrderByInput = Prisma.ActionFigureOrderByWithRelationInput
+
 export type BackupOrderByInput = Prisma.BackupOrderByWithRelationInput
 
 // ============================================================================
 // Enum types
 // ============================================================================
 
-export { CollectionType, BookType } from '@prisma/client'
+export { CollectionType, BookType, PurchaseStatus, CurrentStatus } from '@prisma/client'
 
 // ============================================================================
 // Utility types
@@ -167,6 +184,11 @@ export type ParsedMusic = Omit<Music, 'genres' | 'item'> & {
 
 export type ParsedBook = Omit<Book, 'genres' | 'item'> & {
   genres: string[]
+  item: Omit<Item, 'tags'> & { tags: string[] }
+}
+
+export type ParsedActionFigure = Omit<ActionFigure, 'accessories' | 'item'> & {
+  accessories: string[]
   item: Omit<Item, 'tags'> & { tags: string[] }
 }
 
@@ -253,6 +275,27 @@ export function parseBookItem(item: ItemWithBook): Omit<Book, 'genres' | 'item'>
   return {
     ...item.book,
     genres: parseJsonArray(item.book.genres),
+    item: parseItem(item as Item),
+  }
+}
+
+/**
+ * Parse item with action figure data
+ */
+export function parseActionFigureItem(item: ItemWithActionFigure): Omit<
+  ActionFigure,
+  'accessories' | 'item'
+> & {
+  accessories: string[]
+  item: ParsedItem
+} {
+  if (!item.actionFigure) {
+    throw new Error('Item does not have action figure data')
+  }
+
+  return {
+    ...item.actionFigure,
+    accessories: parseJsonArray(item.actionFigure.accessories),
     item: parseItem(item as Item),
   }
 }

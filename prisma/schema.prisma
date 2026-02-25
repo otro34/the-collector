@@ -15,6 +15,24 @@ enum CollectionType {
   VIDEOGAME
   MUSIC
   BOOK
+  ACTIONFIGURE
+}
+
+// Purchase status enum (condition at time of purchase)
+enum PurchaseStatus {
+  NEW_SEALED
+  NEW_OPENED
+  USED
+}
+
+// Current physical condition of the item
+enum CurrentStatus {
+  SEALED
+  AS_NEW
+  NORMAL_USE
+  WEARED_DOWN
+  DAMAGED
+  BROKEN
 }
 
 // Book subtypes
@@ -40,6 +58,13 @@ model Item {
   tags                String          @default("[]") // JSON string array
   customFields        Json?           // Flexible JSON for type-specific data
 
+  // Purchase & condition tracking (Phase 2 - Sprint 11)
+  purchasePlace       String?
+  purchaseDate        DateTime?
+  purchaseStatus      PurchaseStatus?
+  currentStatus       CurrentStatus?
+  notes               String?         @db.Text
+
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 
@@ -47,6 +72,7 @@ model Item {
   videogame           Videogame?
   music               Music?
   book                Book?
+  actionFigure        ActionFigure?
   readingProgress     ReadingProgress?
 
   @@index([collectionType])
@@ -112,6 +138,28 @@ model Book {
   @@index([author])
   @@index([series])
   @@index([publisher])
+}
+
+// Action Figure specific fields
+model ActionFigure {
+  id                  String          @id @default(cuid())
+  itemId              String          @unique
+  item                Item            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  manufacturer        String
+  series              String?
+  characterName       String?
+  scale               String?
+  material            String?
+  height              String?
+  articulation        String?
+  accessories         String          @default("[]") // JSON string array
+  edition             String?
+  seriesNumber        String?
+
+  @@index([manufacturer])
+  @@index([series])
+  @@index([characterName])
 }
 
 // Backup tracking

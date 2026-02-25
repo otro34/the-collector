@@ -104,6 +104,71 @@ export const DATABASE_FIELDS: Record<CollectionType, DatabaseField[]> = {
     { key: 'copies', label: 'Copies', required: false, description: 'Number of copies owned' },
     { key: 'priceEstimate', label: 'Price', required: false, description: 'Estimated price' },
   ],
+  ACTIONFIGURE: [
+    { key: 'title', label: 'Title', required: true, description: 'Figure name or title' },
+    {
+      key: 'manufacturer',
+      label: 'Manufacturer',
+      required: true,
+      description: 'Figure manufacturer (e.g., Hasbro, NECA)',
+    },
+    { key: 'series', label: 'Series', required: false, description: 'Product line or series name' },
+    {
+      key: 'characterName',
+      label: 'Character Name',
+      required: false,
+      description: 'Character depicted',
+    },
+    {
+      key: 'scale',
+      label: 'Scale',
+      required: false,
+      description: 'Figure scale (e.g., 1/6, 6 inch)',
+    },
+    {
+      key: 'material',
+      label: 'Material',
+      required: false,
+      description: 'Primary material (e.g., PVC, Resin)',
+    },
+    { key: 'height', label: 'Height', required: false, description: 'Figure height' },
+    {
+      key: 'articulation',
+      label: 'Articulation',
+      required: false,
+      description: 'Points of articulation',
+    },
+    {
+      key: 'accessories',
+      label: 'Accessories',
+      required: false,
+      description: 'Included accessories (comma-separated)',
+    },
+    {
+      key: 'edition',
+      label: 'Edition',
+      required: false,
+      description: 'Special or limited edition',
+    },
+    {
+      key: 'seriesNumber',
+      label: 'Series Number',
+      required: false,
+      description: 'Number within the series',
+    },
+    { key: 'year', label: 'Year', required: false, description: 'Release year' },
+    {
+      key: 'description',
+      label: 'Description',
+      required: false,
+      description: 'Figure description',
+    },
+    { key: 'coverUrl', label: 'Cover URL', required: false, description: 'Cover image URL' },
+    { key: 'language', label: 'Language', required: false, description: 'Language of packaging' },
+    { key: 'country', label: 'Country', required: false, description: 'Country of origin' },
+    { key: 'copies', label: 'Copies', required: false, description: 'Number of copies owned' },
+    { key: 'priceEstimate', label: 'Price', required: false, description: 'Estimated price' },
+  ],
 }
 
 /**

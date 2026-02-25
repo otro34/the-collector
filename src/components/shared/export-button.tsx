@@ -81,6 +81,26 @@ const FIELD_OPTIONS: Record<
     { value: 'coverUrl', label: 'Cover URL' },
     { value: 'price', label: 'Price' },
   ],
+  ACTIONFIGURE: [
+    { value: 'title', label: 'Title', required: true },
+    { value: 'manufacturer', label: 'Manufacturer', required: true },
+    { value: 'year', label: 'Year' },
+    { value: 'series', label: 'Series' },
+    { value: 'characterName', label: 'Character Name' },
+    { value: 'scale', label: 'Scale' },
+    { value: 'material', label: 'Material' },
+    { value: 'height', label: 'Height' },
+    { value: 'articulation', label: 'Articulation' },
+    { value: 'accessories', label: 'Accessories' },
+    { value: 'edition', label: 'Edition' },
+    { value: 'seriesNumber', label: 'Series Number' },
+    { value: 'language', label: 'Language' },
+    { value: 'country', label: 'Country' },
+    { value: 'copies', label: 'Copies' },
+    { value: 'description', label: 'Description' },
+    { value: 'coverUrl', label: 'Cover URL' },
+    { value: 'price', label: 'Price' },
+  ],
 }
 
 export function ExportButton({
