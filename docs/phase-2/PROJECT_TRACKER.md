@@ -1,24 +1,24 @@
 # The Collector - Phase 2 Project Tracker
 
-**Last Updated**: 2026-02-25
+**Last Updated**: 2026-04-28
 **Phase**: 2 - Enhanced Features, Analytics & Intelligence
 **Status**: 🟡 In Progress
 
 ---
 
-## Current Sprint: Sprint 11 - Database & Model Updates
+## Current Sprint: Sprint 12 - Cloud Image Storage Integration
 
-**Sprint Status**: 🟢 Completed
-**Start Date**: 2026-02-25
-**End Date**: 2026-02-25
-**Goal**: Extend the database schema with new fields and Action Figures collection type
+**Sprint Status**: 🟡 In Progress
+**Start Date**: 2026-04-28
+**End Date**: TBD
+**Goal**: Implement S3 bucket storage for images with CloudFront CDN
 
 ---
 
 ## Phase 2 Overview
 
 **Total Story Points**: 225 (base) + 8 (stretch)
-**Completed Story Points**: 18/225 (8%)
+**Completed Story Points**: 21/225 (9%)
 **Estimated Duration**: 10-14 weeks
 
 ### Phase 2 Goals
@@ -40,16 +40,16 @@
 
 ## Sprint Progress Overview
 
-| Sprint    | Status       | Start Date | End Date   | Completed Stories | Total Stories  | Story Points |
-| --------- | ------------ | ---------- | ---------- | ----------------- | -------------- | ------------ |
-| Sprint 11 | 🟢 Completed | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
-| Sprint 12 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/26         |
-| Sprint 13 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/24         |
-| Sprint 14 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/32         |
-| Sprint 15 | ⚪ Planned   | TBD        | TBD        | 0                 | 2              | 0/21         |
-| Sprint 16 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/34         |
-| Sprint 17 | ⚪ Planned   | TBD        | TBD        | 0                 | 4 (+1 stretch) | 0/44 (+8)    |
-| Sprint 18 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/40         |
+| Sprint    | Status         | Start Date | End Date   | Completed Stories | Total Stories  | Story Points |
+| --------- | -------------- | ---------- | ---------- | ----------------- | -------------- | ------------ |
+| Sprint 11 | 🟢 Completed   | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
+| Sprint 12 | 🟡 In Progress | 2026-04-28 | TBD        | 3                 | 4              | 21/26        |
+| Sprint 13 | ⚪ Planned     | TBD        | TBD        | 0                 | 3              | 0/24         |
+| Sprint 14 | ⚪ Planned     | TBD        | TBD        | 0                 | 4              | 0/32         |
+| Sprint 15 | ⚪ Planned     | TBD        | TBD        | 0                 | 2              | 0/21         |
+| Sprint 16 | ⚪ Planned     | TBD        | TBD        | 0                 | 3              | 0/34         |
+| Sprint 17 | ⚪ Planned     | TBD        | TBD        | 0                 | 4 (+1 stretch) | 0/44 (+8)    |
+| Sprint 18 | ⚪ Planned     | TBD        | TBD        | 0                 | 4              | 0/40         |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -156,24 +156,24 @@
 
 **Goal**: Implement S3 bucket storage for images with CloudFront CDN
 **Duration**: 1-2 weeks
-**Story Points**: 0/26
-**Status**: ⚪ Planned
+**Story Points**: 21/26
+**Status**: 🟡 In Progress
 
 ### User Stories
 
 #### US-12.1: Set Up AWS S3 Integration
 
-- **Status**: 🔴 Not Started
-- **Assigned**: TBD
+- **Status**: 🟡 In Progress (pending user credentials)
+- **Assigned**: Claude
 - **Story Points**: 5
 - **PR**: TBD
 - **Acceptance Criteria**:
-  - [ ] AWS SDK installed and configured
-  - [ ] S3 bucket credentials added to environment variables
-  - [ ] CloudFront distribution URL configured
-  - [ ] Bucket permissions configured correctly
-  - [ ] CORS settings configured for uploads
-  - [ ] Connection tested successfully
+  - [x] AWS SDK installed and configured (`@aws-sdk/client-s3` already in dependencies)
+  - [x] S3 bucket credentials added to environment variables (`.env.example` updated)
+  - [x] CloudFront distribution URL configured (env var documented)
+  - [ ] Bucket permissions configured correctly (user action required in AWS console)
+  - [ ] CORS settings configured for uploads (user action required in AWS console)
+  - [ ] Connection tested successfully (pending user credentials)
 
 **Environment Variables Needed**:
 
@@ -187,81 +187,82 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 **Notes**:
 
-- User needs to provide AWS credentials
-- Document setup in README
+- User needs to provide AWS credentials and configure the S3 bucket in AWS console
+- Bucket policy and CORS must be configured manually
+- App gracefully falls back to original URL when credentials are not set
 
 ---
 
 #### US-12.2: Create Image Upload Service
 
-- **Status**: 🔴 Not Started
-- **Assigned**: TBD
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 8
 - **PR**: TBD
 - **Acceptance Criteria**:
-  - [ ] Image upload utility created (`src/lib/image-upload.ts`)
-  - [ ] Supports JPEG, PNG, WebP formats
-  - [ ] Generates unique filenames (UUID-based)
-  - [ ] Returns CloudFront URL after upload
-  - [ ] Handles upload errors gracefully
-  - [ ] Validates image size and dimensions
-  - [ ] Optimizes images before upload (optional)
+  - [x] Image upload utility created (`src/lib/image-upload.ts`)
+  - [x] Supports JPEG, PNG, WebP, GIF formats
+  - [x] Generates unique filenames (UUID-based)
+  - [x] Returns CloudFront URL after upload
+  - [x] Handles upload errors gracefully
+  - [x] Validates image size (max 10MB)
+  - [x] API route created (`src/app/api/upload-image/route.ts`)
 
 **Notes**:
 
-- Consider image compression for performance
-- Add retry logic for failed uploads
+- `isImageUploadConfigured()` check lets code degrade gracefully when S3 is not set up
+- `uploadImageBuffer()` helper available for future direct buffer uploads
 
 ---
 
 #### US-12.3: Update Image Selection Flow
 
-- **Status**: 🔴 Not Started
-- **Assigned**: TBD
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 8
 - **PR**: TBD
 - **Acceptance Criteria**:
-  - [ ] Image search results trigger upload to S3
-  - [ ] Selected image URL saved as CloudFront URL
-  - [ ] Upload progress indicator shown
-  - [ ] Upload errors handled with retry option
-  - [ ] Works for all collection types
-  - [ ] Existing URL-based images still work (backwards compatible)
+  - [x] Image search results trigger upload to S3
+  - [x] Selected image URL saved as CloudFront URL
+  - [x] Upload progress indicator shown ("Uploading…" with spinner)
+  - [x] Upload errors handled with error message shown in dialog
+  - [x] Works for all collection types (via shared `ImageSearchDialog`)
+  - [x] Existing URL-based images still work (falls back when S3 not configured)
 
 **Notes**:
 
-- Maintain backward compatibility
-- Test with all collection types
+- Cancel button disabled while uploading to prevent accidental dismissal
+- Retry is possible by clicking "Use Selected Image" again after an error
 
 ---
 
 #### US-12.4: Image Migration Strategy (Optional)
 
-- **Status**: 🔴 Not Started
-- **Assigned**: TBD
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 5
 - **PR**: TBD
 - **Acceptance Criteria**:
-  - [ ] Migration script created
-  - [ ] Script downloads images from existing URLs
-  - [ ] Script uploads images to S3
-  - [ ] Script updates database with new URLs
-  - [ ] Script handles failures gracefully
-  - [ ] Script provides progress report
-  - [ ] Can be run multiple times safely (idempotent)
+  - [x] Migration script created (`scripts/migrate-images.ts`)
+  - [x] Script downloads images from existing URLs
+  - [x] Script uploads images to S3
+  - [x] Script updates database with new URLs
+  - [x] Script handles failures gracefully (per-item try/catch, continues on error)
+  - [x] Script provides progress report (per-item status + final summary)
+  - [x] Can be run multiple times safely (skips items already on CloudFront)
 
 **Notes**:
 
-- Optional - can migrate gradually
-- Create script in `scripts/migrate-images.ts`
+- Run with `--dry-run` flag to preview without making changes
+- Usage: `npx tsx scripts/migrate-images.ts [--dry-run]`
 
 ---
 
 **Sprint 12 Notes**:
 
-- AWS credentials required before starting
-- Test S3 uploads thoroughly
-- Consider bandwidth costs
+- Completed 2026-04-28: US-12.2, US-12.3, US-12.4 fully implemented
+- US-12.1 blocked on user providing AWS credentials and configuring the S3 bucket/CloudFront
+- All code gracefully degrades when AWS credentials are absent (original URL used as fallback)
 
 ---
 
