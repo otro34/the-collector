@@ -1,6 +1,6 @@
 # The Collector - Phase 2 Project Tracker
 
-**Last Updated**: 2026-04-28
+**Last Updated**: 2026-07-24
 **Phase**: 2 - Enhanced Features, Analytics & Intelligence
 **Status**: 🟡 In Progress
 
@@ -8,9 +8,9 @@
 
 ## Current Sprint: Sprint 12 - Cloud Image Storage Integration
 
-**Sprint Status**: 🟡 In Progress
+**Sprint Status**: 🟢 Completed
 **Start Date**: 2026-04-28
-**End Date**: TBD
+**End Date**: 2026-07-24
 **Goal**: Implement S3 bucket storage for images with CloudFront CDN
 
 ---
@@ -18,7 +18,7 @@
 ## Phase 2 Overview
 
 **Total Story Points**: 225 (base) + 8 (stretch)
-**Completed Story Points**: 21/225 (9%)
+**Completed Story Points**: 44/225 (20%)
 **Estimated Duration**: 10-14 weeks
 
 ### Phase 2 Goals
@@ -40,16 +40,16 @@
 
 ## Sprint Progress Overview
 
-| Sprint    | Status         | Start Date | End Date   | Completed Stories | Total Stories  | Story Points |
-| --------- | -------------- | ---------- | ---------- | ----------------- | -------------- | ------------ |
-| Sprint 11 | 🟢 Completed   | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
-| Sprint 12 | 🟡 In Progress | 2026-04-28 | TBD        | 3                 | 4              | 21/26        |
-| Sprint 13 | ⚪ Planned     | TBD        | TBD        | 0                 | 3              | 0/24         |
-| Sprint 14 | ⚪ Planned     | TBD        | TBD        | 0                 | 4              | 0/32         |
-| Sprint 15 | ⚪ Planned     | TBD        | TBD        | 0                 | 2              | 0/21         |
-| Sprint 16 | ⚪ Planned     | TBD        | TBD        | 0                 | 3              | 0/34         |
-| Sprint 17 | ⚪ Planned     | TBD        | TBD        | 0                 | 4 (+1 stretch) | 0/44 (+8)    |
-| Sprint 18 | ⚪ Planned     | TBD        | TBD        | 0                 | 4              | 0/40         |
+| Sprint    | Status       | Start Date | End Date   | Completed Stories | Total Stories  | Story Points |
+| --------- | ------------ | ---------- | ---------- | ----------------- | -------------- | ------------ |
+| Sprint 11 | 🟢 Completed | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
+| Sprint 12 | 🟢 Completed | 2026-04-28 | 2026-07-24 | 4                 | 4              | 26/26        |
+| Sprint 13 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/24         |
+| Sprint 14 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/32         |
+| Sprint 15 | ⚪ Planned   | TBD        | TBD        | 0                 | 2              | 0/21         |
+| Sprint 16 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/34         |
+| Sprint 17 | ⚪ Planned   | TBD        | TBD        | 0                 | 4 (+1 stretch) | 0/44 (+8)    |
+| Sprint 18 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/40         |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -156,14 +156,14 @@
 
 **Goal**: Implement S3 bucket storage for images with CloudFront CDN
 **Duration**: 1-2 weeks
-**Story Points**: 21/26
-**Status**: 🟡 In Progress
+**Story Points**: 26/26
+**Status**: 🟢 Completed
 
 ### User Stories
 
 #### US-12.1: Set Up AWS S3 Integration
 
-- **Status**: 🟡 In Progress (pending user credentials)
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
 - **PR**: TBD
@@ -171,9 +171,9 @@
   - [x] AWS SDK installed and configured (`@aws-sdk/client-s3` already in dependencies)
   - [x] S3 bucket credentials added to environment variables (`.env.example` updated)
   - [x] CloudFront distribution URL configured (env var documented)
-  - [ ] Bucket permissions configured correctly (user action required in AWS console)
-  - [ ] CORS settings configured for uploads (user action required in AWS console)
-  - [ ] Connection tested successfully (pending user credentials)
+  - [x] Bucket permissions configured correctly (private bucket + CloudFront OAC, IAM user with `s3:PutObject`)
+  - [x] CORS not required (uploads are server-side via API route; images served through CloudFront)
+  - [x] Connection tested successfully (real upload verified end-to-end)
 
 **Environment Variables Needed**:
 
@@ -254,15 +254,18 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 **Notes**:
 
 - Run with `--dry-run` flag to preview without making changes
-- Usage: `npx tsx scripts/migrate-images.ts [--dry-run]`
+- Usage: `npm run db:migrate-images -- --dry-run` (preview) / `npm run db:migrate-images` (execute)
+- `tsx` does NOT auto-load `.env`; the npm script passes `--env-file=.env` so it connects to the cloud DB (`db.prisma.io`). Running `npx tsx scripts/migrate-images.ts` directly fails to reach the database.
 
 ---
 
 **Sprint 12 Notes**:
 
 - Completed 2026-04-28: US-12.2, US-12.3, US-12.4 fully implemented
-- US-12.1 blocked on user providing AWS credentials and configuring the S3 bucket/CloudFront
+- Completed 2026-07-24: US-12.1 — AWS S3 bucket + CloudFront (OAC) configured, IAM upload user set up, real upload verified end-to-end
+- Architecture: private bucket, uploads server-side via API route, images served through CloudFront (no CORS needed)
 - All code gracefully degrades when AWS credentials are absent (original URL used as fallback)
+- Migration script must be run with env loaded: `npm run db:migrate-images` (wraps `tsx --env-file=.env`); 1207/1208 items still on external URLs and pending migration
 
 ---
 
@@ -908,16 +911,16 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 ### Sprint Velocity (To be calculated)
 
-| Sprint    | Planned Points | Completed Points | Velocity | Notes |
-| --------- | -------------- | ---------------- | -------- | ----- |
-| Sprint 11 | 18             | 0                | TBD      | -     |
-| Sprint 12 | 26             | 0                | TBD      | -     |
-| Sprint 13 | 24             | 0                | TBD      | -     |
-| Sprint 14 | 32             | 0                | TBD      | -     |
-| Sprint 15 | 21             | 0                | TBD      | -     |
-| Sprint 16 | 34             | 0                | TBD      | -     |
-| Sprint 17 | 44 (+8)        | 0                | TBD      | -     |
-| Sprint 18 | 40             | 0                | TBD      | -     |
+| Sprint    | Planned Points | Completed Points | Velocity | Notes                                                   |
+| --------- | -------------- | ---------------- | -------- | ------------------------------------------------------- |
+| Sprint 11 | 18             | 18               | 18 pts   | Completed 2026-02-25                                    |
+| Sprint 12 | 26             | 26               | TBD      | Completed 2026-07-24; US-12.1 unblocked after AWS setup |
+| Sprint 13 | 24             | 0                | TBD      | -                                                       |
+| Sprint 14 | 32             | 0                | TBD      | -                                                       |
+| Sprint 15 | 21             | 0                | TBD      | -                                                       |
+| Sprint 16 | 34             | 0                | TBD      | -                                                       |
+| Sprint 17 | 44 (+8)        | 0                | TBD      | -                                                       |
+| Sprint 18 | 40             | 0                | TBD      | -                                                       |
 
 **Average Velocity**: 18 pts (Sprint 11)
 
@@ -1018,10 +1021,10 @@ _To be updated as feedback is received_
 
 #### Sprint 12
 
-- [ ] S3 upload works
-- [ ] CloudFront URLs accessible
-- [ ] Images display correctly
-- [ ] Error handling works
+- [x] S3 upload works
+- [x] CloudFront URLs accessible
+- [x] Images display correctly
+- [x] Error handling works
 
 #### Sprint 13
 
@@ -1146,5 +1149,5 @@ Phase 2 will be considered complete when:
 
 ---
 
-**Last Updated**: 2026-02-25
-**Next Review**: Sprint 12 kickoff
+**Last Updated**: 2026-07-24
+**Next Review**: Sprint 13 kickoff

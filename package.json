@@ -25,6 +25,7 @@
     "db:studio": "prisma studio",
     "db:import": "tsx scripts/import-csv.ts",
     "db:test": "tsx scripts/test-db.ts",
+    "db:migrate-images": "tsx --env-file=.env scripts/migrate-images.ts",
     "prepare": "husky"
   },
   "prisma": {

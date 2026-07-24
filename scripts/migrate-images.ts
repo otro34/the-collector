@@ -10,10 +10,14 @@
  * Safe to run multiple times (idempotent — skips already-migrated items).
  *
  * Usage:
- *   npx tsx scripts/migrate-images.ts [--dry-run]
+ *   npm run db:migrate-images -- --dry-run     # preview (recommended)
+ *   npm run db:migrate-images                  # execute
  *
- * Requires env vars: AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
- *                    AWS_S3_BUCKET, CLOUDFRONT_URL
+ * Or directly (note: tsx does NOT auto-load .env, so pass --env-file):
+ *   npx tsx --env-file=.env scripts/migrate-images.ts [--dry-run]
+ *
+ * Requires env vars: POSTGRES_URL (database), AWS_REGION, AWS_ACCESS_KEY_ID,
+ *                    AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET, CLOUDFRONT_URL
  */
 
 import { prisma } from '../src/lib/db'
