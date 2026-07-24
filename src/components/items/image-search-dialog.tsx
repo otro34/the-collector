@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Search, Loader2 } from 'lucide-react'
+import { Search, Loader2, Upload } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -39,6 +39,7 @@ export function ImageSearchDialog({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   // Reset query and clear state when dialog opens or initialQuery changes
   useEffect(() => {
@@ -47,6 +48,7 @@ export function ImageSearchDialog({
       setImages([])
       setError(null)
       setSelectedImage(null)
+      setUploading(false)
     }
   }, [open, initialQuery])
 
@@ -79,11 +81,31 @@ export function ImageSearchDialog({
     }
   }
 
-  const handleSelectImage = () => {
-    if (selectedImage) {
-      onSelectImage(selectedImage)
+  const handleSelectImage = async () => {
+    if (!selectedImage) return
+
+    setUploading(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl: selectedImage }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Upload failed')
+      }
+
+      const { url } = await response.json()
+      onSelectImage(url)
       onOpenChange(false)
-      // State will be reset by useEffect when dialog reopens
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to upload image. Please try again.')
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -165,10 +187,29 @@ export function ImageSearchDialog({
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-4">
-                <Button onClick={handleSelectImage} disabled={!selectedImage} className="flex-1">
-                  Use Selected Image
+                <Button
+                  onClick={handleSelectImage}
+                  disabled={!selectedImage || uploading}
+                  className="flex-1"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Uploading…
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Use Selected Image
+                    </>
+                  )}
                 </Button>
-                <Button onClick={() => onOpenChange(false)} variant="outline" className="flex-1">
+                <Button
+                  onClick={() => onOpenChange(false)}
+                  variant="outline"
+                  className="flex-1"
+                  disabled={uploading}
+                >
                   Cancel
                 </Button>
               </div>
