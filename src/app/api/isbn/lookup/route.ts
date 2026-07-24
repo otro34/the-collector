@@ -80,7 +80,13 @@ async function fetchFromOpenLibrary(isbn: string): Promise<ISBNLookupResult | nu
  */
 async function fetchFromGoogleBooks(isbn: string): Promise<ISBNLookupResult | null> {
   try {
-    const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
+    // Reuse the project's Google API key (same one used for Custom Search image
+    // search). The keyless quota is effectively zero, so a key is required for
+    // this fallback to work. Falls through gracefully if the key is absent.
+    const apiKey = process.env.GOOGLE_API_KEY
+    const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}${
+      apiKey ? `&key=${apiKey}` : ''
+    }`
     const response = await fetch(url, {
       signal: AbortSignal.timeout(API_TIMEOUT_MS),
     })
