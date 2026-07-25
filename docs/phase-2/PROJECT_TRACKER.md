@@ -351,33 +351,38 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 #### US-13.4: Square Cards for Music Collection (Vinyl Sleeve Aspect Ratio)
 
-- **Status**: 🔴 Not Started
-- **Assigned**: TBD
+- **Status**: 🟡 In Progress (implemented, pending visual verification)
+- **Assigned**: Claude
 - **Story Points**: 5
 - **PR**: TBD
 - **Acceptance Criteria**:
-  - [ ] Cover area renders `aspect-square` when `collectionType === 'MUSIC'`
-  - [ ] Videogames and Books keep `aspect-[2/3]` (no visual regression)
-  - [ ] Aspect ratio derived from `collectionType` in a single shared helper
-  - [ ] `CollectionGrid` updated
-  - [ ] `VirtualizedCollectionGrid` updated, including virtualizer row height (`estimateSize`)
-  - [ ] `CollectionGridSkeleton` matches the real card ratio per collection type
-  - [ ] Music page loading placeholder uses the square ratio
-  - [ ] `ItemDetailModal` cover uses the square ratio for music items
-  - [ ] Album art fills the square without distortion (`object-cover` preserved)
-  - [ ] Placeholder icon stays centered in the square
-  - [ ] Hover overlay and title still cover the full cover area
-  - [ ] Responsive at all breakpoints; dark mode unaffected
-  - [ ] Tests updated: music renders square, books/games do not
+  - [x] Cover area renders `aspect-square` when `collectionType === 'MUSIC'`
+  - [x] Videogames and Books keep `aspect-[2/3]` (no visual regression)
+  - [x] Aspect ratio derived from `collectionType` in a single shared helper
+        (`src/lib/collection-display.ts`)
+  - [x] `CollectionGrid` updated
+  - [x] `VirtualizedCollectionGrid` updated, including virtualizer row height (`estimateSize`)
+  - [x] `CollectionGridSkeleton` matches the real card ratio per collection type
+  - [x] Music page loading placeholder uses the square ratio
+  - [x] `ItemDetailModal` cover uses the square ratio for music items
+  - [x] Album art fills the square without distortion (`object-cover` preserved)
+  - [x] Placeholder icon stays centered in the square (`absolute inset-0`, unchanged)
+  - [x] Hover overlay and title still cover the full cover area (`absolute inset-0`, unchanged)
+  - [ ] Responsive at all breakpoints; dark mode unaffected — **needs manual check in browser**
+  - [ ] ~~Tests updated~~ — **not possible**: the project has no test runner
+        (`npm test` is a placeholder echo). Deferred; see Sprint 13 notes
 
 **Notes**:
 
-- Vinyl sleeves and CD jewel cases are square; the current shared `aspect-[2/3]` distorts album art
-- ⚠️ `VirtualizedCollectionGrid` hardcodes `estimateSize: () => 320`, which assumes the 2/3 ratio.
-  Square rows are shorter — must be derived per collection type or rows will overlap/gap
-- ⚠️ `CollectionGridSkeleton` currently hardcodes `aspect-[3/4]`, matching neither ratio. Fix here
-- Affected files: `collection-grid.tsx`, `virtualized-collection-grid.tsx`,
-  `collection-grid-skeleton.tsx`, `src/app/music/page.tsx`, `item-detail-modal.tsx`
+- Vinyl sleeves and CD jewel cases are square; the shared `aspect-[2/3]` distorted album art
+- Helper defaults to portrait, so Action Figures (Sprint 14) inherits the mechanism for free
+- ⚠️ Found while implementing: the virtualizer never measured its rows — it rendered
+  `estimateSize` as the final height. Connected `measureElement` + `data-index` so rows are
+  measured for real, which fixes the row-height fragility across breakpoints, not just for music
+- Tailwind v4 is in use with no `@config` directive, so the `content` globs in
+  `tailwind.config.ts` are inert and the whole repo is auto-scanned. Verified `aspect-square`
+  is emitted into the production CSS from `src/lib/collection-display.ts`
+- Verified: `npm run type-check` clean, `eslint` clean on changed files, `npm run build` succeeds
 
 ---
 
@@ -386,6 +391,9 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 - Focus on UX improvements
 - Ensure accessibility standards maintained
 - US-13.4 touches shared grid components — verify `/videogames` and `/books` for regressions
+- ⚠️ **No test infrastructure exists** (`npm test` is a placeholder echo). Every "write tests"
+  acceptance criterion in this sprint is currently unachievable. Consider a story to set up
+  Vitest + React Testing Library before, or as part of, Sprint 13
 
 ---
 

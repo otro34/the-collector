@@ -28,6 +28,8 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { ImageSearchDialog } from './image-search-dialog'
 import { useReadingProgress, useToggleReadStatus } from '@/hooks/use-reading-progress'
+import { getCoverAspectClass } from '@/lib/collection-display'
+import { cn } from '@/lib/utils'
 import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
 
 type ItemWithRelations = Item & {
@@ -260,7 +262,12 @@ export function ItemDetailModal({
         <div className="grid gap-6 md:grid-cols-2">
           {/* Cover Image */}
           <div className="space-y-2">
-            <div className="relative aspect-[2/3] bg-muted rounded-lg overflow-hidden">
+            <div
+              className={cn(
+                'relative bg-muted rounded-lg overflow-hidden',
+                getCoverAspectClass(item.collectionType)
+              )}
+            >
               {item.coverUrl ? (
                 <Image
                   src={item.coverUrl}

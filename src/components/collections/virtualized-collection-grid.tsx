@@ -7,6 +7,8 @@ import Image from 'next/image'
 import { Gamepad2, Music, BookOpen, CheckCircle2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { getCoverAspectClass, getEstimatedRowHeight } from '@/lib/collection-display'
+import { cn } from '@/lib/utils'
 import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
 import type { ReadingProgress } from '@/hooks/use-reading-progress'
 
@@ -62,6 +64,8 @@ export function VirtualizedCollectionGrid({
     return progress?.isRead ?? false
   }
 
+  const coverAspect = getCoverAspectClass(collectionType)
+
   // Calculate columns based on window width (matches CollectionGrid responsive grid)
   const getColumnCount = () => {
     if (typeof window === 'undefined') return 6 // SSR default
@@ -86,7 +90,7 @@ export function VirtualizedCollectionGrid({
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 320, // Approximate row height (card height + gap)
+    estimateSize: () => getEstimatedRowHeight(collectionType), // Card height + gap; depends on cover aspect ratio
     overscan: 2, // Render 2 extra rows above and below viewport
   })
 
@@ -130,6 +134,8 @@ export function VirtualizedCollectionGrid({
           return (
             <div
               key={virtualRow.key}
+              data-index={virtualRow.index}
+              ref={rowVirtualizer.measureElement}
               style={{
                 position: 'absolute',
                 top: 0,
@@ -154,7 +160,7 @@ export function VirtualizedCollectionGrid({
                     <Card className="overflow-hidden transition-all hover:shadow-lg hover:scale-105">
                       <CardContent className="p-0">
                         {/* Cover Image */}
-                        <div className="relative aspect-[2/3] bg-muted">
+                        <div className={cn('relative bg-muted', coverAspect)}>
                           {item.coverUrl ? (
                             <Image
                               src={item.coverUrl}
