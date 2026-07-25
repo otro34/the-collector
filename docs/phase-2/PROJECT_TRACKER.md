@@ -1,6 +1,6 @@
 # The Collector - Phase 2 Project Tracker
 
-**Last Updated**: 2026-07-24
+**Last Updated**: 2026-07-25
 **Phase**: 2 - Enhanced Features, Analytics & Intelligence
 **Status**: 🟡 In Progress
 
@@ -17,8 +17,8 @@
 
 ## Phase 2 Overview
 
-**Total Story Points**: 225 (base) + 8 (stretch)
-**Completed Story Points**: 44/225 (20%)
+**Total Story Points**: 230 (base) + 8 (stretch)
+**Completed Story Points**: 44/230 (19%)
 **Estimated Duration**: 10-14 weeks
 
 ### Phase 2 Goals
@@ -44,7 +44,7 @@
 | --------- | ------------ | ---------- | ---------- | ----------------- | -------------- | ------------ |
 | Sprint 11 | 🟢 Completed | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
 | Sprint 12 | 🟢 Completed | 2026-04-28 | 2026-07-24 | 4                 | 4              | 26/26        |
-| Sprint 13 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/24         |
+| Sprint 13 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/29         |
 | Sprint 14 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/32         |
 | Sprint 15 | ⚪ Planned   | TBD        | TBD        | 0                 | 2              | 0/21         |
 | Sprint 16 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/34         |
@@ -271,9 +271,9 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 ## Sprint 13: Enhanced UI Components & Forms
 
-**Goal**: Add searchable dropdowns and update forms with new fields
+**Goal**: Add searchable dropdowns, update forms with new fields, and adapt card layout per collection type
 **Duration**: 1-2 weeks
-**Story Points**: 0/24
+**Story Points**: 0/29
 **Status**: ⚪ Planned
 
 ### User Stories
@@ -349,10 +349,43 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 ---
 
+#### US-13.4: Square Cards for Music Collection (Vinyl Sleeve Aspect Ratio)
+
+- **Status**: 🔴 Not Started
+- **Assigned**: TBD
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [ ] Cover area renders `aspect-square` when `collectionType === 'MUSIC'`
+  - [ ] Videogames and Books keep `aspect-[2/3]` (no visual regression)
+  - [ ] Aspect ratio derived from `collectionType` in a single shared helper
+  - [ ] `CollectionGrid` updated
+  - [ ] `VirtualizedCollectionGrid` updated, including virtualizer row height (`estimateSize`)
+  - [ ] `CollectionGridSkeleton` matches the real card ratio per collection type
+  - [ ] Music page loading placeholder uses the square ratio
+  - [ ] `ItemDetailModal` cover uses the square ratio for music items
+  - [ ] Album art fills the square without distortion (`object-cover` preserved)
+  - [ ] Placeholder icon stays centered in the square
+  - [ ] Hover overlay and title still cover the full cover area
+  - [ ] Responsive at all breakpoints; dark mode unaffected
+  - [ ] Tests updated: music renders square, books/games do not
+
+**Notes**:
+
+- Vinyl sleeves and CD jewel cases are square; the current shared `aspect-[2/3]` distorts album art
+- ⚠️ `VirtualizedCollectionGrid` hardcodes `estimateSize: () => 320`, which assumes the 2/3 ratio.
+  Square rows are shorter — must be derived per collection type or rows will overlap/gap
+- ⚠️ `CollectionGridSkeleton` currently hardcodes `aspect-[3/4]`, matching neither ratio. Fix here
+- Affected files: `collection-grid.tsx`, `virtualized-collection-grid.tsx`,
+  `collection-grid-skeleton.tsx`, `src/app/music/page.tsx`, `item-detail-modal.tsx`
+
+---
+
 **Sprint 13 Notes**:
 
 - Focus on UX improvements
 - Ensure accessibility standards maintained
+- US-13.4 touches shared grid components — verify `/videogames` and `/books` for regressions
 
 ---
 
@@ -1085,7 +1118,7 @@ _To be updated as feedback is received_
 
 Phase 2 will be considered complete when:
 
-- [ ] All 27 user stories completed (225 story points)
+- [ ] All 28 user stories completed (230 story points)
 - [ ] Database schema extended with new fields and analytics models
 - [ ] Action Figures collection fully functional
 - [ ] S3 image storage implemented and tested

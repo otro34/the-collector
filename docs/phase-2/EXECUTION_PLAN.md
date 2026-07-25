@@ -11,7 +11,7 @@
 Phase 2 builds upon the solid foundation of Phase 1 by adding enhanced metadata tracking, improved UI components, cloud-based image storage, a new collection type for action figures, collection-specific dashboards with rich analytics, intelligent recommendation algorithms, a collector personality profiling system, and deep linking throughout the application.
 
 **Timeline**: 10-14 weeks
-**Story Points**: 225 (base) + 8 (stretch)
+**Story Points**: 230 (base) + 8 (stretch)
 **Sprints**: 8 (Sprints 11-18)
 
 ---
@@ -221,17 +221,25 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
    - Test each replacement
    - Verify keyboard navigation
 
+4. **Collection-Aware Card Layout (US-13.4)**
+   - Derive cover aspect ratio from collection type
+   - Square cards for Music (vinyl sleeves / CD jewel cases)
+   - Update grid, virtualized grid (row height), skeleton and detail modal
+   - Verify no regression on Videogames and Books
+
 #### Critical Success Factors
 
 - **Accessibility**: WCAG AA compliant, screen reader friendly
 - **Keyboard Navigation**: Arrow keys, Enter, Escape work correctly
 - **Consistency**: All dropdowns work the same way
 - **Performance**: Filtering is fast and responsive
+- **No Regressions**: Shared grid components are used by all collections
 
 #### Deliverables
 
 - SearchableSelect component
 - Updated collection forms (Video Games, Music, Books)
+- Square music cards with collection-aware aspect ratio
 - Component tests
 - Usage documentation
 
@@ -1096,7 +1104,7 @@ If issues occur:
 
 ### Phase 2 Complete When:
 
-- [ ] All 225 story points completed
+- [ ] All 230 story points completed
 - [ ] All acceptance criteria met
 - [ ] Test coverage goals achieved
 - [ ] Documentation updated

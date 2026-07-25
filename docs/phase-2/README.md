@@ -3,7 +3,7 @@
 **Status**: 🔵 Planning
 **Last Updated**: 2026-02-24
 **Expected Duration**: 10-14 weeks
-**Story Points**: 225 (base) + 8 (stretch)
+**Story Points**: 230 (base) + 8 (stretch)
 
 ---
 
@@ -127,13 +127,13 @@ Add comprehensive tracking for:
 | ------------- | ----------------------------- | -------------------- | --------------- |
 | **Sprint 11** | Database & Model Updates      | 18                   | 1 week          |
 | **Sprint 12** | Cloud Image Storage           | 26                   | 1-2 weeks       |
-| **Sprint 13** | Enhanced UI Components        | 24                   | 1-2 weeks       |
+| **Sprint 13** | Enhanced UI Components        | 29                   | 1-2 weeks       |
 | **Sprint 14** | Action Figures Collection     | 32                   | 1-2 weeks       |
 | **Sprint 15** | Completion & Deep Links       | 21                   | 1 week          |
 | **Sprint 16** | Analytics Engine              | 34                   | 2 weeks         |
 | **Sprint 17** | Collection Dashboards         | 44 (+8 stretch)      | 2 weeks         |
 | **Sprint 18** | Recommendations & Personality | 40                   | 2 weeks         |
-| **Total**     |                               | **225** (+8 stretch) | **10-14 weeks** |
+| **Total**     |                               | **230** (+8 stretch) | **10-14 weeks** |
 
 ---
 
@@ -254,7 +254,7 @@ Add these to `.env` file before starting Sprint 12.
 
 ### Phase 2 Complete When:
 
-- [ ] All 225 story points completed
+- [ ] All 230 story points completed
 - [ ] All acceptance criteria met
 - [ ] Test coverage >= 70%
 - [ ] All documentation updated
