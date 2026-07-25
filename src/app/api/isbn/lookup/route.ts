@@ -1,9 +1,12 @@
 import { type NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { isValidISBN, cleanISBN, isbn10ToISBN13 } from '@/lib/isbn'
 import type { ISBNLookupResult, ISBNLookupError } from '@/types/isbn'
 
 // Timeout for external API calls (in milliseconds)
 const API_TIMEOUT_MS = 10000
+// Gemini grounded search is slower (web search + generation), so allow more time
+const GEMINI_TIMEOUT_MS = 20000
 
 /**
  * Fetches book data from Open Library API
@@ -153,6 +156,143 @@ async function fetchFromGoogleBooks(isbn: string): Promise<ISBNLookupResult | nu
 }
 
 /**
+ * Shape we ask Gemini to return. Kept lenient — the model may omit fields or
+ * return numbers as strings, so numeric fields are coerced and validation
+ * failures fall through to `null` rather than throwing.
+ */
+const geminiBookSchema = z.object({
+  found: z.boolean().optional(),
+  title: z.string().optional(),
+  authors: z.array(z.string()).optional(),
+  publisher: z.string().optional(),
+  publishedDate: z.string().optional(),
+  year: z.coerce.number().optional().catch(undefined),
+  description: z.string().optional(),
+  pageCount: z.coerce.number().optional().catch(undefined),
+  language: z.string().optional(),
+  categories: z.array(z.string()).optional(),
+})
+
+/**
+ * Fetches book data from Gemini with Google Search grounding.
+ *
+ * Last-resort fallback for books missing from Open Library and Google Books
+ * (e.g. recent or non-English titles). Gemini searches the live web and returns
+ * structured JSON, which we validate with Zod before trusting.
+ *
+ * Requires GEMINI_API_KEY (a separate key from GOOGLE_API_KEY). Returns null
+ * gracefully when the key is absent or the lookup fails/does not find a match.
+ *
+ * Results are AI-sourced and may be imperfect — the client flags them for user
+ * verification via `source: 'gemini'`. Cover images are intentionally omitted
+ * to avoid hallucinated image URLs.
+ */
+async function fetchFromGemini(isbn: string): Promise<ISBNLookupResult | null> {
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) {
+    return null
+  }
+
+  // Auto-updating Flash alias — avoids breakage when Google retires pinned
+  // version IDs (e.g. gemini-2.5-flash) for new keys. Override via GEMINI_MODEL.
+  const model = process.env.GEMINI_MODEL || 'gemini-flash-latest'
+
+  try {
+    const prompt = [
+      `Search the web for the book with ISBN ${isbn}.`,
+      'Respond with ONLY a JSON object (no markdown fences, no prose) using these fields:',
+      'title (string), authors (string array), publisher (string), publishedDate (string),',
+      'year (number), description (string), pageCount (number), language (ISO 639-1 code),',
+      'categories (string array).',
+      'Only include fields you are confident are correct; omit any you are unsure about.',
+      'If you cannot find a real book with this ISBN, respond with exactly {"found": false}.',
+    ].join(' ')
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        // Ground the answer in live web search instead of parametric memory
+        tools: [{ google_search: {} }],
+        generationConfig: { temperature: 0 },
+      }),
+      signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    const data = await response.json()
+    const parts: Array<{ text?: string }> = data?.candidates?.[0]?.content?.parts ?? []
+    const rawText = parts
+      .map((part) => part.text)
+      .filter(Boolean)
+      .join('')
+      .trim()
+
+    if (!rawText) {
+      return null
+    }
+
+    // Extract the JSON object from the (possibly fenced or prose-wrapped) text
+    const start = rawText.indexOf('{')
+    const end = rawText.lastIndexOf('}')
+    if (start === -1 || end === -1 || end <= start) {
+      return null
+    }
+
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(rawText.slice(start, end + 1))
+    } catch {
+      return null
+    }
+
+    const validated = geminiBookSchema.safeParse(parsed)
+    if (!validated.success) {
+      return null
+    }
+
+    const book = validated.data
+    // Model reported no match, or returned nothing usable
+    if (book.found === false || !book.title) {
+      return null
+    }
+
+    // Sanitize numerics (coercion can yield 0/NaN for null-ish values)
+    const pageCount = book.pageCount && book.pageCount > 0 ? Math.trunc(book.pageCount) : undefined
+    let year = book.year && book.year > 0 ? Math.trunc(book.year) : undefined
+    if (!year && book.publishedDate) {
+      const yearMatch = book.publishedDate.match(/\d{4}/)
+      if (yearMatch) {
+        year = parseInt(yearMatch[0], 10)
+      }
+    }
+
+    return {
+      isbn: cleanISBN(isbn),
+      title: book.title,
+      authors: book.authors ?? [],
+      publisher: book.publisher,
+      publishedDate: book.publishedDate,
+      year,
+      description: book.description,
+      // coverUrl intentionally omitted — see function docs
+      pageCount,
+      language: book.language,
+      categories: book.categories,
+      source: 'gemini',
+    }
+  } catch (error) {
+    console.error('Gemini ISBN lookup error:', error)
+    return null
+  }
+}
+
+/**
  * GET /api/isbn/lookup?isbn={isbn}
  * Looks up book information by ISBN from multiple sources
  */
@@ -203,7 +343,14 @@ export async function GET(request: NextRequest) {
       result = await fetchFromGoogleBooks(searchISBN)
     }
 
-    // If both fail, return not found
+    // Last resort: Gemini grounded web search (only runs if GEMINI_API_KEY is
+    // set). Covers recent/international books the free databases lack. Results
+    // are AI-sourced and flagged for verification on the client.
+    if (!result) {
+      result = await fetchFromGemini(searchISBN)
+    }
+
+    // If all sources fail, return not found
     if (!result) {
       return NextResponse.json(
         {

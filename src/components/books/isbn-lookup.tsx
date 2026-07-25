@@ -74,8 +74,13 @@ export function ISBNLookup({ onBookFound, onCancel }: ISBNLookupProps) {
         return
       }
 
-      // Success - pass book data to parent
-      toast.success(`Book found: ${data.title}`)
+      // Success - pass book data to parent. AI-sourced results may be
+      // imperfect, so prompt the user to double-check the details.
+      if (data.source === 'gemini') {
+        toast.info(`Found via AI: ${data.title} — please verify the details`)
+      } else {
+        toast.success(`Book found: ${data.title}`)
+      }
       onBookFound(data)
     } catch (err) {
       console.error('ISBN lookup error:', err)

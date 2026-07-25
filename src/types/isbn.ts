@@ -15,7 +15,7 @@ export interface ISBNLookupResult {
   pageCount?: number
   language?: string
   categories?: string[]
-  source: 'openlibrary' | 'google' | 'manual'
+  source: 'openlibrary' | 'google' | 'gemini' | 'manual'
 }
 
 export interface OpenLibraryBook {
