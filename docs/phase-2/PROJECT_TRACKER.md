@@ -1,6 +1,6 @@
 # The Collector - Phase 2 Project Tracker
 
-**Last Updated**: 2026-07-24
+**Last Updated**: 2026-07-25
 **Phase**: 2 - Enhanced Features, Analytics & Intelligence
 **Status**: 🟡 In Progress
 
@@ -17,8 +17,8 @@
 
 ## Phase 2 Overview
 
-**Total Story Points**: 225 (base) + 8 (stretch)
-**Completed Story Points**: 44/225 (20%)
+**Total Story Points**: 230 (base) + 8 (stretch)
+**Completed Story Points**: 44/230 (19%)
 **Estimated Duration**: 10-14 weeks
 
 ### Phase 2 Goals
@@ -44,7 +44,7 @@
 | --------- | ------------ | ---------- | ---------- | ----------------- | -------------- | ------------ |
 | Sprint 11 | 🟢 Completed | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
 | Sprint 12 | 🟢 Completed | 2026-04-28 | 2026-07-24 | 4                 | 4              | 26/26        |
-| Sprint 13 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/24         |
+| Sprint 13 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/29         |
 | Sprint 14 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/32         |
 | Sprint 15 | ⚪ Planned   | TBD        | TBD        | 0                 | 2              | 0/21         |
 | Sprint 16 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/34         |
@@ -271,9 +271,9 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 ## Sprint 13: Enhanced UI Components & Forms
 
-**Goal**: Add searchable dropdowns and update forms with new fields
+**Goal**: Add searchable dropdowns, update forms with new fields, and adapt card layout per collection type
 **Duration**: 1-2 weeks
-**Story Points**: 0/24
+**Story Points**: 0/29
 **Status**: ⚪ Planned
 
 ### User Stories
@@ -349,10 +349,51 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 ---
 
+#### US-13.4: Square Cards for Music Collection (Vinyl Sleeve Aspect Ratio)
+
+- **Status**: 🟡 In Progress (implemented, pending visual verification)
+- **Assigned**: Claude
+- **Story Points**: 5
+- **PR**: TBD
+- **Acceptance Criteria**:
+  - [x] Cover area renders `aspect-square` when `collectionType === 'MUSIC'`
+  - [x] Videogames and Books keep `aspect-[2/3]` (no visual regression)
+  - [x] Aspect ratio derived from `collectionType` in a single shared helper
+        (`src/lib/collection-display.ts`)
+  - [x] `CollectionGrid` updated
+  - [x] `VirtualizedCollectionGrid` updated, including virtualizer row height (`estimateSize`)
+  - [x] `CollectionGridSkeleton` matches the real card ratio per collection type
+  - [x] Music page loading placeholder uses the square ratio
+  - [x] `ItemDetailModal` cover uses the square ratio for music items
+  - [x] Album art fills the square without distortion (`object-cover` preserved)
+  - [x] Placeholder icon stays centered in the square (`absolute inset-0`, unchanged)
+  - [x] Hover overlay and title still cover the full cover area (`absolute inset-0`, unchanged)
+  - [ ] Responsive at all breakpoints; dark mode unaffected — **needs manual check in browser**
+  - [ ] ~~Tests updated~~ — **not possible**: the project has no test runner
+        (`npm test` is a placeholder echo). Deferred; see Sprint 13 notes
+
+**Notes**:
+
+- Vinyl sleeves and CD jewel cases are square; the shared `aspect-[2/3]` distorted album art
+- Helper defaults to portrait, so Action Figures (Sprint 14) inherits the mechanism for free
+- ⚠️ Found while implementing: the virtualizer never measured its rows — it rendered
+  `estimateSize` as the final height. Connected `measureElement` + `data-index` so rows are
+  measured for real, which fixes the row-height fragility across breakpoints, not just for music
+- Tailwind v4 is in use with no `@config` directive, so the `content` globs in
+  `tailwind.config.ts` are inert and the whole repo is auto-scanned. Verified `aspect-square`
+  is emitted into the production CSS from `src/lib/collection-display.ts`
+- Verified: `npm run type-check` clean, `eslint` clean on changed files, `npm run build` succeeds
+
+---
+
 **Sprint 13 Notes**:
 
 - Focus on UX improvements
 - Ensure accessibility standards maintained
+- US-13.4 touches shared grid components — verify `/videogames` and `/books` for regressions
+- ⚠️ **No test infrastructure exists** (`npm test` is a placeholder echo). Every "write tests"
+  acceptance criterion in this sprint is currently unachievable. Consider a story to set up
+  Vitest + React Testing Library before, or as part of, Sprint 13
 
 ---
 
@@ -1085,7 +1126,7 @@ _To be updated as feedback is received_
 
 Phase 2 will be considered complete when:
 
-- [ ] All 27 user stories completed (225 story points)
+- [ ] All 28 user stories completed (230 story points)
 - [ ] Database schema extended with new fields and analytics models
 - [ ] Action Figures collection fully functional
 - [ ] S3 image storage implemented and tested

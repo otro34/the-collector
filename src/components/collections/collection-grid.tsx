@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { Gamepad2, Music, BookOpen, CheckCircle2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { getCoverAspectClass } from '@/lib/collection-display'
+import { cn } from '@/lib/utils'
 import type { Item, CollectionType, Videogame, Music as MusicType, Book } from '@prisma/client'
 import type { ReadingProgress } from '@/hooks/use-reading-progress'
 
@@ -58,6 +60,8 @@ export function CollectionGrid({
     return progress?.isRead ?? false
   }
 
+  const coverAspect = getCoverAspectClass(collectionType)
+
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -87,7 +91,7 @@ export function CollectionGrid({
           <Card className="overflow-hidden transition-all hover:shadow-lg hover:scale-105">
             <CardContent className="p-0">
               {/* Cover Image */}
-              <div className="relative aspect-[2/3] bg-muted">
+              <div className={cn('relative bg-muted', coverAspect)}>
                 {item.coverUrl ? (
                   <Image
                     src={item.coverUrl}

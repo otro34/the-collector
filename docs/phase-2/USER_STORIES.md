@@ -2,7 +2,7 @@
 
 **Phase**: 2
 **Status**: 🔵 Planning
-**Last Updated**: 2026-02-24
+**Last Updated**: 2026-07-25
 
 ---
 
@@ -14,7 +14,8 @@ Add comprehensive metadata fields to all collection items for better tracking an
 
 ### Epic 10: Advanced UI Components
 
-Implement searchable dropdowns and enhanced form controls for better user experience.
+Implement searchable dropdowns, enhanced form controls, and collection-aware card layouts
+(e.g. square cards for vinyl) for better user experience.
 
 ### Epic 11: Cloud Image Storage
 
@@ -251,9 +252,9 @@ Add deep linking support, videogame completion tracking, and improved URL-based 
 
 ### Sprint 13: Enhanced UI Components & Forms
 
-**Goal**: Add searchable dropdowns and update forms with new fields
+**Goal**: Add searchable dropdowns, update forms with new fields, and adapt card layout per collection type
 **Duration**: 1-2 weeks
-**Story Points**: 24
+**Story Points**: 29
 
 #### User Stories
 
@@ -351,7 +352,57 @@ Add deep linking support, videogame completion tracking, and improved URL-based 
 
 **Effort**: 6 story points
 
-**Sprint 13 Total**: 24 story points
+---
+
+**US-13.4: Square Cards for Music Collection (Vinyl Sleeve Aspect Ratio)**
+
+- **As a** music collector
+- **I want** music items to be displayed in square cards instead of rectangular ones
+- **So that** the grid visually represents vinyl records and their sleeves, which are square
+
+**Context**:
+
+The grid card is shared across all collections and hardcodes a `aspect-[2/3]` cover
+area, an aspect ratio that suits book covers and game boxes but distorts album art.
+Vinyl sleeves (and CD jewel cases) are square, so covers are currently letterboxed or
+cropped. The aspect ratio must become a function of `collectionType`, defaulting to
+`2/3` so Videogames and Books are unaffected.
+
+**Acceptance Criteria**:
+
+- [ ] Cover area renders `aspect-square` when `collectionType === 'MUSIC'`
+- [ ] Videogames and Books keep the current `aspect-[2/3]` ratio (no visual regression)
+- [ ] Aspect ratio derived from `collectionType` in a single shared helper — not duplicated per component
+- [ ] `CollectionGrid` updated
+- [ ] `VirtualizedCollectionGrid` updated, including the virtualizer row height
+      (`estimateSize` is hardcoded to 320px and assumes the 2/3 ratio — square rows are
+      shorter, so it must be derived per collection type or rows will overlap/gap)
+- [ ] `CollectionGridSkeleton` matches the real card ratio per collection type
+      (currently hardcodes `aspect-[3/4]`, which matches neither — fix as part of this story)
+- [ ] Music page loading placeholder (`src/app/music/page.tsx`) uses the square ratio
+- [ ] `ItemDetailModal` cover uses the square ratio for music items
+- [ ] Album art fills the square without distortion (`object-cover` preserved)
+- [ ] Placeholder icon (no cover URL) stays centered in the square
+- [ ] Hover overlay and title still cover the full cover area
+- [ ] Responsive at all breakpoints (2/3/4/5/6 columns) on mobile, tablet and desktop
+- [ ] Dark mode unaffected
+- [ ] Existing component tests pass; test added asserting music renders square and books/games do not
+
+**Tasks**:
+
+- Add a `getCoverAspectClass(collectionType)` helper (e.g. `src/lib/collection-display.ts`)
+- Update `src/components/collections/collection-grid.tsx`
+- Update `src/components/collections/virtualized-collection-grid.tsx` (cover + `estimateSize`)
+- Update `src/components/collections/collection-grid-skeleton.tsx` (accept `collectionType`)
+- Update loading placeholder in `src/app/music/page.tsx`
+- Update `src/components/items/item-detail-modal.tsx`
+- Verify no regression on `/videogames` and `/books`
+- Manual check across breakpoints and in dark mode
+- Update/add component tests
+
+**Effort**: 5 story points
+
+**Sprint 13 Total**: 29 story points
 
 ---
 
@@ -1316,7 +1367,7 @@ Archetype Selection:
 
 ## Phase 2 Summary
 
-**Total Story Points**: 225 (base) + 8 (stretch from US-17.5)
+**Total Story Points**: 230 (base) + 8 (stretch from US-17.5)
 **Total Sprints**: 8 (Sprints 11-18)
 **Estimated Duration**: 10-14 weeks
 
@@ -1324,7 +1375,7 @@ Archetype Selection:
 
 - Sprint 11: 18 points (Database & Models)
 - Sprint 12: 26 points (Cloud Storage)
-- Sprint 13: 24 points (UI Components)
+- Sprint 13: 29 points (UI Components)
 - Sprint 14: 32 points (Action Figures)
 - Sprint 15: 21 points (Completion Tracking & Deep Links)
 - Sprint 16: 34 points (Analytics Engine)

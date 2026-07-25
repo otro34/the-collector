@@ -423,7 +423,11 @@ function MusicPageContent() {
           {/* Loading State */}
           {isLoading && (
             <div className="space-y-4">
-              {view === 'grid' ? <CollectionGridSkeleton /> : <CollectionListSkeleton />}
+              {view === 'grid' ? (
+                <CollectionGridSkeleton collectionType="MUSIC" />
+              ) : (
+                <CollectionListSkeleton />
+              )}
             </div>
           )}
 
@@ -529,7 +533,7 @@ export default function MusicPage() {
             <div className="h-12 bg-muted rounded-lg w-1/3" />
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="aspect-[2/3] bg-muted rounded-lg" />
+                <div key={i} className="aspect-square bg-muted rounded-lg" />
               ))}
             </div>
           </div>

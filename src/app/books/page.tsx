@@ -468,7 +468,11 @@ function BooksPageContent() {
           {/* Loading State */}
           {isLoading && (
             <div className="space-y-4">
-              {view === 'grid' ? <CollectionGridSkeleton /> : <CollectionListSkeleton />}
+              {view === 'grid' ? (
+                <CollectionGridSkeleton collectionType="BOOK" />
+              ) : (
+                <CollectionListSkeleton />
+              )}
             </div>
           )}
 
