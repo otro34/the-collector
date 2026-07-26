@@ -283,7 +283,7 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 - **Status**: 🟡 In Progress (implemented, pending interactive verification)
 - **Assigned**: Claude
 - **Story Points**: 8
-- **PR**: TBD
+- **PR**: [#70](https://github.com/otro34/the-collector/pull/70)
 - **Acceptance Criteria**:
   - [x] SearchableSelect component created (`src/components/ui/searchable-select.tsx`)
   - [x] Filter text field at top of dropdown
