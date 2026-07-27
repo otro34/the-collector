@@ -1,24 +1,24 @@
 # The Collector - Phase 2 Project Tracker
 
-**Last Updated**: 2026-07-25
+**Last Updated**: 2026-07-26
 **Phase**: 2 - Enhanced Features, Analytics & Intelligence
 **Status**: 🟡 In Progress
 
 ---
 
-## Current Sprint: Sprint 12 - Cloud Image Storage Integration
+## Current Sprint: Sprint 13 - Enhanced UI Components & Forms
 
-**Sprint Status**: 🟢 Completed
-**Start Date**: 2026-04-28
-**End Date**: 2026-07-24
-**Goal**: Implement S3 bucket storage for images with CloudFront CDN
+**Sprint Status**: 🟡 In Progress
+**Start Date**: 2026-07-26
+**End Date**: TBD
+**Goal**: Add searchable dropdowns, update forms with new fields, and adapt card layout per collection type
 
 ---
 
 ## Phase 2 Overview
 
 **Total Story Points**: 230 (base) + 8 (stretch)
-**Completed Story Points**: 44/230 (19%)
+**Completed Story Points**: 49/230 (21%)
 **Estimated Duration**: 10-14 weeks
 
 ### Phase 2 Goals
@@ -40,16 +40,16 @@
 
 ## Sprint Progress Overview
 
-| Sprint    | Status       | Start Date | End Date   | Completed Stories | Total Stories  | Story Points |
-| --------- | ------------ | ---------- | ---------- | ----------------- | -------------- | ------------ |
-| Sprint 11 | 🟢 Completed | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
-| Sprint 12 | 🟢 Completed | 2026-04-28 | 2026-07-24 | 4                 | 4              | 26/26        |
-| Sprint 13 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/29         |
-| Sprint 14 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/32         |
-| Sprint 15 | ⚪ Planned   | TBD        | TBD        | 0                 | 2              | 0/21         |
-| Sprint 16 | ⚪ Planned   | TBD        | TBD        | 0                 | 3              | 0/34         |
-| Sprint 17 | ⚪ Planned   | TBD        | TBD        | 0                 | 4 (+1 stretch) | 0/44 (+8)    |
-| Sprint 18 | ⚪ Planned   | TBD        | TBD        | 0                 | 4              | 0/40         |
+| Sprint    | Status         | Start Date | End Date   | Completed Stories | Total Stories  | Story Points |
+| --------- | -------------- | ---------- | ---------- | ----------------- | -------------- | ------------ |
+| Sprint 11 | 🟢 Completed   | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
+| Sprint 12 | 🟢 Completed   | 2026-04-28 | 2026-07-24 | 4                 | 4              | 26/26        |
+| Sprint 13 | 🟡 In Progress | 2026-07-26 | TBD        | 1                 | 4              | 5/29         |
+| Sprint 14 | ⚪ Planned     | TBD        | TBD        | 0                 | 4              | 0/32         |
+| Sprint 15 | ⚪ Planned     | TBD        | TBD        | 0                 | 2              | 0/21         |
+| Sprint 16 | ⚪ Planned     | TBD        | TBD        | 0                 | 3              | 0/34         |
+| Sprint 17 | ⚪ Planned     | TBD        | TBD        | 0                 | 4 (+1 stretch) | 0/44 (+8)    |
+| Sprint 18 | ⚪ Planned     | TBD        | TBD        | 0                 | 4              | 0/40         |
 
 **Legend**: 🔴 Not Started | 🟡 In Progress | 🟢 Completed | ⚪ Planned
 
@@ -273,32 +273,53 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 **Goal**: Add searchable dropdowns, update forms with new fields, and adapt card layout per collection type
 **Duration**: 1-2 weeks
-**Story Points**: 0/29
-**Status**: ⚪ Planned
+**Story Points**: 5/29
+**Status**: 🟡 In Progress
 
 ### User Stories
 
 #### US-13.1: Create Searchable Dropdown Component
 
-- **Status**: 🔴 Not Started
-- **Assigned**: TBD
+- **Status**: 🟡 In Progress (implemented, pending interactive verification)
+- **Assigned**: Claude
 - **Story Points**: 8
-- **PR**: TBD
+- **PR**: [#70](https://github.com/otro34/the-collector/pull/70)
 - **Acceptance Criteria**:
-  - [ ] SearchableSelect component created
-  - [ ] Filter text field at top of dropdown
-  - [ ] Real-time filtering as user types
-  - [ ] Case-insensitive search
-  - [ ] Keyboard navigation supported (arrow keys, enter, escape)
-  - [ ] Accessible (ARIA labels, screen reader friendly)
-  - [ ] Styled consistently with existing UI
-  - [ ] Dark mode supported
-  - [ ] Works with single and multi-select
+  - [x] SearchableSelect component created (`src/components/ui/searchable-select.tsx`)
+  - [x] Filter text field at top of dropdown
+  - [x] Real-time filtering as user types
+  - [x] Case-insensitive search (custom `filterOption` substring matcher)
+  - [x] Keyboard navigation supported (arrow keys with wrap, enter, escape, tab)
+  - [x] Accessible (`aria-haspopup`/`aria-expanded`/`aria-controls` on the trigger,
+        cmdk listbox + `aria-activedescendant`, sr-only "selected" text)
+  - [x] Styled consistently with existing UI (same tokens/classes as `SelectTrigger`)
+  - [x] Dark mode supported (popover/accent/secondary tokens, no hardcoded colors)
+  - [x] Works with single and multi-select (discriminated union props; badges + `+N more`)
+  - [ ] Manual interactive check in browser — **pending** (see notes)
+  - [ ] ~~Write component tests~~ — **not possible**: no test runner in the project
+        (`npm test` is a placeholder echo). Deferred; see Sprint 13 notes
+  - [x] Document usage (`docs/phase-2/SEARCHABLE_SELECT.md`)
 
 **Notes**:
 
-- Base on shadcn/ui Select component
-- Ensure accessibility compliance
+- Built on Radix Popover + cmdk (the shadcn/ui Combobox stack) rather than extending
+  `Select`: Radix Select swallows keystrokes for its own typeahead, so a filter field
+  cannot live inside its content. Two new primitives added: `ui/popover.tsx`, `ui/command.tsx`
+- New dependencies: `@radix-ui/react-popover` ^1.1.23, `cmdk` ^1.1.1
+- cmdk's default fuzzy scoring is replaced with a plain case-insensitive substring match so
+  results are predictable; `option.keywords` adds alias terms
+- ⚠️ Two a11y details worth remembering: `aria-invalid` is **not** valid on `role=button`
+  (mapped to `data-invalid` for styling; the message is still announced via
+  `aria-describedby`), and cmdk uses `aria-selected` for the _highlighted_ row — so the
+  _chosen_ state is announced with sr-only text instead of overriding it
+- The multi-select trigger uses `<span>` badges rather than the `Badge` component, since a
+  `<button>` may only contain phrasing content (`Badge` renders a `<div>`)
+- Verified: `npm run type-check` clean, `eslint` clean on all new files, `npm run build`
+  succeeds, SSR render checked over HTTP against a temporary demo page (trigger markup,
+  ARIA attributes and disabled state all correct, no runtime errors)
+- ⚠️ Interactive behaviour (open/filter/keyboard/multi-select toggling, dark mode) could
+  **not** be verified: neither browser extension was connected in this session. The
+  component is unused until US-13.3, so it will get real usage coverage there
 
 ---
 
@@ -351,10 +372,10 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 #### US-13.4: Square Cards for Music Collection (Vinyl Sleeve Aspect Ratio)
 
-- **Status**: 🟡 In Progress (implemented, pending visual verification)
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 5
-- **PR**: TBD
+- **PR**: [#69](https://github.com/otro34/the-collector/pull/69) (merged)
 - **Acceptance Criteria**:
   - [x] Cover area renders `aspect-square` when `collectionType === 'MUSIC'`
   - [x] Videogames and Books keep `aspect-[2/3]` (no visual regression)
