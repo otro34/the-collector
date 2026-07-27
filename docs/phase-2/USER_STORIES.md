@@ -254,9 +254,62 @@ Add deep linking support, videogame completion tracking, and improved URL-based 
 
 **Goal**: Add searchable dropdowns, update forms with new fields, and adapt card layout per collection type
 **Duration**: 1-2 weeks
-**Story Points**: 29
+**Story Points**: 37
 
 #### User Stories
+
+**US-13.0: Set Up Test Infrastructure**
+
+- **As a** developer
+- **I want** a working test runner with React component testing
+- **So that** the "write tests" acceptance criteria across the project can actually be met
+
+**Context**: `npm test` is currently a placeholder (`echo "Tests will be added in later sprints"`).
+Every story that asks for tests — US-13.1, US-13.2, US-13.3, US-13.4 and all of Sprints 14-18 —
+is blocked on this. This story is a prerequisite for the rest of Sprint 13.
+
+**Acceptance Criteria**:
+
+- [ ] Vitest installed and configured for Next.js 15 + React 19 + TypeScript
+- [ ] `vitest.config.ts` created with the `@/` path alias resolving the same way as `tsconfig.json`
+- [ ] jsdom environment configured for component tests
+- [ ] React Testing Library + `@testing-library/jest-dom` + `@testing-library/user-event` installed
+- [ ] Global test setup file registers the jest-dom matchers
+- [ ] `npm test` runs the suite (replacing the placeholder echo); `npm run test:watch` and
+      `npm run test:coverage` available
+- [ ] Coverage reporting configured with the thresholds from `docs/CLAUDE.md`
+      (utilities 90%, components 70%, services/API 80%, overall minimum 70%)
+- [ ] Coverage thresholds do **not** fail the build until a baseline exists — enable them
+      once real coverage lands
+- [ ] Sample tests proving each layer works:
+  - a utility test (e.g. `src/lib/collection-display.ts`)
+  - a component test rendering a shadcn/ui component
+  - a component test exercising user interaction (`user-event`)
+- [ ] Next.js-specific mocks documented/provided as needed (`next/navigation`, `next/image`,
+      `next-themes`)
+- [ ] Tests run in CI (or the lint-staged/husky hook) without touching the database
+- [ ] Test conventions documented (file naming, colocation, what to mock)
+
+**Tasks**:
+
+- Install `vitest`, `@vitejs/plugin-react`, `jsdom`, `@testing-library/react`,
+  `@testing-library/jest-dom`, `@testing-library/user-event`
+- Create `vitest.config.ts` and `vitest.setup.ts`
+- Replace the placeholder `test` script; add `test:watch` and `test:coverage`
+- Write the three sample tests
+- Document conventions in `docs/phase-2/TESTING.md`
+- Backfill tests for `SearchableSelect` (US-13.1), whose test criterion was deferred
+
+**Effort**: 8 story points
+
+**Notes**:
+
+- Vitest over Jest: the project is already on Vite-compatible tooling via Next 15/Turbopack,
+  and Vitest needs far less configuration for TS + ESM
+- Interactive tests for `SearchableSelect` also close the manual-verification gap left by
+  US-13.1, which could not be checked in a browser
+
+---
 
 **US-13.1: Create Searchable Dropdown Component**
 
@@ -402,7 +455,7 @@ cropped. The aspect ratio must become a function of `collectionType`, defaulting
 
 **Effort**: 5 story points
 
-**Sprint 13 Total**: 29 story points
+**Sprint 13 Total**: 37 story points
 
 ---
 
@@ -1367,7 +1420,7 @@ Archetype Selection:
 
 ## Phase 2 Summary
 
-**Total Story Points**: 230 (base) + 8 (stretch from US-17.5)
+**Total Story Points**: 238 (base) + 8 (stretch from US-17.5)
 **Total Sprints**: 8 (Sprints 11-18)
 **Estimated Duration**: 10-14 weeks
 
@@ -1375,7 +1428,7 @@ Archetype Selection:
 
 - Sprint 11: 18 points (Database & Models)
 - Sprint 12: 26 points (Cloud Storage)
-- Sprint 13: 29 points (UI Components)
+- Sprint 13: 37 points (Test Infrastructure & UI Components)
 - Sprint 14: 32 points (Action Figures)
 - Sprint 15: 21 points (Completion Tracking & Deep Links)
 - Sprint 16: 34 points (Analytics Engine)

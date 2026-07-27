@@ -17,8 +17,8 @@
 
 ## Phase 2 Overview
 
-**Total Story Points**: 230 (base) + 8 (stretch)
-**Completed Story Points**: 49/230 (21%)
+**Total Story Points**: 238 (base) + 8 (stretch)
+**Completed Story Points**: 49/238 (21%)
 **Estimated Duration**: 10-14 weeks
 
 ### Phase 2 Goals
@@ -44,7 +44,7 @@
 | --------- | -------------- | ---------- | ---------- | ----------------- | -------------- | ------------ |
 | Sprint 11 | 🟢 Completed   | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
 | Sprint 12 | 🟢 Completed   | 2026-04-28 | 2026-07-24 | 4                 | 4              | 26/26        |
-| Sprint 13 | 🟡 In Progress | 2026-07-26 | TBD        | 1                 | 4              | 5/29         |
+| Sprint 13 | 🟡 In Progress | 2026-07-26 | TBD        | 1                 | 5              | 5/37         |
 | Sprint 14 | ⚪ Planned     | TBD        | TBD        | 0                 | 4              | 0/32         |
 | Sprint 15 | ⚪ Planned     | TBD        | TBD        | 0                 | 2              | 0/21         |
 | Sprint 16 | ⚪ Planned     | TBD        | TBD        | 0                 | 3              | 0/34         |
@@ -273,10 +273,48 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 **Goal**: Add searchable dropdowns, update forms with new fields, and adapt card layout per collection type
 **Duration**: 1-2 weeks
-**Story Points**: 5/29
+**Story Points**: 5/37
 **Status**: 🟡 In Progress
 
 ### User Stories
+
+#### US-13.0: Set Up Test Infrastructure
+
+- **Status**: 🔴 Not Started
+- **Assigned**: TBD
+- **Story Points**: 8
+- **PR**: TBD
+- **Blocks**: US-13.1, US-13.2, US-13.3, US-13.4 and every "write tests" criterion in Sprints 14-18
+- **Acceptance Criteria**:
+  - [ ] Vitest installed and configured for Next.js 15 + React 19 + TypeScript
+  - [ ] `vitest.config.ts` with the `@/` alias resolving like `tsconfig.json`
+  - [ ] jsdom environment configured for component tests
+  - [ ] React Testing Library + `@testing-library/jest-dom` + `@testing-library/user-event` installed
+  - [ ] Global setup file registers the jest-dom matchers
+  - [ ] `npm test` runs the suite (replaces the placeholder echo); `test:watch` and
+        `test:coverage` scripts added
+  - [ ] Coverage reporting configured with the `docs/CLAUDE.md` thresholds
+        (utilities 90%, components 70%, services/API 80%, overall 70%)
+  - [ ] Thresholds do not fail the build until a baseline exists
+  - [ ] Sample tests for all three layers: a utility, a rendered component, an interaction test
+  - [ ] Next.js mocks provided where needed (`next/navigation`, `next/image`, `next-themes`)
+  - [ ] Tests run without touching the database
+  - [ ] Conventions documented (`docs/phase-2/TESTING.md`)
+  - [ ] Backfill tests for `SearchableSelect` (deferred from US-13.1)
+
+**Notes**:
+
+- Added 2026-07-26 after US-13.1 hit the same wall US-13.4 did: `npm test` is
+  `echo "Tests will be added in later sprints"`, so no story in this sprint can satisfy its
+  testing criterion
+- Should be picked up **before** US-13.2 / US-13.3 so those stories can ship with tests
+  instead of accumulating more debt
+- Vitest over Jest: much less config for TS + ESM, and the project already leans on
+  Vite-compatible tooling through Next 15
+- Also closes the manual-verification gap from US-13.1 — interaction tests can cover the
+  open/filter/keyboard/multi-select behaviour that could not be checked in a browser
+
+---
 
 #### US-13.1: Create Searchable Dropdown Component
 
@@ -413,8 +451,8 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 - Ensure accessibility standards maintained
 - US-13.4 touches shared grid components — verify `/videogames` and `/books` for regressions
 - ⚠️ **No test infrastructure exists** (`npm test` is a placeholder echo). Every "write tests"
-  acceptance criterion in this sprint is currently unachievable. Consider a story to set up
-  Vitest + React Testing Library before, or as part of, Sprint 13
+  acceptance criterion in this sprint is currently unachievable — tracked as **US-13.0**
+  (added 2026-07-26), which should be picked up before US-13.2 / US-13.3
 
 ---
 
