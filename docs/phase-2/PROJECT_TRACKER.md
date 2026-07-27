@@ -1,6 +1,6 @@
 # The Collector - Phase 2 Project Tracker
 
-**Last Updated**: 2026-07-26
+**Last Updated**: 2026-07-27
 **Phase**: 2 - Enhanced Features, Analytics & Intelligence
 **Status**: 🟡 In Progress
 
@@ -18,7 +18,7 @@
 ## Phase 2 Overview
 
 **Total Story Points**: 238 (base) + 8 (stretch)
-**Completed Story Points**: 49/238 (21%)
+**Completed Story Points**: 65/238 (27%)
 **Estimated Duration**: 10-14 weeks
 
 ### Phase 2 Goals
@@ -44,7 +44,7 @@
 | --------- | -------------- | ---------- | ---------- | ----------------- | -------------- | ------------ |
 | Sprint 11 | 🟢 Completed   | 2026-02-25 | 2026-02-25 | 3                 | 3              | 18/18        |
 | Sprint 12 | 🟢 Completed   | 2026-04-28 | 2026-07-24 | 4                 | 4              | 26/26        |
-| Sprint 13 | 🟡 In Progress | 2026-07-26 | TBD        | 1                 | 5              | 5/37         |
+| Sprint 13 | 🟡 In Progress | 2026-07-26 | TBD        | 3                 | 5              | 21/37        |
 | Sprint 14 | ⚪ Planned     | TBD        | TBD        | 0                 | 4              | 0/32         |
 | Sprint 15 | ⚪ Planned     | TBD        | TBD        | 0                 | 2              | 0/21         |
 | Sprint 16 | ⚪ Planned     | TBD        | TBD        | 0                 | 3              | 0/34         |
@@ -273,55 +273,73 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 
 **Goal**: Add searchable dropdowns, update forms with new fields, and adapt card layout per collection type
 **Duration**: 1-2 weeks
-**Story Points**: 5/37
+**Story Points**: 21/37
 **Status**: 🟡 In Progress
 
 ### User Stories
 
 #### US-13.0: Set Up Test Infrastructure
 
-- **Status**: 🔴 Not Started
-- **Assigned**: TBD
+- **Status**: 🟢 Completed
+- **Assigned**: Claude
 - **Story Points**: 8
 - **PR**: TBD
-- **Blocks**: US-13.1, US-13.2, US-13.3, US-13.4 and every "write tests" criterion in Sprints 14-18
+- **Blocks**: ~~US-13.1, US-13.2, US-13.3, US-13.4~~ — unblocked 2026-07-27
 - **Acceptance Criteria**:
-  - [ ] Vitest installed and configured for Next.js 15 + React 19 + TypeScript
-  - [ ] `vitest.config.ts` with the `@/` alias resolving like `tsconfig.json`
-  - [ ] jsdom environment configured for component tests
-  - [ ] React Testing Library + `@testing-library/jest-dom` + `@testing-library/user-event` installed
-  - [ ] Global setup file registers the jest-dom matchers
-  - [ ] `npm test` runs the suite (replaces the placeholder echo); `test:watch` and
+  - [x] Vitest installed and configured for Next.js 15 + React 19 + TypeScript
+        (`vitest` 4.1 + `@vitejs/plugin-react`)
+  - [x] `vitest.config.ts` with the `@/` alias resolving like `tsconfig.json`
+        (`resolve.tsconfigPaths`, so the two cannot drift)
+  - [x] jsdom environment configured for component tests
+  - [x] React Testing Library + `@testing-library/jest-dom` + `@testing-library/user-event` installed
+  - [x] Global setup file registers the jest-dom matchers (`src/test/setup.ts`)
+  - [x] `npm test` runs the suite (replaces the placeholder echo); `test:watch` and
         `test:coverage` scripts added
-  - [ ] Coverage reporting configured with the `docs/CLAUDE.md` thresholds
+  - [x] Coverage reporting configured with the `docs/CLAUDE.md` thresholds
         (utilities 90%, components 70%, services/API 80%, overall 70%)
-  - [ ] Thresholds do not fail the build until a baseline exists
-  - [ ] Sample tests for all three layers: a utility, a rendered component, an interaction test
-  - [ ] Next.js mocks provided where needed (`next/navigation`, `next/image`, `next-themes`)
-  - [ ] Tests run without touching the database
-  - [ ] Conventions documented (`docs/phase-2/TESTING.md`)
-  - [ ] Backfill tests for `SearchableSelect` (deferred from US-13.1)
+  - [x] Thresholds do not fail the build until a baseline exists — gated behind
+        `ENFORCE_COVERAGE=true`; verified they do fire when the flag is on
+  - [x] Sample tests for all three layers: a utility
+        (`src/lib/__tests__/collection-display.test.ts`), a rendered component
+        (`src/components/collections/__tests__/collection-grid-skeleton.test.tsx`) and an
+        interaction test (`src/components/ui/__tests__/searchable-select.test.tsx`)
+  - [x] Next.js mocks provided where needed (`next/navigation`, `next/image`, `next-themes`)
+  - [x] Tests run without touching the database
+  - [x] Conventions documented (`docs/phase-2/TESTING.md`)
+  - [x] Backfill tests for `SearchableSelect` (deferred from US-13.1) — 21 tests covering
+        open/filter/keyboard/multi-select/clear/a11y/hidden-input behaviour
 
 **Notes**:
 
-- Added 2026-07-26 after US-13.1 hit the same wall US-13.4 did: `npm test` is
-  `echo "Tests will be added in later sprints"`, so no story in this sprint can satisfy its
+- Added 2026-07-26 after US-13.1 hit the same wall US-13.4 did: `npm test` was
+  `echo "Tests will be added in later sprints"`, so no story in this sprint could satisfy its
   testing criterion
-- Should be picked up **before** US-13.2 / US-13.3 so those stories can ship with tests
-  instead of accumulating more debt
 - Vitest over Jest: much less config for TS + ESM, and the project already leans on
   Vite-compatible tooling through Next 15
-- Also closes the manual-verification gap from US-13.1 — interaction tests can cover the
-  open/filter/keyboard/multi-select behaviour that could not be checked in a browser
+- ⚠️ **jsdom has no layout engine**, so Radix and cmdk call APIs that do not exist there.
+  `src/test/setup.ts` stubs `ResizeObserver`, `IntersectionObserver`, `scrollIntoView` and the
+  pointer-capture methods — without them _every_ popover test throws before it can assert
+  anything. Every future Radix-based component test depends on this
+- Coverage baseline at merge: **2.66% statements** (104/3907). Thresholds are configured but
+  parked behind `ENFORCE_COVERAGE=true` until the backfill lifts the numbers; flip the guard in
+  `vitest.config.ts` and add `npm run test:coverage` to CI at that point
+- ⚠️ Test-writing gotchas worth remembering: query a dropdown trigger by a stable `aria-label`,
+  never by its visible text — the text changes the moment something is selected and the query
+  silently stops matching mid-test. And harness props must be listed explicitly; spreading a
+  `Partial<ComponentProps<…>>` collapses `SearchableSelect`'s single/multiple discriminated union
+- CI already ran `npm test` after lint/type-check/build, so it now runs the real suite with no
+  workflow change
+- Verified: 28 tests passing, `npm run type-check` clean, `eslint` clean on all new files,
+  `npm run build` succeeds
 
 ---
 
 #### US-13.1: Create Searchable Dropdown Component
 
-- **Status**: 🟡 In Progress (implemented, pending interactive verification)
+- **Status**: 🟢 Completed
 - **Assigned**: Claude
 - **Story Points**: 8
-- **PR**: [#70](https://github.com/otro34/the-collector/pull/70)
+- **PR**: [#70](https://github.com/otro34/the-collector/pull/70) (merged)
 - **Acceptance Criteria**:
   - [x] SearchableSelect component created (`src/components/ui/searchable-select.tsx`)
   - [x] Filter text field at top of dropdown
@@ -333,9 +351,9 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
   - [x] Styled consistently with existing UI (same tokens/classes as `SelectTrigger`)
   - [x] Dark mode supported (popover/accent/secondary tokens, no hardcoded colors)
   - [x] Works with single and multi-select (discriminated union props; badges + `+N more`)
-  - [ ] Manual interactive check in browser — **pending** (see notes)
-  - [ ] ~~Write component tests~~ — **not possible**: no test runner in the project
-        (`npm test` is a placeholder echo). Deferred; see Sprint 13 notes
+  - [x] Interactive behaviour verified — covered by the 21 interaction tests added in US-13.0
+        (`src/components/ui/__tests__/searchable-select.test.tsx`) rather than by hand
+  - [x] Write component tests — done in US-13.0 once the runner existed
   - [x] Document usage (`docs/phase-2/SEARCHABLE_SELECT.md`)
 
 **Notes**:
@@ -355,9 +373,12 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 - Verified: `npm run type-check` clean, `eslint` clean on all new files, `npm run build`
   succeeds, SSR render checked over HTTP against a temporary demo page (trigger markup,
   ARIA attributes and disabled state all correct, no runtime errors)
-- ⚠️ Interactive behaviour (open/filter/keyboard/multi-select toggling, dark mode) could
-  **not** be verified: neither browser extension was connected in this session. The
-  component is unused until US-13.3, so it will get real usage coverage there
+- Interactive behaviour (open/filter/keyboard/multi-select toggling) could not be verified in a
+  browser when the component was written — no extension was connected. **Closed in US-13.0**
+  (2026-07-27) with 21 jsdom interaction tests; two real behaviours were confirmed there that
+  had only been reasoned about: the filter resets on reopen, and disabled options are never
+  highlighted by keyboard navigation. Dark mode is still only verified by inspection (it uses
+  theme tokens exclusively, and jsdom has no CSS engine)
 
 ---
 
@@ -450,9 +471,11 @@ CLOUDFRONT_URL=https://<distribution-id>.cloudfront.net
 - Focus on UX improvements
 - Ensure accessibility standards maintained
 - US-13.4 touches shared grid components — verify `/videogames` and `/books` for regressions
-- ⚠️ **No test infrastructure exists** (`npm test` is a placeholder echo). Every "write tests"
-  acceptance criterion in this sprint is currently unachievable — tracked as **US-13.0**
-  (added 2026-07-26), which should be picked up before US-13.2 / US-13.3
+- ✅ **Test infrastructure landed 2026-07-27** (US-13.0): Vitest + React Testing Library + jsdom.
+  `npm test` runs a real suite. US-13.2 and US-13.3 are expected to ship with tests — read
+  `docs/phase-2/TESTING.md` first; the jsdom stubs and query conventions there are not obvious
+- US-13.4's remaining "responsive at all breakpoints / dark mode" check still needs a real
+  browser: jsdom has no CSS engine, so no test can cover it
 
 ---
 
